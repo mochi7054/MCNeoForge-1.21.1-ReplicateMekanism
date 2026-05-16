@@ -1,0 +1,9 @@
+{
+  "type": "mekanism:enriching",
+  "input": {
+    "item": "replicatemekanism:replica_dust"
+  },
+  "output": {
+    "item": "replicatemekanism:enriched_replica"
+  }
+}
