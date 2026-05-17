@@ -4,6 +4,6 @@
     "item": "replicatemekanism:replica_dust"
   },
   "output": {
-    "item": "replicatemekanism:enriched_replica"
+    "id": "replicatemekanism:enriched_replica"
   }
 }

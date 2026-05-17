@@ -1,0 +1,11 @@
+{
+  "type": "mekanism:enriching",
+  "input": {
+    "item": "replication:raw_replica",
+    "count": 3
+  },
+  "output": {
+    "id": "replicatemekanism:replica_dust",
+    "count": 4
+  }
+}

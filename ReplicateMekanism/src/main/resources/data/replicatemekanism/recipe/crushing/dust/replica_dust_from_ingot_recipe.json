@@ -1,0 +1,9 @@
+{
+  "type": "mekanism:crushing",
+  "input": {
+    "item": "replication:replica_ingot"
+  },
+  "output": {
+    "id": "replicatemekanism:replica_dust"
+  }
+}
