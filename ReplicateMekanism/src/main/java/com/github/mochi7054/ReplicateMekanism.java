@@ -22,12 +22,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import mekanism.api.MekanismIMC;
-import mekanism.api.chemical.Chemical;
-import mekanism.api.chemical.ChemicalBuilder;
-import mekanism.common.ChemicalConstants;
-import mekanism.common.registration.impl.ChemicalDeferredRegister;
-import mekanism.common.registration.impl.DeferredChemical;
+import net.minecraft.resources.ResourceLocation;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(ReplicateMekanism.MODID)
@@ -85,6 +80,7 @@ public class ReplicateMekanism {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        RMChemical.CHEMICALS.register(modEventBus);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -107,4 +103,8 @@ public class ReplicateMekanism {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
+    public static ResourceLocation rl(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    }
 }
+
