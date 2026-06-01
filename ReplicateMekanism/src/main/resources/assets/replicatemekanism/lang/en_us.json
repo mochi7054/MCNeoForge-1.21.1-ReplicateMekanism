@@ -6,7 +6,7 @@
   "item.replicatemekanism.enriched_replica": "Enriched Replica",
   "item.replicatemekanism.replica_incomplete_control_circuit": "Replica Incomplete Control Circuit",
   "item.replicatemekanism.replica_control_circuit": "Replica Control Circuit",
-  "item.replicatemekanism.replica_upgrade": "Replica Upgrade",
+  "item.mekanism.replica_upgrade": "Replica Upgrade",
   "item.replicatemekanism.replica_guide": "Replica Guide",
   "chemical.replicatemekanism.replica": "Replica",
 

@@ -36,6 +36,8 @@ public class ReplicateMekanism {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     // Create a Deferred Register to hold Items which will all be registered under the "replicatemekanism" namespace
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
+    // Create a Deferred Register to hold Items registered under the "mekanism" namespace
+    public static final DeferredRegister.Items MEKANISM_ITEMS = DeferredRegister.createItems("mekanism");
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "replicatemekanism" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
@@ -47,10 +49,10 @@ public class ReplicateMekanism {
     public static final DeferredItem<Item> ENRICHED_REPLICA = ITEMS.registerSimpleItem("enriched_replica", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_INCOMPLETE_CONTROL_CIRCUIT = ITEMS.registerSimpleItem("replica_incomplete_control_circuit", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_CONTROL_CIRCUIT = ITEMS.registerSimpleItem("replica_control_circuit", new Item.Properties());
-    public static final DeferredItem<Item> REPLICA_UPGRADE = ITEMS.register("replica_upgrade", () -> new ReplicaUpgradeItem(new Item.Properties()));
+    public static final DeferredItem<Item> REPLICA_UPGRADE = MEKANISM_ITEMS.register("replica_upgrade", () -> new ReplicaUpgradeItem(new Item.Properties()));
     public static final DeferredItem<Item> REPLICA_GUIDE = ITEMS.registerSimpleItem("replica_guide", new Item.Properties());
 
-    // Creates a creative tab with the id "replicatemekanism:example_tab" for the example item, that is placed after the combat tab
+    // Creates a creative tab with the id "replicatemekanism:example_tab" for the example item, that is placed after the creative tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("replicatemekanism", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.replicatemekanism")) //The language key for the title of your CreativeModeTab
             .withTabsBefore(CreativeModeTabs.COMBAT)
@@ -77,6 +79,7 @@ public class ReplicateMekanism {
         BLOCKS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         ITEMS.register(modEventBus);
+        MEKANISM_ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
 
@@ -91,24 +94,7 @@ public class ReplicateMekanism {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-
-        if (Config.LOG_DIRT_BLOCK.getAsBoolean()) {
-            LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-        }
-
-        LOGGER.info("{}{}", Config.MAGIC_NUMBER_INTRODUCTION.get(), Config.MAGIC_NUMBER.getAsInt());
-
-        Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
-    }
-
-
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
+        LOGGER.info("ReplicateMekanism common setup completed.");
     }
 
     public static ResourceLocation rl(String path) {
