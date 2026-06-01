@@ -36,8 +36,6 @@ public class ReplicateMekanism {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     // Create a Deferred Register to hold Items which will all be registered under the "replicatemekanism" namespace
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
-    // Create a Deferred Register to hold Items registered under the "mekanism" namespace
-    public static final DeferredRegister.Items MEKANISM_ITEMS = DeferredRegister.createItems("mekanism");
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "replicatemekanism" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
@@ -49,7 +47,7 @@ public class ReplicateMekanism {
     public static final DeferredItem<Item> ENRICHED_REPLICA = ITEMS.registerSimpleItem("enriched_replica", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_INCOMPLETE_CONTROL_CIRCUIT = ITEMS.registerSimpleItem("replica_incomplete_control_circuit", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_CONTROL_CIRCUIT = ITEMS.registerSimpleItem("replica_control_circuit", new Item.Properties());
-    public static final DeferredItem<Item> REPLICA_UPGRADE = MEKANISM_ITEMS.register("replica_upgrade", () -> new ReplicaUpgradeItem(new Item.Properties()));
+    public static final DeferredItem<Item> REPLICA_UPGRADE = ITEMS.register("replica_upgrade", () -> new ReplicaUpgradeItem(new Item.Properties()));
     public static final DeferredItem<Item> REPLICA_GUIDE = ITEMS.registerSimpleItem("replica_guide", new Item.Properties());
 
     // Creates a creative tab with the id "replicatemekanism:example_tab" for the example item, that is placed after the creative tab
@@ -79,14 +77,13 @@ public class ReplicateMekanism {
         BLOCKS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         ITEMS.register(modEventBus);
-        MEKANISM_ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ReplicateMekanism) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-        NeoForge.EVENT_BUS.register(this);
+        // NeoForge.EVENT_BUS.register(this);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
