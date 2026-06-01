@@ -10,6 +10,10 @@
   "item.replicatemekanism.replica_guide": "Replica Guide",
   "chemical.replicatemekanism.replica": "Replica",
 
+  "upgrade.replicatemekanism.replica": "Replica",
+  "upgrade.replicatemekanism.replica.desc": "Doubles output of machinery.",
+  "upgrade.replicatemekanism.replica.supported_machines": "All upgradeable machinery",
+
   "replicatemekanism.configuration.title": "ReplicateMekanism Configs",
   "replicatemekanism.configuration.section.replicatemekanism.common.toml": "ReplicateMekanism Configs",
   "replicatemekanism.configuration.section.replicatemekanism.common.toml.title": "ReplicateMekanism Configs",
