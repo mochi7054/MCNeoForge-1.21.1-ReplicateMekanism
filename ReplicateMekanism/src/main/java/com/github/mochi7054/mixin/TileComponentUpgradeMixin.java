@@ -17,11 +17,4 @@ public abstract class TileComponentUpgradeMixin {
             cir.setReturnValue(true);
         }
     }
-
-    @Inject(method = "isSupported", at = @At("HEAD"), cancellable = true)
-    private void onIsSupported(Upgrade upgrade, CallbackInfoReturnable<Boolean> cir) {
-        if (upgrade != null && upgrade.name().equals("REPLICA")) {
-            cir.setReturnValue(true);
-        }
-    }
 }

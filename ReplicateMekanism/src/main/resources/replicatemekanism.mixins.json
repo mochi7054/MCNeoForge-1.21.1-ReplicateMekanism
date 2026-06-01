@@ -3,7 +3,13 @@
   "package": "com.github.mochi7054.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "TileComponentUpgradeMixin"
+    "TileComponentUpgradeMixin",
+    "UpgradeUtilsMixin",
+    "CachedRecipeMixin",
+    "RecipeCacheLookupMonitorMixin",
+    "OutputHelperMixin",
+    "UpgradeInventorySlotMixin",
+    "TileEntityDigitalMinerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

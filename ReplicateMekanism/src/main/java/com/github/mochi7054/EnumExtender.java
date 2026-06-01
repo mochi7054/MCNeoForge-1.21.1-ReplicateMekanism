@@ -49,6 +49,25 @@ public class EnumExtender {
             // Clear Class caches
             clearClassCaches(unsafe, Upgrade.class);
 
+            // Override BY_ID field using Unsafe
+            try {
+                Field byIdField = Upgrade.class.getDeclaredField("BY_ID");
+                long byIdOffset = unsafe.staticFieldOffset(byIdField);
+                Object byIdBase = unsafe.staticFieldBase(byIdField);
+                @SuppressWarnings("unchecked")
+                java.util.function.IntFunction<Upgrade> originalById = (java.util.function.IntFunction<Upgrade>) unsafe.getObject(byIdBase, byIdOffset);
+                java.util.function.IntFunction<Upgrade> customById = id -> {
+                    if (id == 7) {
+                        return replicaUpgrade;
+                    }
+                    return originalById != null ? originalById.apply(id) : null;
+                };
+                unsafe.putObject(byIdBase, byIdOffset, customById);
+                System.out.println("SUCCESSFULLY OVERRODE Upgrade.BY_ID!");
+            } catch (Exception e) {
+                System.err.println("FAILED TO OVERRIDE Upgrade.BY_ID: " + e.getMessage());
+            }
+
             System.out.println("SUCCESSFULLY INJECTED REPLICA UPGRADE ENUM CONSTANT!");
             return replicaUpgrade;
         } catch (Exception e) {
