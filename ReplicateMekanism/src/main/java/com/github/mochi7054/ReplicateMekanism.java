@@ -23,6 +23,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraft.resources.ResourceLocation;
+import mekanism.api.Upgrade;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(ReplicateMekanism.MODID)
@@ -38,13 +39,15 @@ public class ReplicateMekanism {
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "replicatemekanism" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
+    public static final Upgrade REPLICA_UPGRADE_TYPE = EnumExtender.extendUpgrade();
+
     // Creates a new food item with the id "replicatemekanism:example_id", nutrition 1 and saturation 2
     public static final DeferredItem<Item> REPLICA_ALLOY = ITEMS.registerSimpleItem("replica_alloy", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_DUST = ITEMS.registerSimpleItem("replica_dust", new Item.Properties());
     public static final DeferredItem<Item> ENRICHED_REPLICA = ITEMS.registerSimpleItem("enriched_replica", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_INCOMPLETE_CONTROL_CIRCUIT = ITEMS.registerSimpleItem("replica_incomplete_control_circuit", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_CONTROL_CIRCUIT = ITEMS.registerSimpleItem("replica_control_circuit", new Item.Properties());
-    public static final DeferredItem<Item> REPLICA_UPGRADE = ITEMS.registerSimpleItem("replica_upgrade", new Item.Properties());
+    public static final DeferredItem<Item> REPLICA_UPGRADE = ITEMS.register("replica_upgrade", () -> new ReplicaUpgradeItem(new Item.Properties()));
     public static final DeferredItem<Item> REPLICA_GUIDE = ITEMS.registerSimpleItem("replica_guide", new Item.Properties());
 
     // Creates a creative tab with the id "replicatemekanism:example_tab" for the example item, that is placed after the combat tab

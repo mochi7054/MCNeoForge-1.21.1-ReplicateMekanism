@@ -2,7 +2,9 @@
   "required": true,
   "package": "com.github.mochi7054.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "TileComponentUpgradeMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },
