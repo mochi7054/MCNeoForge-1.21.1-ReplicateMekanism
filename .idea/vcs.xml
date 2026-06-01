@@ -2,5 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MCNeoForge-1.21.1-ReplicateMekanism" vcs="Git" />
   </component>
 </project>
