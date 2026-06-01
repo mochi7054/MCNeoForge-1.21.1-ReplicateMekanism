@@ -45,6 +45,7 @@ public class ReplicateMekanism {
     public static final DeferredItem<Item> REPLICA_INCOMPLETE_CONTROL_CIRCUIT = ITEMS.registerSimpleItem("replica_incomplete_control_circuit", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_CONTROL_CIRCUIT = ITEMS.registerSimpleItem("replica_control_circuit", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_UPGRADE = ITEMS.registerSimpleItem("replica_upgrade", new Item.Properties());
+    public static final DeferredItem<Item> REPLICA_GUIDE = ITEMS.registerSimpleItem("replica_guide", new Item.Properties());
 
     // Creates a creative tab with the id "replicatemekanism:example_tab" for the example item, that is placed after the combat tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("replicatemekanism", () -> CreativeModeTab.builder()
@@ -57,7 +58,8 @@ public class ReplicateMekanism {
                 output.accept(ENRICHED_REPLICA.get());
                 output.accept(REPLICA_INCOMPLETE_CONTROL_CIRCUIT.get());
                 output.accept(REPLICA_CONTROL_CIRCUIT.get());
-                output.accept(REPLICA_UPGRADE.get());// Add the example item to the tab. For your own tabs, this method is preferred over the event
+                output.accept(REPLICA_UPGRADE.get());
+                output.accept(REPLICA_GUIDE.get());// Add the example item to the tab. For your own tabs, this method is preferred over the event
             }).build());
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
@@ -103,6 +105,7 @@ public class ReplicateMekanism {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
+
     public static ResourceLocation rl(String path) {
         return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }

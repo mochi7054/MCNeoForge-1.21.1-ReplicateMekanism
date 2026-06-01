@@ -1,0 +1,10 @@
+{
+  "type": "mekanism:chemical_conversion",
+  "input": {
+    "item": "replicatemekanism:enriched_replica"
+  },
+  "output": {
+    "amount": 80,
+    "id": "replicatemekanism:replica"
+  }
+}

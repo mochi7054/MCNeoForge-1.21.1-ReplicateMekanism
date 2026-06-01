@@ -1,0 +1,10 @@
+{
+  "type": "mekanism:chemical_conversion",
+  "input": {
+    "item": "replicatemekanism:replica_dust"
+  },
+  "output": {
+    "amount": 10,
+    "id": "replicatemekanism:replica"
+  }
+}
