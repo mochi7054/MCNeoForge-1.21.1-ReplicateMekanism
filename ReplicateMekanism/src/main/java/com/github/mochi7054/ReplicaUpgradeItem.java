@@ -24,7 +24,7 @@ public class ReplicaUpgradeItem extends ItemUpgrade {
                 // Add Hold Left Shift for details.
                 Component holdShift = Component.literal("Hold ")
                     .withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal("Left Shift").withStyle(ChatFormatting.AQUA))
+                    .append(Component.literal("Left Shift").withStyle(net.minecraft.ChatFormatting.BLUE))
                     .append(Component.literal(" for details.").withStyle(ChatFormatting.GRAY));
                 tooltip.add(holdShift);
             }

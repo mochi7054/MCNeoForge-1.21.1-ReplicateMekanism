@@ -63,12 +63,10 @@ public class EnumExtender {
                     return originalById != null ? originalById.apply(id) : null;
                 };
                 unsafe.putObject(byIdBase, byIdOffset, customById);
-                System.out.println("SUCCESSFULLY OVERRODE Upgrade.BY_ID!");
             } catch (Exception e) {
                 System.err.println("FAILED TO OVERRIDE Upgrade.BY_ID: " + e.getMessage());
             }
 
-            System.out.println("SUCCESSFULLY INJECTED REPLICA UPGRADE ENUM CONSTANT!");
             return replicaUpgrade;
         } catch (Exception e) {
             System.err.println("FAILED TO INJECT REPLICA UPGRADE ENUM CONSTANT: " + e.getMessage());
