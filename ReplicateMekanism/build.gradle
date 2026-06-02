@@ -122,9 +122,12 @@ configurations {
 
 dependencies {
     implementation "curse.maven:mekanism-268560:7904058"
+    implementation "curse.maven:mekanism-generators-268566:7904061"
+    implementation "curse.maven:mekanism-tools-268567:7904062"
     implementation "curse.maven:jei-238222:7420587"
     implementation "curse.maven:replication-638351:7662870"
     implementation "curse.maven:titanium-287342:7662843"
+    implementation "curse.maven:embeddium-908741:6118392"
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
