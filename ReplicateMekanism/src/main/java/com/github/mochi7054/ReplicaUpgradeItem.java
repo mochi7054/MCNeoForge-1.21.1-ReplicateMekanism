@@ -23,7 +23,7 @@ public class ReplicaUpgradeItem extends ItemUpgrade {
             } else {
                 // Add Hold Left Shift for details.
                 Component holdShift = Component.literal("Hold ")
-                    .withStyle(ChatFormatting.GRAY)
+                    .withStyle(ChatFormatting.WHITE)
                         .append(Component.literal("Left Shift").withStyle(style -> style.withColor(0x559eff)))
                     .append(Component.literal(" for details.").withStyle(ChatFormatting.WHITE));
                 tooltip.add(holdShift);
