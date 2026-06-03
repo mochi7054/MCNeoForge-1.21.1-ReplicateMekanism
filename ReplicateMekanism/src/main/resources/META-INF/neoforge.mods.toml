@@ -6,8 +6,11 @@ modId = "replicatemekanism"
 version = "1.0.1-beta"
 displayName = "ReplicateMekanism"
 authors = "mochisora7054"
+credits = "Thanks to Mekanism and Replication developers."
+displayURL = "https://github.com/mochisora7054/ReplicateMekanism"
+license = "MIT"
 description = '''
-
+An addon integrating a custom Upgrade (REPLICA) for Mekanism and Replication.
 '''
 [[dependencies.replicatemekanism]]
 modId = "minecraft"

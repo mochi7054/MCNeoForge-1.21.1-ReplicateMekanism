@@ -95,6 +95,29 @@ public class ReplicateMekanism {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("ReplicateMekanism common setup completed.");
+        dumpMekanismClassMethods("mekanism.api.chemical.Chemical");
+    }
+
+    public static void dumpMekanismClassMethods(String className) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            LOGGER.info("[RMReflect] Dumping methods for: " + className);
+            for (java.lang.reflect.Method method : clazz.getDeclaredMethods()) {
+                StringBuilder signature = new StringBuilder();
+                signature.append(java.lang.reflect.Modifier.toString(method.getModifiers())).append(" ");
+                signature.append(method.getReturnType().getSimpleName()).append(" ");
+                signature.append(method.getName()).append("(");
+                Class<?>[] params = method.getParameterTypes();
+                for (int i = 0; i < params.length; i++) {
+                    signature.append(params[i].getSimpleName());
+                    if (i < params.length - 1) signature.append(", ");
+                }
+                signature.append(")");
+                LOGGER.info("[RMReflect]   " + signature.toString());
+            }
+        } catch (Exception e) {
+            LOGGER.error("[RMReflect] Failed to dump class " + className, e);
+        }
     }
 
     public static ResourceLocation rl(String path) {

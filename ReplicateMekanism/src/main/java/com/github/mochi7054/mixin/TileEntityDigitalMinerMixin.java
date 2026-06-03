@@ -25,9 +25,8 @@ public abstract class TileEntityDigitalMinerMixin {
                 List<ItemStack> doubled = new ArrayList<>();
                 for (ItemStack drop : drops) {
                     if (drop != null && !drop.isEmpty()) {
-                        ItemStack copy = drop.copy();
-                        copy.setCount(copy.getCount() * 2);
-                        doubled.add(copy);
+                        doubled.add(drop);
+                        doubled.add(drop.copy());
                     } else {
                         doubled.add(drop);
                     }

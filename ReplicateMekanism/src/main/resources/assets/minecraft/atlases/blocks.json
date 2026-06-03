@@ -1,0 +1,8 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "replicatemekanism:infuse_type/replica"
+    }
+  ]
+}

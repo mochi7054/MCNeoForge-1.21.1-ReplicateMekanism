@@ -13,7 +13,9 @@
     "UpgradeMixin",
     "UpgradeInvoker",
     "TileEntityGeneratorMixin",
-    "BasicEnergyContainerMixin"
+    "BasicEnergyContainerMixin",
+    "TileEntityFormulaicAssemblicatorMixin",
+    "MekanismRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

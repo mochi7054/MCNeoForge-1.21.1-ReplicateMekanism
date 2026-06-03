@@ -28,5 +28,8 @@ public class ReplicateMekanismClient {
         // Some client setup code
         ReplicateMekanism.LOGGER.info("HELLO FROM CLIENT SETUP");
         ReplicateMekanism.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        ReplicateMekanism.dumpMekanismClassMethods("mekanism.client.render.MekanismRenderer");
+        ReplicateMekanism.dumpMekanismClassMethods("mekanism.client.render.chemical.ChemicalRenderInfo");
+        ReplicateMekanism.dumpMekanismClassMethods("mekanism.client.render.chemical.GasRenderInfo");
     }
 }
