@@ -18,12 +18,21 @@ public class ReplicaRecipeTracker {
     }
 
     public static boolean hasReplicaUpgrade(Object tileObj) {
+        if (tileObj == null) return false;
+        ReplicateMekanism.LOGGER.info("[RMDebug] hasReplicaUpgrade check for class: {}", tileObj.getClass().getName());
         if (tileObj instanceof IUpgradeTile upgradeTile) {
             TileComponentUpgrade component = upgradeTile.getComponent();
             if (component != null) {
-                return component.isUpgradeInstalled(ReplicateMekanism.REPLICA_UPGRADE_TYPE);
+                boolean installed = component.isUpgradeInstalled(ReplicateMekanism.REPLICA_UPGRADE_TYPE);
+                ReplicateMekanism.LOGGER.info("[RMDebug]   Component found. Installed status for REPLICA: {}", installed);
+                return installed;
+            } else {
+                ReplicateMekanism.LOGGER.info("[RMDebug]   Component is null.");
             }
+        } else {
+            ReplicateMekanism.LOGGER.info("[RMDebug]   tileObj is not an instance of IUpgradeTile.");
         }
         return false;
     }
+
 }

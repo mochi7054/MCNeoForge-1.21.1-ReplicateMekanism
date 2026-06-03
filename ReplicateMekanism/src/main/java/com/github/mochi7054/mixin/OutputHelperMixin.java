@@ -22,9 +22,13 @@ public class OutputHelperMixin {
         ordinal = 0
     )
     private static ItemStack modifyItemStackOutput(ItemStack stack) {
+        if (stack != null && !stack.isEmpty()) {
+            com.github.mochi7054.ReplicateMekanism.LOGGER.info("[RMDebug] modifyItemStackOutput called. stack: {}, count: {}, isReplicaActive: {}", stack.getItem(), stack.getCount(), ReplicaRecipeTracker.isReplicaActive.get());
+        }
         if (ReplicaRecipeTracker.isReplicaActive.get() == Boolean.TRUE && stack != null && !stack.isEmpty()) {
             ItemStack doubled = stack.copy();
             doubled.setCount(doubled.getCount() * 2);
+            com.github.mochi7054.ReplicateMekanism.LOGGER.info("[RMDebug]   Doubled ItemStack output. New count: {}", doubled.getCount());
             return doubled;
         }
         return stack;
@@ -37,9 +41,13 @@ public class OutputHelperMixin {
         ordinal = 0
     )
     private static FluidStack modifyFluidStackOutput(FluidStack stack) {
+        if (stack != null && !stack.isEmpty()) {
+            com.github.mochi7054.ReplicateMekanism.LOGGER.info("[RMDebug] modifyFluidStackOutput called. amount: {}, isReplicaActive: {}", stack.getAmount(), ReplicaRecipeTracker.isReplicaActive.get());
+        }
         if (ReplicaRecipeTracker.isReplicaActive.get() == Boolean.TRUE && stack != null && !stack.isEmpty()) {
             FluidStack doubled = stack.copy();
             doubled.setAmount(doubled.getAmount() * 2);
+            com.github.mochi7054.ReplicateMekanism.LOGGER.info("[RMDebug]   Doubled FluidStack output. New amount: {}", doubled.getAmount());
             return doubled;
         }
         return stack;
@@ -52,11 +60,16 @@ public class OutputHelperMixin {
         ordinal = 0
     )
     private static ChemicalStack modifyChemicalStackOutput(ChemicalStack stack) {
+        if (stack != null && !stack.isEmpty()) {
+            com.github.mochi7054.ReplicateMekanism.LOGGER.info("[RMDebug] modifyChemicalStackOutput called. amount: {}, isReplicaActive: {}", stack.getAmount(), ReplicaRecipeTracker.isReplicaActive.get());
+        }
         if (ReplicaRecipeTracker.isReplicaActive.get() == Boolean.TRUE && stack != null && !stack.isEmpty()) {
             ChemicalStack doubled = stack.copy();
             doubled.setAmount(doubled.getAmount() * 2);
+            com.github.mochi7054.ReplicateMekanism.LOGGER.info("[RMDebug]   Doubled ChemicalStack output. New amount: {}", doubled.getAmount());
             return doubled;
         }
         return stack;
     }
+
 }
