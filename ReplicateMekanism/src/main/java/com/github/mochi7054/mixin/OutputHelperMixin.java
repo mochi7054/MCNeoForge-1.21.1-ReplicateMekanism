@@ -10,7 +10,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import com.github.mochi7054.ReplicaRecipeTracker;
+import com.github.mochi7054.recipe.ReplicaRecipeTracker;
 
 @Mixin(value = OutputHelper.class, remap = false)
 public class OutputHelperMixin {

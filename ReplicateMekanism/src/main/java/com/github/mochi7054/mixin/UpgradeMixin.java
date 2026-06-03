@@ -27,8 +27,8 @@ public abstract class UpgradeMixin {
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void onClinit(CallbackInfo ci) {
-        ILangEntry langKey = new com.github.mochi7054.ReplicaLangEntry("upgrade.replicatemekanism.replica");
-        ILangEntry descLangKey = new com.github.mochi7054.ReplicaLangEntry("upgrade.replicatemekanism.replica.desc");
+        ILangEntry langKey = new com.github.mochi7054.lang.ReplicaLangEntry("upgrade.replicatemekanism.replica");
+        ILangEntry descLangKey = new com.github.mochi7054.lang.ReplicaLangEntry("upgrade.replicatemekanism.replica.desc");
 
         Upgrade replicaUpgrade = UpgradeInvoker.createUpgrade("REPLICA", 7, "replica", langKey, descLangKey, 1, EnumColor.DARK_BLUE);
 

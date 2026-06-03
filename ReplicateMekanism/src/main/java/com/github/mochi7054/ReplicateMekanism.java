@@ -1,8 +1,12 @@
 package com.github.mochi7054;
 
 import org.slf4j.Logger;
-
 import com.mojang.logging.LogUtils;
+
+import com.github.mochi7054.item.ReplicaUpgradeItem;
+import com.github.mochi7054.config.Config;
+import com.github.mochi7054.chemical.RMChemical;
+
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;

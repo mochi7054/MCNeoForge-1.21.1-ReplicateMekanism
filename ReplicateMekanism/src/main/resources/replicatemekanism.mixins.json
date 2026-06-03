@@ -12,7 +12,8 @@
     "TileEntityDigitalMinerMixin",
     "UpgradeMixin",
     "UpgradeInvoker",
-    "TileEntityGeneratorMixin"
+    "TileEntityGeneratorMixin",
+    "BasicEnergyContainerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

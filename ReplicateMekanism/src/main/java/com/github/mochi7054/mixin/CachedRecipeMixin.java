@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import com.github.mochi7054.ReplicaRecipeTracker;
+import com.github.mochi7054.recipe.ReplicaRecipeTracker;
 
 @Mixin(value = CachedRecipe.class, remap = false)
 public abstract class CachedRecipeMixin {

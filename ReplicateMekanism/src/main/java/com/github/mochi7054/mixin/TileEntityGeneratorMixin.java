@@ -5,13 +5,17 @@ import mekanism.generators.common.tile.TileEntityGenerator;
 import mekanism.common.tile.component.TileComponentUpgrade;
 import mekanism.common.capabilities.energy.BasicEnergyContainer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = TileEntityGenerator.class, remap = false)
 public abstract class TileEntityGeneratorMixin extends TileEntityMekanism {
+
+    @Shadow
+    private BasicEnergyContainer energyContainer;
 
     public TileEntityGeneratorMixin(net.minecraft.core.Holder<net.minecraft.world.level.block.Block> blockProvider, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state) {
         super(blockProvider, pos, state);
@@ -42,14 +46,10 @@ public abstract class TileEntityGeneratorMixin extends TileEntityMekanism {
         }
     }
 
-    @Redirect(
-        method = "getInitialEnergyContainers",
-        at = @At(
-            value = "INVOKE",
-            target = "Lmekanism/common/capabilities/energy/BasicEnergyContainer;output(JLmekanism/api/IContentsListener;)Lmekanism/common/capabilities/energy/BasicEnergyContainer;"
-        )
-    )
-    private BasicEnergyContainer redirectOutput(long maxEnergy, mekanism.api.IContentsListener listener) {
-        return new mekanism.common.capabilities.energy.ReplicaEnergyContainer(maxEnergy, listener, this);
+    @Inject(method = "getInitialEnergyContainers", at = @At("RETURN"))
+    private void onGetInitialEnergyContainers(mekanism.api.IContentsListener listener, CallbackInfoReturnable<mekanism.common.capabilities.holder.energy.IEnergyContainerHolder> cir) {
+        if (this.energyContainer instanceof com.github.mochi7054.IOwnerTrackedContainer tracker) {
+            tracker.setReplicateMekanism$owner(this);
+        }
     }
 }
