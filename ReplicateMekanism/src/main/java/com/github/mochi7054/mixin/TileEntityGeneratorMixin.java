@@ -41,15 +41,11 @@ public abstract class TileEntityGeneratorMixin extends TileEntityMekanism {
                 upgradeComponentField.set(this, upgradeComp);
                 this.addComponent(upgradeComp);
             }
+            if (this.energyContainer instanceof com.github.mochi7054.IOwnerTrackedContainer tracker) {
+                tracker.setReplicateMekanism$owner(this);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    @Inject(method = "getInitialEnergyContainers", at = @At("RETURN"))
-    private void onGetInitialEnergyContainers(mekanism.api.IContentsListener listener, CallbackInfoReturnable<mekanism.common.capabilities.holder.energy.IEnergyContainerHolder> cir) {
-        if (this.energyContainer instanceof com.github.mochi7054.IOwnerTrackedContainer tracker) {
-            tracker.setReplicateMekanism$owner(this);
         }
     }
 }

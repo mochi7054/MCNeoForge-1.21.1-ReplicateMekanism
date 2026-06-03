@@ -31,6 +31,7 @@ public abstract class UpgradeMixin {
         ILangEntry descLangKey = new com.github.mochi7054.lang.ReplicaLangEntry("upgrade.replicatemekanism.replica.desc");
 
         Upgrade replicaUpgrade = UpgradeInvoker.createUpgrade("REPLICA", 7, "replica", langKey, descLangKey, 1, EnumColor.DARK_BLUE);
+        com.github.mochi7054.ReplicateMekanism.REPLICA_UPGRADE_TYPE = replicaUpgrade;
 
         // Append to $VALUES
         Upgrade[] oldValues = $VALUES;
