@@ -30,22 +30,26 @@ public abstract class UpgradeMixin {
         ILangEntry langKey = new com.github.mochi7054.lang.ReplicaLangEntry("upgrade.replicatemekanism.replica");
         ILangEntry descLangKey = new com.github.mochi7054.lang.ReplicaLangEntry("upgrade.replicatemekanism.replica.desc");
 
-        Upgrade replicaUpgrade = UpgradeInvoker.createUpgrade("REPLICA", 7, "replica", langKey, descLangKey, 1, EnumColor.DARK_BLUE);
+        Upgrade[] oldValues = $VALUES;
+        int newOrdinal = oldValues.length;
+
+        Upgrade replicaUpgrade = UpgradeInvoker.createUpgrade("REPLICA", newOrdinal, "replica", langKey, descLangKey, 1, EnumColor.DARK_BLUE);
         com.github.mochi7054.ReplicateMekanism.REPLICA_UPGRADE_TYPE = replicaUpgrade;
 
         // Append to $VALUES
-        Upgrade[] oldValues = $VALUES;
         Upgrade[] newValues = Arrays.copyOf(oldValues, oldValues.length + 1);
         newValues[oldValues.length] = replicaUpgrade;
         $VALUES = newValues;
 
         // Override BY_ID
         java.util.function.IntFunction<Upgrade> originalById = BY_ID;
+        final int targetId = newOrdinal;
         BY_ID = id -> {
-            if (id == 7) {
+            if (id == targetId) {
                 return replicaUpgrade;
             }
             return originalById != null ? originalById.apply(id) : null;
         };
     }
+
 }
