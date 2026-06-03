@@ -9,7 +9,7 @@ authors = "mochisora7054"
 description = '''
 
 '''
-[[dependencies.replication]]
+[[dependencies.replicatemekanism]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.21.1,)"
@@ -17,18 +17,25 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.replicatemekanism]]
-modId="mekanism"
-type="required"
-versionRange="[10.7.0,)"
-ordering="NONE"
-side="BOTH"
+modId = "neoforge"
+mandatory = true
+versionRange = "[21.1.230,)"
+ordering = "NONE"
+side = "BOTH"
 
 [[dependencies.replicatemekanism]]
-modId="replication"
-type="required"
-versionRange="[1.0.0,)"
-ordering="NONE"
-side="BOTH"
+modId = "mekanism"
+mandatory = true
+versionRange = "[10.7.19,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.replicatemekanism]]
+modId = "replication"
+mandatory = true
+versionRange = "[1.21.1-1.2.7,)"
+ordering = "NONE"
+side = "BOTH"
 
 [[mixins]]
 config = "replicatemekanism.mixins.json"
