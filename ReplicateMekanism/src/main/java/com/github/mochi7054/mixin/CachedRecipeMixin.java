@@ -13,20 +13,13 @@ public abstract class CachedRecipeMixin {
     @Inject(method = "process", at = @At("HEAD"))
     private void onProcessHead(CallbackInfo ci) {
         Object tile = ReplicaRecipeTracker.getTile((CachedRecipe) (Object) this);
-        if (tile != null) {
-            com.github.mochi7054.ReplicateMekanism.LOGGER.info("[RMDebug] process() head. Found tile associated: {}", tile.getClass().getName());
-            if (ReplicaRecipeTracker.hasReplicaUpgrade(tile)) {
-                ReplicaRecipeTracker.isReplicaActive.set(true);
-                com.github.mochi7054.ReplicateMekanism.LOGGER.info("[RMDebug]   isReplicaActive set to true.");
-            } else {
-                ReplicaRecipeTracker.isReplicaActive.set(false);
-            }
+        if (tile != null && ReplicaRecipeTracker.hasReplicaUpgrade(tile)) {
+            ReplicaRecipeTracker.isReplicaActive.set(true);
         } else {
-            // Un-comment to reduce noise if needed, but useful for initial check
-            // com.github.mochi7054.ReplicateMekanism.LOGGER.info("[RMDebug] process() head. No tile associated with recipe.");
             ReplicaRecipeTracker.isReplicaActive.set(false);
         }
     }
+
 
 
     @Inject(method = "process", at = @At("RETURN"))

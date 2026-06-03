@@ -7,7 +7,9 @@
     "UpgradeUtilsMixin",
     "CachedRecipeMixin",
     "RecipeCacheLookupMonitorMixin",
-    "OutputHelperMixin",
+    "BasicInventorySlotMixin",
+    "BasicFluidTankMixin",
+    "BasicChemicalTankMixin",
     "UpgradeInventorySlotMixin",
     "TileEntityDigitalMinerMixin",
     "UpgradeMixin",
@@ -16,6 +18,7 @@
     "BasicEnergyContainerMixin",
     "TileEntityFormulaicAssemblicatorMixin",
     "MekanismRendererMixin"
+
   ],
   "injectors": {
     "defaultRequire": 1
