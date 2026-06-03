@@ -17,15 +17,15 @@ public class ReplicaUpgradeItem extends ItemUpgrade {
         if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient()) {
             if (ReplicaClientUtils.isShiftDown()) {
                 // Add description: Doubles output of machinery.
-                tooltip.add(Component.translatable("upgrade.replicatemekanism.replica.desc").withStyle(ChatFormatting.GRAY));
+                tooltip.add(Component.translatable("upgrade.replicatemekanism.replica.desc").withStyle(ChatFormatting.WHITE));
                 // Add max installed: 1
-                tooltip.add(Component.translatable("upgrade.mekanism.max_installed", 1).withStyle(ChatFormatting.GRAY));
+                tooltip.add(Component.translatable("upgrade.mekanism.max_installed", 1).withStyle(ChatFormatting.WHITE));
             } else {
                 // Add Hold Left Shift for details.
                 Component holdShift = Component.literal("Hold ")
-                    .withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal("Left Shift").withStyle(net.minecraft.ChatFormatting.BLUE))
-                    .append(Component.literal(" for details.").withStyle(ChatFormatting.GRAY));
+                    .withStyle(ChatFormatting.WHITE)
+                        .append(Component.literal("Left Shift").withStyle(style -> style.withColor(0x559eff)))
+                    .append(Component.literal(" for details.").withStyle(ChatFormatting.WHITE));
                 tooltip.add(holdShift);
             }
         }
