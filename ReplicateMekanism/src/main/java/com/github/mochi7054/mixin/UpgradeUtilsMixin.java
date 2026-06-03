@@ -21,6 +21,20 @@ public class UpgradeUtilsMixin {
         }
     }
 
+    @Inject(method = "getStack(Lmekanism/api/Upgrade;)Lnet/minecraft/world/item/ItemStack;", at = @At("HEAD"), cancellable = true)
+    private static void onGetStackSingle(Upgrade upgrade, CallbackInfoReturnable<net.minecraft.world.item.ItemStack> cir) {
+        if (upgrade != null && upgrade.name().equals("REPLICA")) {
+            cir.setReturnValue(new net.minecraft.world.item.ItemStack(ReplicateMekanism.REPLICA_UPGRADE.get()));
+        }
+    }
+
+    @Inject(method = "getStack(Lmekanism/api/Upgrade;I)Lnet/minecraft/world/item/ItemStack;", at = @At("HEAD"), cancellable = true)
+    private static void onGetStackCount(Upgrade upgrade, int count, CallbackInfoReturnable<net.minecraft.world.item.ItemStack> cir) {
+        if (upgrade != null && upgrade.name().equals("REPLICA")) {
+            cir.setReturnValue(new net.minecraft.world.item.ItemStack(ReplicateMekanism.REPLICA_UPGRADE.get(), count));
+        }
+    }
+
     @Inject(method = "getInfo", at = @At("HEAD"), cancellable = true)
     private static void onGetInfo(net.minecraft.world.level.block.entity.BlockEntity tile, Upgrade upgrade, CallbackInfoReturnable<List<?>> cir) {
         if (upgrade != null && upgrade.name().equals("REPLICA")) {

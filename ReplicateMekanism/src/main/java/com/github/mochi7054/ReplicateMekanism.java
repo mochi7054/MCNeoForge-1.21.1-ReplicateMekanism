@@ -41,7 +41,7 @@ public class ReplicateMekanism {
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "replicatemekanism" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    public static final Upgrade REPLICA_UPGRADE_TYPE = EnumExtender.extendUpgrade();
+    public static final Upgrade REPLICA_UPGRADE_TYPE = Upgrade.valueOf("REPLICA");
 
     // Creates a new food item with the id "replicatemekanism:example_id", nutrition 1 and saturation 2
     public static final DeferredItem<Item> REPLICA_ALLOY = ITEMS.registerSimpleItem("replica_alloy", new Item.Properties());
