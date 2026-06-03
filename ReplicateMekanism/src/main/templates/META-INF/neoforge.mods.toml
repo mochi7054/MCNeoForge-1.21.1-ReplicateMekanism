@@ -1,0 +1,46 @@
+modLoader = "javafml"
+loaderVersion = "${loader_version_range}"
+license = "${mod_license}"
+
+[[mods]]
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+authors = "mochisora7054"
+credits = "Thanks to Mekanism and Replication developers."
+displayURL = "https://github.com/mochisora7054/ReplicateMekanism"
+license = "${mod_license}"
+description = '''
+An addon integrating a custom Upgrade (REPLICA) for Mekanism and Replication.
+'''
+
+[[dependencies.${mod_id}]]
+modId = "minecraft"
+mandatory = true
+versionRange = "${minecraft_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "neoforge"
+mandatory = true
+versionRange = "[${neo_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "mekanism"
+mandatory = true
+versionRange = "[10.7.19,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "replication"
+mandatory = true
+versionRange = "[1.21.1-1.2.7,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "replicatemekanism.mixins.json"
