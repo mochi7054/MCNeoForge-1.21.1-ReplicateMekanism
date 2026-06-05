@@ -48,7 +48,7 @@ import java.util.Map;
 
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
-public class ImaginatorBlockEntity extends TileEntityConfigurableMachine implements MenuProvider {
+public class CollapserBlockEntity extends TileEntityConfigurableMachine implements MenuProvider {
 
     public static final int BASE_TICKS_REQUIRED = 100;
     public static final long BASE_ENERGY_USAGE = 50L;
@@ -65,8 +65,8 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
     private com.buuz135.replication.network.DefaultMatterNetworkElement networkElement = null;
     private com.buuz135.replication.network.MatterNetwork currentNetwork = null;
 
-    private MachineEnergyContainer<ImaginatorBlockEntity> energyContainer;
-    
+    private MachineEnergyContainer<CollapserBlockEntity> energyContainer;
+
     public BasicFluidTank earthTank;
     public BasicFluidTank netherTank;
     public BasicFluidTank organicTank;
@@ -84,24 +84,24 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
     private OutputInventorySlot outputSlot;
     private EnergyInventorySlot energySlot;
 
-    public ImaginatorBlockEntity(BlockPos pos, BlockState state) {
-        super(ReplicateMekanism.IMAGINATOR, pos, state);
+    public CollapserBlockEntity(BlockPos pos, BlockState state) {
+        super(ReplicateMekanism.COLLAPSER, pos, state);
         configComponent.setupItemIOConfig(null, outputSlot, energySlot);
-        
+
         // Setup fluid config with all 8 tanks
         mekanism.common.tile.component.config.ConfigInfo fluidConfig = configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID);
         if (fluidConfig != null) {
-            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.INPUT, 
-                mekanism.common.tile.component.TileComponentConfig.createInfo(
-                    mekanism.common.lib.transmitter.TransmissionType.FLUID, true, false,
-                    earthTank, netherTank, organicTank, enderTank, metallicTank, preciousTank, livingTank, quantumTank
-                )
+            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.INPUT,
+                    mekanism.common.tile.component.TileComponentConfig.createInfo(
+                            mekanism.common.lib.transmitter.TransmissionType.FLUID, true, false,
+                            earthTank, netherTank, organicTank, enderTank, metallicTank, preciousTank, livingTank, quantumTank
+                    )
             );
-            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.OUTPUT, 
-                mekanism.common.tile.component.TileComponentConfig.createInfo(
-                    mekanism.common.lib.transmitter.TransmissionType.FLUID, false, true,
-                    earthTank, netherTank, organicTank, enderTank, metallicTank, preciousTank, livingTank, quantumTank
-                )
+            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.OUTPUT,
+                    mekanism.common.tile.component.TileComponentConfig.createInfo(
+                            mekanism.common.lib.transmitter.TransmissionType.FLUID, false, true,
+                            earthTank, netherTank, organicTank, enderTank, metallicTank, preciousTank, livingTank, quantumTank
+                    )
             );
             fluidConfig.setCanEject(false);
         }
@@ -270,7 +270,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                     for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
                         IMatterType neededMatterType = entry.getKey();
                         int neededAmount = (int) Math.ceil(entry.getValue().getAmount());
-                        
+
                         BasicFluidTank matchingTank = null;
                         for (BasicFluidTank tank : getMatterTanks()) {
                             FluidStack storedFluid = tank.getFluid();
@@ -282,7 +282,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                                 }
                             }
                         }
-                        
+
                         if (matchingTank == null || matchingTank.getFluid().getAmount() < neededAmount) {
                             allFluidsAvailable = false;
                             break;
@@ -352,13 +352,13 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             operatingTicks++;
             if (operatingTicks >= ticksRequired) {
                 operatingTicks = 0;
-                
+
                 if (recipeCompound != null) {
                     // Manual Replication Finalize
                     for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
                         IMatterType neededMatterType = entry.getKey();
                         int neededAmount = (int) Math.ceil(entry.getValue().getAmount());
-                        
+
                         for (BasicFluidTank tank : getMatterTanks()) {
                             FluidStack storedFluid = tank.getFluid();
                             if (!storedFluid.isEmpty() && storedFluid.getFluid().getFluidType() instanceof MatterFluidType matterFluidType) {
@@ -394,9 +394,9 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
 
                     if (!getBlockPos().equals(source)) {
                         net.neoforged.neoforge.items.IItemHandler itemHandler = level.getCapability(
-                            net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                            source,
-                            Direction.UP
+                                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                                source,
+                                Direction.UP
                         );
                         if (itemHandler != null) {
                             ItemStack remaining = ItemHandlerHelper.insertItem(itemHandler, copyStack, false);
@@ -456,19 +456,19 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         return (double) operatingTicks / (double) ticksRequired;
     }
 
-    public MachineEnergyContainer<ImaginatorBlockEntity> getEnergyContainer() {
+    public MachineEnergyContainer<CollapserBlockEntity> getEnergyContainer() {
         return energyContainer;
     }
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("container.replicatemekanism.imaginator");
+        return Component.translatable("container.replicatemekanism.collapser");
     }
 
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return new com.github.mochi7054.inventory.container.ImaginatorMenu(containerId, playerInventory, this);
+        return new com.github.mochi7054.inventory.container.CollapserMenu(containerId, playerInventory, this);
     }
 
     @Override

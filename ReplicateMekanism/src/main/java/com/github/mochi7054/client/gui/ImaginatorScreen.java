@@ -73,8 +73,6 @@ public class ImaginatorScreen extends GuiConfigurableTile<ImaginatorBlockEntity,
     protected void addSlots() {
         for (int i = 0; i < menu.slots.size(); i++) {
             Slot slot = menu.slots.get(i);
-            com.github.mochi7054.ReplicateMekanism.LOGGER.info("[RMScreenDebug] Slot index={}, class={}, x={}, y={}, container={}",
-                i, slot.getClass().getName(), slot.x, slot.y, slot.container.getClass().getName());
             
             if (slot instanceof InventoryContainerSlot containerSlot) {
                 ContainerSlotType slotType = containerSlot.getSlotType();

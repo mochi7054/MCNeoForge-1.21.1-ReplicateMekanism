@@ -166,6 +166,24 @@ tasks.register("inspectMekanismGui") {
         runJavap("mekanism.client.gui.element.gauge.GuiFluidGauge")
     }
 }
+tasks.register("inspectReplication") {
+    doLast {
+        def compileClasspath = project.sourceSets.main.compileClasspath.asPath
+        def runJavap = { className, filename ->
+            def outFile = file(filename)
+            outFile.text = "=== javap -c -p $className ===\n"
+            def proc = new ProcessBuilder("javap", "-c", "-p", "-cp", compileClasspath, className)
+                .redirectErrorStream(true)
+                .start()
+            proc.inputStream.eachLine { outFile.append(it + "\n") }
+            proc.waitFor()
+        }
+        runJavap("com.buuz135.replication.network.MatterNetwork", "javap_matternetwork.txt")
+        runJavap("com.buuz135.replication.network.DefaultMatterNetworkElement", "javap_networkelement.txt")
+        runJavap("com.buuz135.replication.api.network.IMatterTanksConsumer", "javap_consumer.txt")
+        runJavap("com.buuz135.replication.api.network.IMatterTanksSupplier", "javap_supplier.txt")
+    }
+}
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
@@ -213,12 +231,6 @@ idea {
         downloadJavadoc = true
     }
 }
-
-
-
-
-
-
 
 
 

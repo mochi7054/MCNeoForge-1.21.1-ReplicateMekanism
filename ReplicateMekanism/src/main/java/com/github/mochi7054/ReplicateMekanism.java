@@ -104,6 +104,21 @@ public class ReplicateMekanism {
                     com.github.mochi7054.block.entity.ImaginatorBlockEntity.class,
                     com.github.mochi7054.inventory.container.ImaginatorMenu::new);
 
+    public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.CollapserBlock, com.github.mochi7054.item.CollapserBlockItem> COLLAPSER =
+            BLOCKS.register("collapser",
+                    () -> new com.github.mochi7054.block.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F)),
+                    com.github.mochi7054.item.CollapserBlockItem::new);
+
+    public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.CollapserBlockEntity> COLLAPSER_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER, com.github.mochi7054.block.entity.CollapserBlockEntity::new)
+            .clientTicker(mekanism.common.tile.base.TileEntityMekanism::tickClient)
+            .serverTicker(mekanism.common.tile.base.TileEntityMekanism::tickServer)
+            .build();
+
+    public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.inventory.container.CollapserMenu> COLLAPSER_CONTAINER_TYPE =
+            MENU_TYPES.register("collapser",
+                    com.github.mochi7054.block.entity.CollapserBlockEntity.class,
+                    com.github.mochi7054.inventory.container.CollapserMenu::new);
+
     // Creates a creative tab with the id "replicatemekanism:example_tab" for the example item, that is placed after the creative tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("replicatemekanism", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.replicatemekanism")) //The language key for the title of your CreativeModeTab
@@ -117,6 +132,7 @@ public class ReplicateMekanism {
                 output.accept(REPLICA_CONTROL_CIRCUIT.get());
                 output.accept(REPLICA_UPGRADE.get());// Add the example item to the tab. For your own tabs, this method is preferred over the event
                 output.accept(IMAGINATOR.asItem());
+                output.accept(COLLAPSER.asItem());
             }).build());
 
 
@@ -153,13 +169,6 @@ public class ReplicateMekanism {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("ReplicateMekanism common setup completed.");
-        
-        LOGGER.info("[RMScan] Listing all Replication BlockEntityType keys:");
-        for (var key : net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE.keySet()) {
-            if (key.getNamespace().equals("replication")) {
-                LOGGER.info("[RMScan]   Found BE key: " + key.toString());
-            }
-        }
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -250,6 +259,14 @@ public class ReplicateMekanism {
                         }
                 );
             }
+
+            event.registerBlockEntity(
+                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
+                    ReplicateMekanism.IMAGINATOR_TILE.get(),
+                    (be, side) -> {
+                        return new com.github.mochi7054.fluid.ImaginatorMatterHandler(be);
+                    }
+            );
         } catch (Exception e) {
             LOGGER.error("Failed to register FluidHandler wrapper capabilities for Replication Blocks/BlockEntities", e);
         }
@@ -259,11 +276,6 @@ public class ReplicateMekanism {
     private static <T extends net.minecraft.world.level.block.entity.BlockEntity> net.minecraft.world.level.block.entity.BlockEntityType<T> getReplicationBEType(String name) {
         var rl = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("replication", name);
         var type = net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE.get(rl);
-        if (type == null) {
-            LOGGER.warn("[RMScan] Failed to find BlockEntityType for replication:{}", name);
-        } else {
-            LOGGER.info("[RMScan] Successfully found BlockEntityType for replication:{}", name);
-        }
         return (net.minecraft.world.level.block.entity.BlockEntityType<T>) type;
     }
 

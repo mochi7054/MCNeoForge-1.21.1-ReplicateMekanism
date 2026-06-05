@@ -32,5 +32,9 @@
   
   "block.replicatemekanism.imaginator": "Imaginator",
   "container.replicatemekanism.imaginator": "Imaginator",
-  "description.replicatemekanism.imaginator": "Uses energy and matter fluids to solidify items."
+  "description.replicatemekanism.imaginator": "Uses energy and matter fluids to solidify items.",
+
+  "block.replicatemekanism.collapser": "Reality Collapser",
+  "container.replicatemekanism.collapser": "Reality Collapser",
+  "description.replicatemekanism.collapser": "Use energy to cause items to collapse from reality."
 }

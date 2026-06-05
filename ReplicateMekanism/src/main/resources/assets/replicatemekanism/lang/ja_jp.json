@@ -23,5 +23,9 @@
   
   "block.replicatemekanism.imaginator": "幻想具現化機",
   "container.replicatemekanism.imaginator": "幻想具現化機",
-  "description.replicatemekanism.imaginator": "電力と液体マターを使用して、アイテムを具現化します。"
+  "description.replicatemekanism.imaginator": "電力と液体マターを使用して、アイテムを具現化します。",
+
+  "block.replicatemekanism.collapser": "現実崩落機",
+  "container.replicatemekanism.collapser": "現実崩落機",
+  "description.replicatemekanism.collapser": "電力を使用して、アイテムを現実から崩落させます。"
 }

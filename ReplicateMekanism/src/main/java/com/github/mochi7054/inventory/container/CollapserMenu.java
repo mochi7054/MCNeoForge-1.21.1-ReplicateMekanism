@@ -1,7 +1,9 @@
 package com.github.mochi7054.inventory.container;
 
+import com.buuz135.replication.calculation.MatterCompound;
+import com.buuz135.replication.calculation.ReplicationCalculation;
 import com.github.mochi7054.ReplicateMekanism;
-import com.github.mochi7054.block.entity.ImaginatorBlockEntity;
+import com.github.mochi7054.block.entity.CollapserBlockEntity;
 import mekanism.common.inventory.container.tile.MekanismTileContainer;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -9,17 +11,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import com.buuz135.replication.calculation.MatterCompound;
-import com.buuz135.replication.calculation.ReplicationCalculation;
 
-public class ImaginatorMenu extends MekanismTileContainer<ImaginatorBlockEntity> {
+public class CollapserMenu extends MekanismTileContainer<CollapserBlockEntity> {
 
-    public ImaginatorMenu(int containerId, Inventory inv, ImaginatorBlockEntity tile) {
-        super(ReplicateMekanism.IMAGINATOR_CONTAINER_TYPE, containerId, inv, tile);
+    public CollapserMenu(int containerId, Inventory inv, CollapserBlockEntity tile) {
+        super(ReplicateMekanism.COLLAPSER_CONTAINER_TYPE, containerId, inv, tile);
     }
 
-    public ImaginatorMenu(int containerId, Inventory inv, RegistryFriendlyByteBuf buf) {
-        this(containerId, inv, getTileFromBuf(buf, ImaginatorBlockEntity.class, inv));
+    public CollapserMenu(int containerId, Inventory inv, RegistryFriendlyByteBuf buf) {
+        this(containerId, inv, getTileFromBuf(buf, CollapserBlockEntity.class, inv));
     }
 
     private static <TILE extends mekanism.common.tile.base.TileEntityMekanism> TILE getTileFromBuf(RegistryFriendlyByteBuf buf, Class<TILE> type, Inventory inv) {
