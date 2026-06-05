@@ -1,0 +1,554 @@
+﻿Starting a Gradle Daemon, 1 busy and 1 incompatible and 8 stopped Daemons could not be reused, use --status for details
+
+> Task :inspectMekanismGui
+=== javap mekanism.common.block.BlockMekanism ===
+Compiled from "BlockMekanism.java"
+public abstract class mekanism.common.block.BlockMekanism extends net.minecraft.world.level.block.Block {
+  protected mekanism.common.block.BlockMekanism(net.minecraft.world.level.block.state.BlockBehaviour$Properties);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #1                  // Method mekanism/common/block/states/BlockStateHelper.applyLightLevelAdjustments:(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;
+       5: invokespecial #7                  // Method net/minecraft/world/level/block/Block."<init>":(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V
+       8: aload_0
+       9: aload_0
+      10: getfield      #13                 // Field stateDefinition:Lnet/minecraft/world/level/block/state/StateDefinition;
+      13: invokevirtual #19                 // Method net/minecraft/world/level/block/state/StateDefinition.any:()Lnet/minecraft/world/level/block/state/StateHolder;
+      16: checkcast     #25                 // class net/minecraft/world/level/block/state/BlockState
+      19: invokestatic  #27                 // Method mekanism/common/block/states/BlockStateHelper.getDefaultState:(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/world/level/block/state/BlockState;
+      22: invokevirtual #31                 // Method registerDefaultState:(Lnet/minecraft/world/level/block/state/BlockState;)V
+      25: return
+
+  public net.minecraft.world.level.material.PushReaction getPistonPushReaction(net.minecraft.world.level.block.state.BlockState);
+    Code:
+       0: aload_1
+       1: invokevirtual #35                 // Method net/minecraft/world/level/block/state/BlockState.hasBlockEntity:()Z
+       4: ifeq          11
+       7: getstatic     #39                 // Field net/minecraft/world/level/material/PushReaction.BLOCK:Lnet/minecraft/world/level/material/PushReaction;
+      10: areturn
+      11: aload_0
+      12: aload_1
+      13: invokespecial #45                 // Method net/minecraft/world/level/block/Block.getPistonPushReaction:(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/world/level/material/PushReaction;
+      16: areturn
+
+  protected boolean canBeReplaced(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.material.Fluid);
+    Code:
+       0: iconst_0
+       1: ireturn
+
+  public net.minecraft.world.item.ItemStack getCloneItemStack(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.phys.HitResult, net.minecraft.world.level.LevelReader, net.minecraft.core.BlockPos, net.minecraft.world.entity.player.Player);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: aload         4
+       6: aload         5
+       8: invokespecial #49                 // Method net/minecraft/world/level/block/Block.getCloneItemStack:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/phys/HitResult;Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/item/ItemStack;
+      11: astore        6
+      13: getstatic     #53                 // Field mekanism/common/config/MekanismConfig.common:Lmekanism/common/config/CommonConfig;
+      16: getfield      #59                 // Field mekanism/common/config/CommonConfig.copyBlockData:Lmekanism/common/config/value/CachedBooleanValue;
+      19: invokevirtual #65                 // Method mekanism/common/config/value/CachedBooleanValue.get:()Z
+      22: ifeq          53
+      25: ldc           #70                 // class mekanism/common/tile/base/TileEntityUpdateable
+      27: aload_3
+      28: aload         4
+      30: invokestatic  #72                 // Method mekanism/common/util/WorldUtils.getTileEntity:(Ljava/lang/Class;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;
+      33: checkcast     #70                 // class mekanism/common/tile/base/TileEntityUpdateable
+      36: astore        7
+      38: aload         7
+      40: ifnull        53
+      43: aload         6
+      45: aload         7
+      47: invokevirtual #78                 // Method mekanism/common/tile/base/TileEntityUpdateable.collectComponents:()Lnet/minecraft/core/component/DataComponentMap;
+      50: invokevirtual #82                 // Method net/minecraft/world/item/ItemStack.applyComponents:(Lnet/minecraft/core/component/DataComponentMap;)V
+      53: aload         6
+      55: areturn
+
+  protected boolean triggerEvent(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.Level, net.minecraft.core.BlockPos, int, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: iload         4
+       6: iload         5
+       8: invokespecial #88                 // Method net/minecraft/world/level/block/Block.triggerEvent:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;II)Z
+      11: istore        6
+      13: aload_0
+      14: astore        8
+      16: aload         8
+      18: instanceof    #92                 // class mekanism/common/block/interfaces/IHasTileEntity
+      21: ifeq          46
+      24: aload         8
+      26: checkcast     #92                 // class mekanism/common/block/interfaces/IHasTileEntity
+      29: astore        7
+      31: aload         7
+      33: aload_1
+      34: aload_2
+      35: aload_3
+      36: iload         4
+      38: iload         5
+      40: invokeinterface #94,  6           // InterfaceMethod mekanism/common/block/interfaces/IHasTileEntity.triggerBlockEntityEvent:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;II)Z
+      45: ireturn
+      46: iload         6
+      48: ireturn
+
+  protected void createBlockStateDefinition(net.minecraft.world.level.block.state.StateDefinition$Builder<net.minecraft.world.level.block.Block, net.minecraft.world.level.block.state.BlockState>);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #97                 // Method net/minecraft/world/level/block/Block.createBlockStateDefinition:(Lnet/minecraft/world/level/block/state/StateDefinition$Builder;)V
+       5: aload_0
+       6: aload_1
+       7: invokestatic  #101                // Method mekanism/common/block/states/BlockStateHelper.fillBlockStateContainer:(Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/level/block/state/StateDefinition$Builder;)V
+      10: return
+
+  public net.minecraft.world.level.block.state.BlockState getStateForPlacement(net.minecraft.world.item.context.BlockPlaceContext);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #105                // Method net/minecraft/world/level/block/Block.getStateForPlacement:(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/level/block/state/BlockState;
+       5: aload_1
+       6: invokestatic  #109                // Method mekanism/common/block/states/BlockStateHelper.getStateForPlacement:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/level/block/state/BlockState;
+       9: areturn
+
+  protected net.minecraft.world.level.material.FluidState getFluidState(net.minecraft.world.level.block.state.BlockState);
+    Code:
+       0: aload_1
+       1: invokevirtual #112                // Method net/minecraft/world/level/block/state/BlockState.getBlock:()Lnet/minecraft/world/level/block/Block;
+       4: astore_3
+       5: aload_3
+       6: instanceof    #116                // class mekanism/common/block/states/IStateFluidLoggable
+       9: ifeq          25
+      12: aload_3
+      13: checkcast     #116                // class mekanism/common/block/states/IStateFluidLoggable
+      16: astore_2
+      17: aload_2
+      18: aload_1
+      19: invokeinterface #118,  2          // InterfaceMethod mekanism/common/block/states/IStateFluidLoggable.getFluid:(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/world/level/material/FluidState;
+      24: areturn
+      25: aload_0
+      26: aload_1
+      27: invokespecial #122                // Method net/minecraft/world/level/block/Block.getFluidState:(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/world/level/material/FluidState;
+      30: areturn
+
+  protected net.minecraft.world.level.block.state.BlockState updateShape(net.minecraft.world.level.block.state.BlockState, net.minecraft.core.Direction, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.LevelAccessor, net.minecraft.core.BlockPos, net.minecraft.core.BlockPos);
+    Code:
+       0: aload_1
+       1: invokevirtual #112                // Method net/minecraft/world/level/block/state/BlockState.getBlock:()Lnet/minecraft/world/level/block/Block;
+       4: astore        8
+       6: aload         8
+       8: instanceof    #116                // class mekanism/common/block/states/IStateFluidLoggable
+      11: ifeq          33
+      14: aload         8
+      16: checkcast     #116                // class mekanism/common/block/states/IStateFluidLoggable
+      19: astore        7
+      21: aload         7
+      23: aload_1
+      24: aload         4
+      26: aload         5
+      28: invokeinterface #125,  4          // InterfaceMethod mekanism/common/block/states/IStateFluidLoggable.updateFluids:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;)V
+      33: aload_0
+      34: aload_1
+      35: aload_2
+      36: aload_3
+      37: aload         4
+      39: aload         5
+      41: aload         6
+      43: invokespecial #129                // Method net/minecraft/world/level/block/Block.updateShape:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;
+      46: areturn
+
+  protected void onRemove(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.Level, net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, boolean);
+    Code:
+       0: aload_1
+       1: aload         4
+       3: invokevirtual #112                // Method net/minecraft/world/level/block/state/BlockState.getBlock:()Lnet/minecraft/world/level/block/Block;
+       6: invokevirtual #133                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+       9: ifne          36
+      12: aload_1
+      13: ldc           #137                // class mekanism/common/block/attribute/AttributeHasBounding
+      15: invokestatic  #139                // InterfaceMethod mekanism/common/block/attribute/Attribute.get:(Lnet/minecraft/world/level/block/state/BlockState;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+      18: checkcast     #137                // class mekanism/common/block/attribute/AttributeHasBounding
+      21: astore        6
+      23: aload         6
+      25: ifnull        36
+      28: aload         6
+      30: aload_2
+      31: aload_3
+      32: aload_1
+      33: invokevirtual #144                // Method mekanism/common/block/attribute/AttributeHasBounding.removeBoundingBlocks:(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V
+      36: aload_1
+      37: invokevirtual #35                 // Method net/minecraft/world/level/block/state/BlockState.hasBlockEntity:()Z
+      40: ifeq          77
+      43: aload_1
+      44: aload         4
+      46: invokevirtual #112                // Method net/minecraft/world/level/block/state/BlockState.getBlock:()Lnet/minecraft/world/level/block/Block;
+      49: invokevirtual #133                // Method net/minecraft/world/level/block/state/BlockState.is:(Lnet/minecraft/world/level/block/Block;)Z
+      52: ifne          77
+      55: ldc           #70                 // class mekanism/common/tile/base/TileEntityUpdateable
+      57: aload_2
+      58: aload_3
+      59: invokestatic  #72                 // Method mekanism/common/util/WorldUtils.getTileEntity:(Ljava/lang/Class;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;
+      62: checkcast     #70                 // class mekanism/common/tile/base/TileEntityUpdateable
+      65: astore        6
+      67: aload         6
+      69: ifnull        77
+      72: aload         6
+      74: invokevirtual #148                // Method mekanism/common/tile/base/TileEntityUpdateable.blockRemoved:()V
+      77: aload_0
+      78: aload_1
+      79: aload_2
+      80: aload_3
+      81: aload         4
+      83: iload         5
+      85: invokespecial #152                // Method net/minecraft/world/level/block/Block.onRemove:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V
+      88: return
+
+  public void setPlacedBy(net.minecraft.world.level.Level, net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.entity.LivingEntity, net.minecraft.world.item.ItemStack);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: aload         4
+       6: aload         5
+       8: invokespecial #156                // Method net/minecraft/world/level/block/Block.setPlacedBy:(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V
+      11: aload_3
+      12: ldc           #137                // class mekanism/common/block/attribute/AttributeHasBounding
+      14: invokestatic  #139                // InterfaceMethod mekanism/common/block/attribute/Attribute.get:(Lnet/minecraft/world/level/block/state/BlockState;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+      17: checkcast     #137                // class mekanism/common/block/attribute/AttributeHasBounding
+      20: astore        6
+      22: aload         6
+      24: ifnull        35
+      27: aload         6
+      29: aload_1
+      30: aload_2
+      31: aload_3
+      32: invokevirtual #160                // Method mekanism/common/block/attribute/AttributeHasBounding.placeBoundingBlocks:(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V
+      35: ldc           #70                 // class mekanism/common/tile/base/TileEntityUpdateable
+      37: aload_1
+      38: aload_2
+      39: invokestatic  #72                 // Method mekanism/common/util/WorldUtils.getTileEntity:(Ljava/lang/Class;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;
+      42: checkcast     #70                 // class mekanism/common/tile/base/TileEntityUpdateable
+      45: astore        7
+      47: aload         7
+      49: ifnull        125
+      52: aload         7
+      54: invokevirtual #163                // Method mekanism/common/tile/base/TileEntityUpdateable.onAdded:()V
+      57: aload         7
+      59: instanceof    #166                // class mekanism/common/lib/security/ISecurityTile
+      62: ifeq          125
+      65: aload         7
+      67: checkcast     #166                // class mekanism/common/lib/security/ISecurityTile
+      70: astore        8
+      72: aload         8
+      74: invokeinterface #168,  1          // InterfaceMethod mekanism/common/lib/security/ISecurityTile.getOwnerUUID:()Ljava/util/UUID;
+      79: ifnonnull     125
+      82: aload         4
+      84: ifnull        125
+      87: aload         8
+      89: aload         4
+      91: invokevirtual #172                // Method net/minecraft/world/entity/LivingEntity.getUUID:()Ljava/util/UUID;
+      94: invokeinterface #177,  2          // InterfaceMethod mekanism/common/lib/security/ISecurityTile.setOwnerUUID:(Ljava/util/UUID;)V
+      99: aload_1
+     100: getfield      #181                // Field net/minecraft/world/level/Level.isClientSide:Z
+     103: ifne          125
+     106: new           #187                // class mekanism/common/network/to_client/security/PacketSyncSecurity
+     109: dup
+     110: aload         4
+     112: invokevirtual #172                // Method net/minecraft/world/entity/LivingEntity.getUUID:()Ljava/util/UUID;
+     115: invokespecial #189                // Method mekanism/common/network/to_client/security/PacketSyncSecurity."<init>":(Ljava/util/UUID;)V
+     118: iconst_0
+     119: anewarray     #191                // class net/minecraft/network/protocol/common/custom/CustomPacketPayload
+     122: invokestatic  #193                // Method net/neoforged/neoforge/network/PacketDistributor.sendToAllPlayers:(Lnet/minecraft/network/protocol/common/custom/CustomPacketPayload;[Lnet/minecraft/network/protocol/common/custom/CustomPacketPayload;)V
+     125: return
+
+  public void onBlockExploded(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.Level, net.minecraft.core.BlockPos, net.minecraft.world.level.Explosion);
+    Code:
+       0: aload_2
+       1: getfield      #181                // Field net/minecraft/world/level/Level.isClientSide:Z
+       4: ifne          63
+       7: aload_1
+       8: ldc           #199                // class mekanism/common/block/attribute/AttributeMultiblock
+      10: invokestatic  #139                // InterfaceMethod mekanism/common/block/attribute/Attribute.get:(Lnet/minecraft/world/level/block/state/BlockState;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+      13: checkcast     #199                // class mekanism/common/block/attribute/AttributeMultiblock
+      16: astore        5
+      18: aload         5
+      20: ifnull        63
+      23: aload         4
+      25: instanceof    #201                // class mekanism/common/lib/radiation/Meltdown$MeltdownExplosion
+      28: ifeq          63
+      31: aload         4
+      33: checkcast     #201                // class mekanism/common/lib/radiation/Meltdown$MeltdownExplosion
+      36: astore        6
+      38: aload         5
+      40: aload_2
+      41: aload_3
+      42: aload         6
+      44: invokevirtual #203                // Method mekanism/common/lib/radiation/Meltdown$MeltdownExplosion.getMultiblockID:()Ljava/util/UUID;
+      47: invokevirtual #206                // Method mekanism/common/block/attribute/AttributeMultiblock.getMultiblock:(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Ljava/util/UUID;)Lmekanism/common/lib/multiblock/MultiblockData;
+      50: astore        7
+      52: aload         7
+      54: ifnull        63
+      57: aload         7
+      59: aload_2
+      60: invokevirtual #210                // Method mekanism/common/lib/multiblock/MultiblockData.meltdownHappened:(Lnet/minecraft/world/level/Level;)V
+      63: aload_0
+      64: aload_1
+      65: aload_2
+      66: aload_3
+      67: aload         4
+      69: invokespecial #216                // Method net/minecraft/world/level/block/Block.onBlockExploded:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;)V
+      72: return
+
+  public net.minecraft.world.level.block.state.BlockState rotate(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.LevelAccessor, net.minecraft.core.BlockPos, net.minecraft.world.level.block.Rotation);
+    Code:
+       0: aload_1
+       1: aload_2
+       2: aload_3
+       3: aload         4
+       5: invokestatic  #220                // Method mekanism/common/block/attribute/AttributeStateFacing.rotate:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Rotation;)Lnet/minecraft/world/level/block/state/BlockState;
+       8: areturn
+
+  protected net.minecraft.world.level.block.state.BlockState rotate(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.Rotation);
+    Code:
+       0: aload_1
+       1: aload_2
+       2: invokestatic  #226                // Method mekanism/common/block/attribute/AttributeStateFacing.rotate:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/Rotation;)Lnet/minecraft/world/level/block/state/BlockState;
+       5: areturn
+
+  protected net.minecraft.world.level.block.state.BlockState mirror(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.Mirror);
+    Code:
+       0: aload_1
+       1: aload_2
+       2: invokestatic  #229                // Method mekanism/common/block/attribute/AttributeStateFacing.mirror:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/Mirror;)Lnet/minecraft/world/level/block/state/BlockState;
+       5: areturn
+
+  protected boolean hasAnalogOutputSignal(net.minecraft.world.level.block.state.BlockState);
+    Code:
+       0: aload_1
+       1: invokevirtual #233                // Method net/minecraft/world/level/block/state/BlockState.getBlockHolder:()Lnet/minecraft/core/Holder;
+       4: ldc           #237                // class mekanism/common/block/attribute/Attributes$AttributeComparator
+       6: invokestatic  #239                // InterfaceMethod mekanism/common/block/attribute/Attribute.has:(Lnet/minecraft/core/Holder;Ljava/lang/Class;)Z
+       9: ireturn
+
+  protected int getAnalogOutputSignal(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.Level, net.minecraft.core.BlockPos);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #243                // Method hasAnalogOutputSignal:(Lnet/minecraft/world/level/block/state/BlockState;)Z
+       5: ifeq          48
+       8: aload_2
+       9: aload_3
+      10: invokestatic  #247                // Method mekanism/common/util/WorldUtils.getTileEntity:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;
+      13: astore        4
+      15: aload         4
+      17: instanceof    #250                // class mekanism/common/tile/interfaces/IComparatorSupport
+      20: ifeq          48
+      23: aload         4
+      25: checkcast     #250                // class mekanism/common/tile/interfaces/IComparatorSupport
+      28: astore        5
+      30: aload         5
+      32: invokeinterface #252,  1          // InterfaceMethod mekanism/common/tile/interfaces/IComparatorSupport.supportsComparator:()Z
+      37: ifeq          48
+      40: aload         5
+      42: invokeinterface #255,  1          // InterfaceMethod mekanism/common/tile/interfaces/IComparatorSupport.getCurrentRedstoneLevel:()I
+      47: ireturn
+      48: iconst_0
+      49: ireturn
+
+  protected float getDestroyProgress(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.entity.player.Player, net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: aload         4
+       6: aload_1
+       7: invokevirtual #35                 // Method net/minecraft/world/level/block/state/BlockState.hasBlockEntity:()Z
+      10: ifeq          22
+      13: aload_3
+      14: aload         4
+      16: invokestatic  #247                // Method mekanism/common/util/WorldUtils.getTileEntity:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;
+      19: goto          23
+      22: aconst_null
+      23: invokevirtual #261                // Method getDestroyProgress:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;)F
+      26: freturn
+
+  protected float getDestroyProgress(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.entity.player.Player, net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos, net.minecraft.world.level.block.entity.BlockEntity);
+    Code:
+       0: aload         5
+       2: ifnonnull     9
+       5: aconst_null
+       6: goto          14
+       9: aload         5
+      11: invokevirtual #265                // Method net/minecraft/world/level/block/entity/BlockEntity.getLevel:()Lnet/minecraft/world/level/Level;
+      14: astore        6
+      16: aload         6
+      18: ifnonnull     34
+      21: aload_3
+      22: instanceof    #182                // class net/minecraft/world/level/Level
+      25: ifeq          34
+      28: aload_3
+      29: checkcast     #182                // class net/minecraft/world/level/Level
+      32: astore        6
+      34: aload         6
+      36: ifnull        60
+      39: getstatic     #271                // Field mekanism/api/security/IBlockSecurityUtils.INSTANCE:Lmekanism/api/security/IBlockSecurityUtils;
+      42: aload_2
+      43: aload         6
+      45: aload         4
+      47: aload_1
+      48: aload         5
+      50: invokeinterface #277,  6          // InterfaceMethod mekanism/api/security/IBlockSecurityUtils.canAccess:(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;)Z
+      55: ifne          60
+      58: fconst_0
+      59: freturn
+      60: aload_0
+      61: aload_1
+      62: aload_2
+      63: aload_3
+      64: aload         4
+      66: invokespecial #281                // Method net/minecraft/world/level/block/Block.getDestroyProgress:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F
+      69: fstore        7
+      71: invokestatic  #284                // Method mekanism/common/lib/radiation/RadiationManager.isGlobalRadiationEnabled:()Z
+      74: ifeq          111
+      77: aload         5
+      79: instanceof    #289                // class mekanism/common/tile/interfaces/ITileRadioactive
+      82: ifeq          111
+      85: aload         5
+      87: checkcast     #289                // class mekanism/common/tile/interfaces/ITileRadioactive
+      90: astore        8
+      92: aload         8
+      94: invokeinterface #291,  1          // InterfaceMethod mekanism/common/tile/interfaces/ITileRadioactive.getRadiationScale:()F
+      99: fconst_0
+     100: fcmpl
+     101: ifle          111
+     104: fload         7
+     106: ldc_w         #295                // float 5.0f
+     109: fdiv
+     110: freturn
+     111: fload         7
+     113: freturn
+
+  public void animateTick(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.Level, net.minecraft.core.BlockPos, net.minecraft.util.RandomSource);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: aload         4
+       6: invokespecial #296                // Method net/minecraft/world/level/block/Block.animateTick:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V
+       9: invokestatic  #284                // Method mekanism/common/lib/radiation/RadiationManager.isGlobalRadiationEnabled:()Z
+      12: ifeq          169
+      15: aload_2
+      16: aload_3
+      17: invokestatic  #247                // Method mekanism/common/util/WorldUtils.getTileEntity:(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;
+      20: astore        5
+      22: aload         5
+      24: instanceof    #289                // class mekanism/common/tile/interfaces/ITileRadioactive
+      27: ifeq          169
+      30: aload         5
+      32: checkcast     #289                // class mekanism/common/tile/interfaces/ITileRadioactive
+      35: astore        6
+      37: aload         6
+      39: invokeinterface #300,  1          // InterfaceMethod mekanism/common/tile/interfaces/ITileRadioactive.getRadiationParticleCount:()I
+      44: istore        7
+      46: iload         7
+      48: ifle          169
+      51: aload         4
+      53: iload         7
+      55: invokeinterface #303,  2          // InterfaceMethod net/minecraft/util/RandomSource.nextInt:(I)I
+      60: istore        7
+      62: iconst_0
+      63: istore        8
+      65: iload         8
+      67: iload         7
+      69: if_icmpge     169
+      72: aload_3
+      73: invokevirtual #309                // Method net/minecraft/core/BlockPos.getX:()I
+      76: i2d
+      77: ldc2_w        #314                // double 0.1d
+      80: dsub
+      81: aload         4
+      83: invokeinterface #316,  1          // InterfaceMethod net/minecraft/util/RandomSource.nextDouble:()D
+      88: ldc2_w        #320                // double 1.2d
+      91: dmul
+      92: dadd
+      93: dstore        9
+      95: aload_3
+      96: invokevirtual #322                // Method net/minecraft/core/BlockPos.getY:()I
+      99: i2d
+     100: ldc2_w        #314                // double 0.1d
+     103: dsub
+     104: aload         4
+     106: invokeinterface #316,  1          // InterfaceMethod net/minecraft/util/RandomSource.nextDouble:()D
+     111: ldc2_w        #320                // double 1.2d
+     114: dmul
+     115: dadd
+     116: dstore        11
+     118: aload_3
+     119: invokevirtual #325                // Method net/minecraft/core/BlockPos.getZ:()I
+     122: i2d
+     123: ldc2_w        #314                // double 0.1d
+     126: dsub
+     127: aload         4
+     129: invokeinterface #316,  1          // InterfaceMethod net/minecraft/util/RandomSource.nextDouble:()D
+     134: ldc2_w        #320                // double 1.2d
+     137: dmul
+     138: dadd
+     139: dstore        13
+     141: aload_2
+     142: getstatic     #328                // Field mekanism/common/registries/MekanismParticleTypes.RADIATION:Lnet/neoforged/neoforge/registries/DeferredHolder;
+     145: invokevirtual #334                // Method net/neoforged/neoforge/registries/DeferredHolder.get:()Ljava/lang/Object;
+     148: checkcast     #339                // class net/minecraft/core/particles/ParticleOptions
+     151: dload         9
+     153: dload         11
+     155: dload         13
+     157: dconst_0
+     158: dconst_0
+     159: dconst_0
+     160: invokevirtual #341                // Method net/minecraft/world/level/Level.addParticle:(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V
+     163: iinc          8, 1
+     166: goto          65
+     169: return
+
+  protected net.minecraft.world.ItemInteractionResult genericClientActivated(net.minecraft.world.item.ItemStack, net.minecraft.world.level.block.entity.BlockEntity);
+    Code:
+       0: aload_0
+       1: ldc_w         #345                // class mekanism/common/block/attribute/AttributeGui
+       4: invokestatic  #347                // InterfaceMethod mekanism/common/block/attribute/Attribute.has:(Lnet/minecraft/world/level/block/Block;Ljava/lang/Class;)Z
+       7: ifne          48
+      10: aload_1
+      11: invokestatic  #350                // Method mekanism/common/util/MekanismUtils.canUseAsWrench:(Lnet/minecraft/world/item/ItemStack;)Z
+      14: ifeq          48
+      17: aload_2
+      18: instanceof    #289                // class mekanism/common/tile/interfaces/ITileRadioactive
+      21: ifeq          44
+      24: aload_2
+      25: checkcast     #289                // class mekanism/common/tile/interfaces/ITileRadioactive
+      28: astore_3
+      29: aload_3
+      30: invokeinterface #291,  1          // InterfaceMethod mekanism/common/tile/interfaces/ITileRadioactive.getRadiationScale:()F
+      35: fconst_0
+      36: fcmpl
+      37: ifle          44
+      40: getstatic     #356                // Field net/minecraft/world/ItemInteractionResult.FAIL:Lnet/minecraft/world/ItemInteractionResult;
+      43: areturn
+      44: getstatic     #362                // Field net/minecraft/world/ItemInteractionResult.SUCCESS:Lnet/minecraft/world/ItemInteractionResult;
+      47: areturn
+      48: getstatic     #365                // Field net/minecraft/world/ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION:Lnet/minecraft/world/ItemInteractionResult;
+      51: areturn
+}
+
+[Incubating] Problems report is available at: file:///C:/Users/mochi/.gemini/antigravity/scratch/MCNeoForge-1.21.1-ReplicateMekanism/ReplicateMekanism/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.2.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 9s
+1 actionable task: 1 executed

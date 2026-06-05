@@ -1,0 +1,27 @@
+{
+  "itemGroup.replicatemekanism": "ReplicateMekanism",
+  "item.replicatemekanism.replica_alloy": "レプリカ合金",
+  "item.replicatemekanism.replica_dust": "レプリカの粉",
+  "item.replicatemekanism.enriched_replica": "濃縮レプリカ",
+  "item.replicatemekanism.replica_incomplete_control_circuit": "未完成のレプリカ制御回路",
+  "item.replicatemekanism.replica_control_circuit": "レプリカ制御回路",
+  "item.replicatemekanism.replica_upgrade": "レプリカアップグレード",
+  "chemical.replicatemekanism.replica": "レプリカ",
+
+  "upgrade.replicatemekanism.replica": "レプリカ",
+  "upgrade.replicatemekanism.replica.desc": "機械の出力を倍化します。",
+  "upgrade.replicatemekanism.replica.supported_machines": "すべてのアップグレード対応機械",
+
+  "fluid.replicatemekanism.earth_matter": "アース・マター",
+  "fluid.replicatemekanism.nether_matter": "ネザー・マター",
+  "fluid.replicatemekanism.organic_matter": "オーガニック・マター",
+  "fluid.replicatemekanism.ender_matter": "エンダー・マター",
+  "fluid.replicatemekanism.metallic_matter": "メタリック・マター",
+  "fluid.replicatemekanism.precious_matter": "プレシャス・マター",
+  "fluid.replicatemekanism.living_matter": "リビング・マター",
+  "fluid.replicatemekanism.quantum_matter": "クォンタム・マター",
+  
+  "block.replicatemekanism.imaginator": "幻想具現化機",
+  "container.replicatemekanism.imaginator": "幻想具現化機",
+  "description.replicatemekanism.imaginator": "電力と液体マターを使用して、アイテムを具現化します。"
+}

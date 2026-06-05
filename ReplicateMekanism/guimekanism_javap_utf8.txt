@@ -1,0 +1,1618 @@
+﻿Compiled from "GuiMekanism.java"
+public abstract class mekanism.client.gui.GuiMekanism<CONTAINER extends net.minecraft.world.inventory.AbstractContainerMenu> extends mekanism.client.gui.VirtualSlotContainerScreen<CONTAINER> implements mekanism.client.gui.IGuiWrapper {
+  public static final net.minecraft.resources.ResourceLocation BASE_BACKGROUND;
+
+  public static final net.minecraft.resources.ResourceLocation SHADOW;
+
+  public static final net.minecraft.resources.ResourceLocation BLUR;
+
+  protected boolean dynamicSlots;
+
+  protected boolean initialFocusSet;
+
+  protected final mekanism.common.lib.collection.LRU<mekanism.client.gui.element.window.GuiWindow> windows;
+
+  public boolean switchingToRecipeViewer;
+
+  public static int maxZOffset;
+
+  protected mekanism.client.gui.GuiMekanism(CONTAINER, net.minecraft.world.entity.player.Inventory, net.minecraft.network.chat.Component);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: invokespecial #1                  // Method mekanism/client/gui/VirtualSlotContainerScreen."<init>":(Lnet/minecraft/world/inventory/AbstractContainerMenu;Lnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/network/chat/Component;)V
+       7: aload_0
+       8: new           #7                  // class mekanism/common/lib/collection/LRU
+      11: dup
+      12: invokespecial #9                  // Method mekanism/common/lib/collection/LRU."<init>":()V
+      15: putfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+      18: aload_0
+      19: iconst_0
+      20: putfield      #18                 // Field hasClicked:Z
+      23: return
+
+  public java.util.function.BooleanSupplier trackWarning(mekanism.common.inventory.warning.WarningTracker$WarningType, java.util.function.BooleanSupplier);
+    Code:
+       0: aload_0
+       1: getfield      #22                 // Field warningTracker:Lmekanism/common/inventory/warning/IWarningTracker;
+       4: ifnonnull     18
+       7: aload_0
+       8: new           #26                 // class mekanism/common/inventory/warning/WarningTracker
+      11: dup
+      12: invokespecial #28                 // Method mekanism/common/inventory/warning/WarningTracker."<init>":()V
+      15: putfield      #22                 // Field warningTracker:Lmekanism/common/inventory/warning/IWarningTracker;
+      18: aload_0
+      19: getfield      #22                 // Field warningTracker:Lmekanism/common/inventory/warning/IWarningTracker;
+      22: aload_1
+      23: aload_2
+      24: invokeinterface #29,  3           // InterfaceMethod mekanism/common/inventory/warning/IWarningTracker.trackWarning:(Lmekanism/common/inventory/warning/WarningTracker$WarningType;Ljava/util/function/BooleanSupplier;)Ljava/util/function/BooleanSupplier;
+      29: areturn
+
+  public void removed();
+    Code:
+       0: aload_0
+       1: getfield      #35                 // Field switchingToRecipeViewer:Z
+       4: ifne          23
+       7: aload_0
+       8: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+      11: invokedynamic #38,  0             // InvokeDynamic #0:accept:()Ljava/util/function/Consumer;
+      16: invokevirtual #42                 // Method mekanism/common/lib/collection/LRU.forEach:(Ljava/util/function/Consumer;)V
+      19: aload_0
+      20: invokespecial #46                 // Method mekanism/client/gui/VirtualSlotContainerScreen.removed:()V
+      23: return
+
+  protected void init();
+    Code:
+       0: aload_0
+       1: invokespecial #49                 // Method mekanism/client/gui/VirtualSlotContainerScreen.init:()V
+       4: aload_0
+       5: getfield      #22                 // Field warningTracker:Lmekanism/common/inventory/warning/IWarningTracker;
+       8: ifnull        23
+      11: aload_0
+      12: getfield      #22                 // Field warningTracker:Lmekanism/common/inventory/warning/IWarningTracker;
+      15: invokeinterface #52,  1           // InterfaceMethod mekanism/common/inventory/warning/IWarningTracker.clearTrackedWarnings:()V
+      20: goto          30
+      23: aload_0
+      24: invokestatic  #55                 // Method net/minecraft/Util.getMillis:()J
+      27: putfield      #61                 // Field lastMSInitialized:J
+      30: aload_0
+      31: invokevirtual #65                 // Method addGuiElements:()V
+      34: aload_0
+      35: getfield      #22                 // Field warningTracker:Lmekanism/common/inventory/warning/IWarningTracker;
+      38: ifnull        49
+      41: aload_0
+      42: aload_0
+      43: getfield      #22                 // Field warningTracker:Lmekanism/common/inventory/warning/IWarningTracker;
+      46: invokevirtual #68                 // Method addWarningTab:(Lmekanism/common/inventory/warning/IWarningTracker;)V
+      49: aload_0
+      50: invokevirtual #72                 // Method initPinnedWindows:()V
+      53: return
+
+  protected void initPinnedWindows();
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: invokevirtual #75                 // Method mekanism/common/lib/collection/LRU.isEmpty:()Z
+       7: ifeq          58
+      10: aload_0
+      11: invokevirtual #79                 // Method children:()Ljava/util/List;
+      14: invokeinterface #83,  1           // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      19: astore_1
+      20: aload_1
+      21: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      26: ifeq          58
+      29: aload_1
+      30: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      35: checkcast     #98                 // class net/minecraft/client/gui/components/events/GuiEventListener
+      38: astore_2
+      39: aload_2
+      40: instanceof    #100                // class mekanism/client/gui/element/GuiElement
+      43: ifeq          55
+      46: aload_2
+      47: checkcast     #100                // class mekanism/client/gui/element/GuiElement
+      50: astore_3
+      51: aload_3
+      52: invokevirtual #102                // Method mekanism/client/gui/element/GuiElement.openPinnedWindows:()V
+      55: goto          20
+      58: return
+
+  protected void addWarningTab(mekanism.common.inventory.warning.IWarningTracker);
+    Code:
+       0: aload_0
+       1: new           #105                // class mekanism/client/gui/element/tab/GuiWarningTab
+       4: dup
+       5: aload_0
+       6: aload_1
+       7: iconst_1
+       8: invokespecial #107                // Method mekanism/client/gui/element/tab/GuiWarningTab."<init>":(Lmekanism/client/gui/IGuiWrapper;Lmekanism/common/inventory/warning/IWarningTracker;Z)V
+      11: invokevirtual #110                // Method addRenderableWidget:(Lmekanism/client/gui/element/GuiElement;)Lmekanism/client/gui/element/GuiElement;
+      14: pop
+      15: return
+
+  protected void addGuiElements();
+    Code:
+       0: aload_0
+       1: getfield      #114                // Field dynamicSlots:Z
+       4: ifeq          11
+       7: aload_0
+       8: invokevirtual #117                // Method addSlots:()V
+      11: return
+
+  protected void setInitialFocus(net.minecraft.client.gui.components.events.GuiEventListener);
+    Code:
+       0: aload_0
+       1: getfield      #120                // Field initialFocusSet:Z
+       4: ifne          17
+       7: aload_0
+       8: aload_1
+       9: invokespecial #123                // Method mekanism/client/gui/VirtualSlotContainerScreen.setInitialFocus:(Lnet/minecraft/client/gui/components/events/GuiEventListener;)V
+      12: aload_0
+      13: iconst_1
+      14: putfield      #120                // Field initialFocusSet:Z
+      17: return
+
+  protected <T extends mekanism.client.gui.element.GuiElement> T addElement(T);
+    Code:
+       0: aload_0
+       1: getfield      #127                // Field renderables:Ljava/util/List;
+       4: aload_1
+       5: invokeinterface #131,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+      10: pop
+      11: aload_0
+      12: invokevirtual #79                 // Method children:()Ljava/util/List;
+      15: aload_1
+      16: invokeinterface #131,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+      21: pop
+      22: aload_1
+      23: areturn
+
+  protected <T extends mekanism.client.gui.element.GuiElement> T addRenderableWidget(T);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #135                // Method addElement:(Lmekanism/client/gui/element/GuiElement;)Lmekanism/client/gui/element/GuiElement;
+       5: areturn
+
+  public void containerTick();
+    Code:
+       0: aload_0
+       1: invokespecial #138                // Method mekanism/client/gui/VirtualSlotContainerScreen.containerTick:()V
+       4: aload_0
+       5: invokevirtual #79                 // Method children:()Ljava/util/List;
+       8: invokeinterface #83,  1           // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      13: astore_1
+      14: aload_1
+      15: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      20: ifeq          52
+      23: aload_1
+      24: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      29: checkcast     #98                 // class net/minecraft/client/gui/components/events/GuiEventListener
+      32: astore_2
+      33: aload_2
+      34: instanceof    #100                // class mekanism/client/gui/element/GuiElement
+      37: ifeq          49
+      40: aload_2
+      41: checkcast     #100                // class mekanism/client/gui/element/GuiElement
+      44: astore_3
+      45: aload_3
+      46: invokevirtual #141                // Method mekanism/client/gui/element/GuiElement.tick:()V
+      49: goto          14
+      52: aload_0
+      53: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+      56: invokedynamic #144,  0            // InvokeDynamic #1:accept:()Ljava/util/function/Consumer;
+      61: invokevirtual #42                 // Method mekanism/common/lib/collection/LRU.forEach:(Ljava/util/function/Consumer;)V
+      64: return
+
+  public long getTimeOpened();
+    Code:
+       0: aload_0
+       1: getfield      #61                 // Field lastMSInitialized:J
+       4: lreturn
+
+  protected void renderTitleText(net.minecraft.client.gui.GuiGraphics);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_0
+       3: getfield      #145                // Field title:Lnet/minecraft/network/chat/Component;
+       6: aload_0
+       7: getfield      #149                // Field titleLabelY:I
+      10: invokevirtual #153                // Method drawTitleText:(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/network/chat/Component;I)V
+      13: return
+
+  protected void renderTitleTextWithOffset(net.minecraft.client.gui.GuiGraphics, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: aload_0
+       4: invokevirtual #157                // Method getXSize:()I
+       7: invokevirtual #161                // Method renderTitleTextWithOffset:(Lnet/minecraft/client/gui/GuiGraphics;II)V
+      10: return
+
+  protected void renderTitleTextWithOffset(net.minecraft.client.gui.GuiGraphics, int, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_0
+       3: getfield      #145                // Field title:Lnet/minecraft/network/chat/Component;
+       6: iload_2
+       7: aload_0
+       8: getfield      #149                // Field titleLabelY:I
+      11: iload_3
+      12: invokevirtual #165                // Method drawTitleTextTextWithOffset:(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/network/chat/Component;III)V
+      15: return
+
+  protected void renderTitleTextWithOffset(net.minecraft.client.gui.GuiGraphics, int, int, int, mekanism.client.render.IFancyFontRenderer$TextAlignment);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_0
+       3: getfield      #145                // Field title:Lnet/minecraft/network/chat/Component;
+       6: iload_2
+       7: aload_0
+       8: getfield      #149                // Field titleLabelY:I
+      11: iload_3
+      12: iload         4
+      14: aload         5
+      16: invokevirtual #169                // Method drawTitleTextTextWithOffset:(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/network/chat/Component;IIIILmekanism/client/render/IFancyFontRenderer$TextAlignment;)V
+      19: return
+
+  protected void renderInventoryText(net.minecraft.client.gui.GuiGraphics);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_0
+       3: invokevirtual #157                // Method getXSize:()I
+       6: invokevirtual #172                // Method renderInventoryText:(Lnet/minecraft/client/gui/GuiGraphics;I)V
+       9: return
+
+  protected void renderInventoryText(net.minecraft.client.gui.GuiGraphics, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_0
+       3: getfield      #176                // Field playerInventoryTitle:Lnet/minecraft/network/chat/Component;
+       6: aload_0
+       7: getfield      #179                // Field inventoryLabelX:I
+      10: aload_0
+      11: getfield      #182                // Field inventoryLabelY:I
+      14: getstatic     #185                // Field mekanism/client/render/IFancyFontRenderer$TextAlignment.LEFT:Lmekanism/client/render/IFancyFontRenderer$TextAlignment;
+      17: aload_0
+      18: invokevirtual #191                // Method titleTextColor:()I
+      21: iload_2
+      22: aload_0
+      23: getfield      #179                // Field inventoryLabelX:I
+      26: isub
+      27: bipush        6
+      29: isub
+      30: iconst_0
+      31: iconst_0
+      32: invokevirtual #194                // Method drawScrollingString:(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/network/chat/Component;IILmekanism/client/render/IFancyFontRenderer$TextAlignment;IIIZ)V
+      35: return
+
+  protected void renderInventoryTextAndOther(net.minecraft.client.gui.GuiGraphics, net.minecraft.network.chat.Component);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: iconst_0
+       4: invokevirtual #198                // Method renderInventoryTextAndOther:(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/network/chat/Component;I)V
+       7: return
+
+  protected void renderInventoryTextAndOther(net.minecraft.client.gui.GuiGraphics, net.minecraft.network.chat.Component, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_0
+       3: getfield      #176                // Field playerInventoryTitle:Lnet/minecraft/network/chat/Component;
+       6: aload_0
+       7: getfield      #179                // Field inventoryLabelX:I
+      10: aload_0
+      11: getfield      #182                // Field inventoryLabelY:I
+      14: getstatic     #185                // Field mekanism/client/render/IFancyFontRenderer$TextAlignment.LEFT:Lmekanism/client/render/IFancyFontRenderer$TextAlignment;
+      17: aload_0
+      18: invokevirtual #191                // Method titleTextColor:()I
+      21: bipush        53
+      23: iconst_0
+      24: iconst_0
+      25: invokevirtual #194                // Method drawScrollingString:(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/network/chat/Component;IILmekanism/client/render/IFancyFontRenderer$TextAlignment;IIIZ)V
+      28: aload_0
+      29: getfield      #179                // Field inventoryLabelX:I
+      32: bipush        51
+      34: iadd
+      35: istore        4
+      37: aload_0
+      38: aload_1
+      39: aload_2
+      40: iload         4
+      42: aload_0
+      43: getfield      #182                // Field inventoryLabelY:I
+      46: getstatic     #201                // Field mekanism/client/render/IFancyFontRenderer$TextAlignment.RIGHT:Lmekanism/client/render/IFancyFontRenderer$TextAlignment;
+      49: aload_0
+      50: invokevirtual #191                // Method titleTextColor:()I
+      53: aload_0
+      54: invokevirtual #157                // Method getXSize:()I
+      57: iload         4
+      59: isub
+      60: iload_3
+      61: isub
+      62: bipush        6
+      64: iconst_0
+      65: invokevirtual #194                // Method drawScrollingString:(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/network/chat/Component;IILmekanism/client/render/IFancyFontRenderer$TextAlignment;IIIZ)V
+      68: return
+
+  protected net.minecraft.resources.ResourceLocation getButtonLocation(java.lang.String);
+    Code:
+       0: getstatic     #204                // Field mekanism/common/util/MekanismUtils$ResourceType.GUI_BUTTON:Lmekanism/common/util/MekanismUtils$ResourceType;
+       3: aload_1
+       4: invokedynamic #210,  0            // InvokeDynamic #2:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+       9: invokestatic  #214                // Method mekanism/common/util/MekanismUtils.getResource:(Lmekanism/common/util/MekanismUtils$ResourceType;Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;
+      12: areturn
+
+  public net.minecraft.world.item.ItemStack getCarriedItem();
+    Code:
+       0: aload_0
+       1: invokevirtual #220                // Method getMenu:()Lnet/minecraft/world/inventory/AbstractContainerMenu;
+       4: invokevirtual #224                // Method net/minecraft/world/inventory/AbstractContainerMenu.getCarried:()Lnet/minecraft/world/item/ItemStack;
+       7: areturn
+
+  public net.minecraft.client.gui.ComponentPath handleTabNavigation(net.minecraft.client.gui.navigation.FocusNavigationEvent$TabNavigation);
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: invokevirtual #75                 // Method mekanism/common/lib/collection/LRU.isEmpty:()Z
+       7: ifeq          16
+      10: aload_0
+      11: aload_1
+      12: invokespecial #297                // Method mekanism/client/gui/VirtualSlotContainerScreen.handleTabNavigation:(Lnet/minecraft/client/gui/navigation/FocusNavigationEvent$TabNavigation;)Lnet/minecraft/client/gui/ComponentPath;
+      15: areturn
+      16: aload_0
+      17: aload_1
+      18: invokedynamic #301,  0            // InvokeDynamic #3:apply:()Ljava/util/function/BiFunction;
+      23: invokevirtual #304                // Method handleNavigationWithWindows:(Lnet/minecraft/client/gui/navigation/FocusNavigationEvent;Ljava/util/function/BiFunction;)Lnet/minecraft/client/gui/ComponentPath;
+      26: areturn
+
+  public net.minecraft.client.gui.ComponentPath handleArrowNavigation(net.minecraft.client.gui.navigation.FocusNavigationEvent$ArrowNavigation);
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: invokevirtual #75                 // Method mekanism/common/lib/collection/LRU.isEmpty:()Z
+       7: ifeq          16
+      10: aload_0
+      11: aload_1
+      12: invokespecial #308                // Method mekanism/client/gui/VirtualSlotContainerScreen.handleArrowNavigation:(Lnet/minecraft/client/gui/navigation/FocusNavigationEvent$ArrowNavigation;)Lnet/minecraft/client/gui/ComponentPath;
+      15: areturn
+      16: aload_0
+      17: aload_1
+      18: invokedynamic #312,  0            // InvokeDynamic #4:apply:()Ljava/util/function/BiFunction;
+      23: invokevirtual #304                // Method handleNavigationWithWindows:(Lnet/minecraft/client/gui/navigation/FocusNavigationEvent;Ljava/util/function/BiFunction;)Lnet/minecraft/client/gui/ComponentPath;
+      26: areturn
+
+  protected boolean hasClickedOutside(double, double, int, int, int);
+    Code:
+       0: aload_0
+       1: dload_1
+       2: dload_3
+       3: invokevirtual #313                // Method getWindowHovering:(DD)Lmekanism/client/gui/element/window/GuiWindow;
+       6: ifnonnull     28
+       9: aload_0
+      10: dload_1
+      11: dload_3
+      12: iload         5
+      14: iload         6
+      16: iload         7
+      18: invokespecial #317                // Method mekanism/client/gui/VirtualSlotContainerScreen.hasClickedOutside:(DDIII)Z
+      21: ifeq          28
+      24: iconst_1
+      25: goto          29
+      28: iconst_0
+      29: ireturn
+
+  protected void repositionElements();
+    Code:
+       0: aload_0
+       1: getfield      #35                 // Field switchingToRecipeViewer:Z
+       4: ifeq          19
+       7: aload_0
+       8: iconst_0
+       9: putfield      #35                 // Field switchingToRecipeViewer:Z
+      12: aload_0
+      13: invokestatic  #55                 // Method net/minecraft/Util.getMillis:()J
+      16: putfield      #61                 // Field lastMSInitialized:J
+      19: aload_0
+      20: invokespecial #321                // Method mekanism/client/gui/VirtualSlotContainerScreen.repositionElements:()V
+      23: return
+
+  protected void rebuildWidgets();
+    Code:
+       0: new           #244                // class java/util/ArrayList
+       3: dup
+       4: invokespecial #324                // Method java/util/ArrayList."<init>":()V
+       7: astore_1
+       8: aload_0
+       9: invokevirtual #325                // Method getFocused:()Lnet/minecraft/client/gui/components/events/GuiEventListener;
+      12: astore_2
+      13: iconst_0
+      14: istore_3
+      15: iload_3
+      16: aload_0
+      17: invokevirtual #79                 // Method children:()Ljava/util/List;
+      20: invokeinterface #328,  1          // InterfaceMethod java/util/List.size:()I
+      25: if_icmpge     109
+      28: aload_0
+      29: invokevirtual #79                 // Method children:()Ljava/util/List;
+      32: iload_3
+      33: invokeinterface #331,  2          // InterfaceMethod java/util/List.get:(I)Ljava/lang/Object;
+      38: checkcast     #98                 // class net/minecraft/client/gui/components/events/GuiEventListener
+      41: astore        4
+      43: aload         4
+      45: instanceof    #100                // class mekanism/client/gui/element/GuiElement
+      48: ifeq          103
+      51: aload         4
+      53: checkcast     #100                // class mekanism/client/gui/element/GuiElement
+      56: astore        5
+      58: aload         5
+      60: aload_2
+      61: if_acmpne     68
+      64: iconst_1
+      65: goto          69
+      68: iconst_0
+      69: istore        6
+      71: iload         6
+      73: ifne          84
+      76: aload         5
+      78: invokevirtual #335                // Method mekanism/client/gui/element/GuiElement.hasPersistentData:()Z
+      81: ifeq          103
+      84: aload_1
+      85: new           #338                // class mekanism/client/gui/GuiMekanism$1PreviousElement
+      88: dup
+      89: iload_3
+      90: aload         5
+      92: iload         6
+      94: invokespecial #340                // Method mekanism/client/gui/GuiMekanism$1PreviousElement."<init>":(ILmekanism/client/gui/element/GuiElement;Z)V
+      97: invokeinterface #131,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     102: pop
+     103: iinc          3, 1
+     106: goto          15
+     109: aload_0
+     110: getfield      #343                // Field leftPos:I
+     113: istore_3
+     114: aload_0
+     115: getfield      #346                // Field topPos:I
+     118: istore        4
+     120: aload_0
+     121: invokespecial #349                // Method mekanism/client/gui/VirtualSlotContainerScreen.rebuildWidgets:()V
+     124: aload_0
+     125: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+     128: invokevirtual #352                // Method mekanism/common/lib/collection/LRU.iterator:()Lmekanism/common/lib/collection/LRU$LRUIterator;
+     131: astore        5
+     133: aload         5
+     135: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+     140: ifeq          174
+     143: aload         5
+     145: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     150: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+     153: astore        6
+     155: aload         6
+     157: iload_3
+     158: iload         4
+     160: aload_0
+     161: getfield      #343                // Field leftPos:I
+     164: aload_0
+     165: getfield      #346                // Field topPos:I
+     168: invokevirtual #355                // Method mekanism/client/gui/element/window/GuiWindow.resize:(IIII)V
+     171: goto          133
+     174: aload_0
+     175: invokevirtual #79                 // Method children:()Ljava/util/List;
+     178: invokeinterface #328,  1          // InterfaceMethod java/util/List.size:()I
+     183: istore        5
+     185: aload_1
+     186: invokeinterface #83,  1           // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     191: astore        6
+     193: aload         6
+     195: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+     200: ifeq          292
+     203: aload         6
+     205: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     210: checkcast     #338                // class mekanism/client/gui/GuiMekanism$1PreviousElement
+     213: astore        7
+     215: aload         7
+     217: invokevirtual #359                // Method mekanism/client/gui/GuiMekanism$1PreviousElement.index:()I
+     220: iload         5
+     222: if_icmpge     289
+     225: aload_0
+     226: invokevirtual #79                 // Method children:()Ljava/util/List;
+     229: aload         7
+     231: invokevirtual #359                // Method mekanism/client/gui/GuiMekanism$1PreviousElement.index:()I
+     234: invokeinterface #331,  2          // InterfaceMethod java/util/List.get:(I)Ljava/lang/Object;
+     239: checkcast     #98                 // class net/minecraft/client/gui/components/events/GuiEventListener
+     242: astore        8
+     244: aload         8
+     246: invokeinterface #362,  1          // InterfaceMethod net/minecraft/client/gui/components/events/GuiEventListener.getClass:()Ljava/lang/Class;
+     251: aload         7
+     253: invokevirtual #366                // Method mekanism/client/gui/GuiMekanism$1PreviousElement.element:()Lmekanism/client/gui/element/GuiElement;
+     256: invokevirtual #370                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+     259: if_acmpne     289
+     262: aload         8
+     264: checkcast     #100                // class mekanism/client/gui/element/GuiElement
+     267: aload         7
+     269: invokevirtual #366                // Method mekanism/client/gui/GuiMekanism$1PreviousElement.element:()Lmekanism/client/gui/element/GuiElement;
+     272: invokevirtual #373                // Method mekanism/client/gui/element/GuiElement.syncFrom:(Lmekanism/client/gui/element/GuiElement;)V
+     275: aload         7
+     277: invokevirtual #377                // Method mekanism/client/gui/GuiMekanism$1PreviousElement.wasFocus:()Z
+     280: ifeq          289
+     283: aload_0
+     284: aload         8
+     286: invokevirtual #380                // Method setFocused:(Lnet/minecraft/client/gui/components/events/GuiEventListener;)V
+     289: goto          193
+     292: return
+
+  protected void renderLabels(net.minecraft.client.gui.GuiGraphics, int, int);
+    Code:
+       0: aload_1
+       1: invokevirtual #383                // Method net/minecraft/client/gui/GuiGraphics.pose:()Lcom/mojang/blaze3d/vertex/PoseStack;
+       4: astore        4
+       6: aload         4
+       8: invokevirtual #389                // Method com/mojang/blaze3d/vertex/PoseStack.pushPose:()V
+      11: aload         4
+      13: fconst_0
+      14: fconst_0
+      15: ldc_w         #394                // float 400.0f
+      18: invokevirtual #395                // Method com/mojang/blaze3d/vertex/PoseStack.translate:(FFF)V
+      21: aload_0
+      22: invokevirtual #79                 // Method children:()Ljava/util/List;
+      25: invokeinterface #83,  1           // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      30: astore        5
+      32: aload         5
+      34: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      39: ifeq          83
+      42: aload         5
+      44: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      49: checkcast     #98                 // class net/minecraft/client/gui/components/events/GuiEventListener
+      52: astore        6
+      54: aload         6
+      56: instanceof    #100                // class mekanism/client/gui/element/GuiElement
+      59: ifeq          80
+      62: aload         6
+      64: checkcast     #100                // class mekanism/client/gui/element/GuiElement
+      67: astore        7
+      69: aload         7
+      71: aload_1
+      72: iload_2
+      73: iload_3
+      74: invokestatic  #399                // Method mekanism/client/render/MekanismRenderer.getPartialTick:()F
+      77: invokevirtual #405                // Method mekanism/client/gui/element/GuiElement.onDrawBackground:(Lnet/minecraft/client/gui/GuiGraphics;IIF)V
+      80: goto          32
+      83: aload_0
+      84: aload_1
+      85: iload_2
+      86: iload_3
+      87: invokevirtual #409                // Method drawForegroundText:(Lnet/minecraft/client/gui/GuiGraphics;II)V
+      90: sipush        200
+      93: istore        5
+      95: iload         5
+      97: putstatic     #412                // Field maxZOffset:I
+     100: aload_0
+     101: invokevirtual #79                 // Method children:()Ljava/util/List;
+     104: invokeinterface #83,  1           // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     109: astore        6
+     111: aload         6
+     113: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+     118: ifeq          173
+     121: aload         6
+     123: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     128: checkcast     #98                 // class net/minecraft/client/gui/components/events/GuiEventListener
+     131: astore        7
+     133: aload         7
+     135: instanceof    #100                // class mekanism/client/gui/element/GuiElement
+     138: ifeq          170
+     141: aload         7
+     143: checkcast     #100                // class mekanism/client/gui/element/GuiElement
+     146: astore        8
+     148: aload         4
+     150: invokevirtual #389                // Method com/mojang/blaze3d/vertex/PoseStack.pushPose:()V
+     153: aload         8
+     155: aload_1
+     156: iload_2
+     157: iload_3
+     158: iload         5
+     160: iload         5
+     162: invokevirtual #415                // Method mekanism/client/gui/element/GuiElement.onRenderForeground:(Lnet/minecraft/client/gui/GuiGraphics;IIII)V
+     165: aload         4
+     167: invokevirtual #419                // Method com/mojang/blaze3d/vertex/PoseStack.popPose:()V
+     170: goto          111
+     173: aload_0
+     174: invokevirtual #422                // Method getWindowsDescendingIterator:()Lmekanism/common/lib/collection/LRU$LRUIterator;
+     177: astore        6
+     179: aload         6
+     181: invokevirtual #425                // Method mekanism/common/lib/collection/LRU$LRUIterator.hasNext:()Z
+     184: ifeq          245
+     187: aload         6
+     189: invokevirtual #428                // Method mekanism/common/lib/collection/LRU$LRUIterator.next:()Ljava/lang/Object;
+     192: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+     195: astore        7
+     197: getstatic     #412                // Field maxZOffset:I
+     200: sipush        150
+     203: iadd
+     204: istore        5
+     206: aload         4
+     208: invokevirtual #389                // Method com/mojang/blaze3d/vertex/PoseStack.pushPose:()V
+     211: aload         7
+     213: aload_1
+     214: iload_2
+     215: iload_3
+     216: iload         5
+     218: iload         5
+     220: invokevirtual #429                // Method mekanism/client/gui/element/window/GuiWindow.onRenderForeground:(Lnet/minecraft/client/gui/GuiGraphics;IIII)V
+     223: aload         6
+     225: invokevirtual #425                // Method mekanism/common/lib/collection/LRU$LRUIterator.hasNext:()Z
+     228: ifeq          237
+     231: aload         7
+     233: aload_1
+     234: invokevirtual #430                // Method mekanism/client/gui/element/window/GuiWindow.renderBlur:(Lnet/minecraft/client/gui/GuiGraphics;)V
+     237: aload         4
+     239: invokevirtual #419                // Method com/mojang/blaze3d/vertex/PoseStack.popPose:()V
+     242: goto          179
+     245: aload         4
+     247: invokevirtual #419                // Method com/mojang/blaze3d/vertex/PoseStack.popPose:()V
+     250: getstatic     #412                // Field maxZOffset:I
+     253: sipush        200
+     256: iadd
+     257: putstatic     #412                // Field maxZOffset:I
+     260: aload         4
+     262: fconst_0
+     263: fconst_0
+     264: getstatic     #412                // Field maxZOffset:I
+     267: i2f
+     268: invokevirtual #395                // Method com/mojang/blaze3d/vertex/PoseStack.translate:(FFF)V
+     271: aload         4
+     273: invokevirtual #389                // Method com/mojang/blaze3d/vertex/PoseStack.pushPose:()V
+     276: aload         4
+     278: aload_0
+     279: getfield      #343                // Field leftPos:I
+     282: ineg
+     283: i2f
+     284: aload_0
+     285: getfield      #346                // Field topPos:I
+     288: ineg
+     289: i2f
+     290: fconst_0
+     291: invokevirtual #395                // Method com/mojang/blaze3d/vertex/PoseStack.translate:(FFF)V
+     294: aload_0
+     295: iload_2
+     296: i2d
+     297: iload_3
+     298: i2d
+     299: invokevirtual #313                // Method getWindowHovering:(DD)Lmekanism/client/gui/element/window/GuiWindow;
+     302: astore        6
+     304: aload         6
+     306: ifnonnull     330
+     309: aload_0
+     310: invokevirtual #79                 // Method children:()Ljava/util/List;
+     313: iload_2
+     314: i2d
+     315: iload_3
+     316: i2d
+     317: invokedynamic #434,  0            // InvokeDynamic #5:test:()Lmekanism/client/gui/GuiUtils$MouseOverPredicate;
+     322: invokestatic  #438                // Method mekanism/client/gui/GuiUtils.findChild:(Ljava/util/List;DDLmekanism/client/gui/GuiUtils$MouseOverPredicate;)Lnet/minecraft/client/gui/components/events/GuiEventListener;
+     325: checkcast     #100                // class mekanism/client/gui/element/GuiElement
+     328: astore        6
+     330: aload         6
+     332: ifnull        343
+     335: aload         6
+     337: aload_1
+     338: iload_2
+     339: iload_3
+     340: invokevirtual #444                // Method mekanism/client/gui/element/GuiElement.renderToolTip:(Lnet/minecraft/client/gui/GuiGraphics;II)V
+     343: aload_0
+     344: aload_1
+     345: iload_2
+     346: iload_3
+     347: invokevirtual #447                // Method renderTooltip:(Lnet/minecraft/client/gui/GuiGraphics;II)V
+     350: aload         4
+     352: invokevirtual #419                // Method com/mojang/blaze3d/vertex/PoseStack.popPose:()V
+     355: return
+
+  public final void renderWithTooltip(net.minecraft.client.gui.GuiGraphics, int, int, float);
+    Code:
+       0: aload_1
+       1: invokevirtual #383                // Method net/minecraft/client/gui/GuiGraphics.pose:()Lcom/mojang/blaze3d/vertex/PoseStack;
+       4: astore        5
+       6: aload         5
+       8: invokevirtual #389                // Method com/mojang/blaze3d/vertex/PoseStack.pushPose:()V
+      11: aload_0
+      12: aload_1
+      13: iload_2
+      14: iload_3
+      15: fload         4
+      17: invokevirtual #450                // Method render:(Lnet/minecraft/client/gui/GuiGraphics;IIF)V
+      20: aload_0
+      21: getfield      #453                // Field deferredTooltipRendering:Lnet/minecraft/client/gui/screens/Screen$DeferredTooltipRendering;
+      24: ifnull        66
+      27: aload         5
+      29: fconst_0
+      30: fconst_0
+      31: getstatic     #412                // Field maxZOffset:I
+      34: i2f
+      35: invokevirtual #395                // Method com/mojang/blaze3d/vertex/PoseStack.translate:(FFF)V
+      38: aload_1
+      39: aload_0
+      40: getfield      #457                // Field font:Lnet/minecraft/client/gui/Font;
+      43: aload_0
+      44: getfield      #453                // Field deferredTooltipRendering:Lnet/minecraft/client/gui/screens/Screen$DeferredTooltipRendering;
+      47: invokevirtual #461                // Method net/minecraft/client/gui/screens/Screen$DeferredTooltipRendering.tooltip:()Ljava/util/List;
+      50: aload_0
+      51: getfield      #453                // Field deferredTooltipRendering:Lnet/minecraft/client/gui/screens/Screen$DeferredTooltipRendering;
+      54: invokevirtual #466                // Method net/minecraft/client/gui/screens/Screen$DeferredTooltipRendering.positioner:()Lnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;
+      57: iload_2
+      58: iload_3
+      59: invokevirtual #470                // Method net/minecraft/client/gui/GuiGraphics.renderTooltip:(Lnet/minecraft/client/gui/Font;Ljava/util/List;Lnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;II)V
+      62: aload_0
+      63: invokevirtual #473                // Method clearTooltipForNextRenderPass:()V
+      66: aload         5
+      68: invokevirtual #419                // Method com/mojang/blaze3d/vertex/PoseStack.popPose:()V
+      71: return
+
+  protected void drawForegroundText(net.minecraft.client.gui.GuiGraphics, int, int);
+    Code:
+       0: return
+
+  public java.util.Optional<net.minecraft.client.gui.components.events.GuiEventListener> getChildAt(double, double);
+    Code:
+       0: aload_0
+       1: dload_1
+       2: dload_3
+       3: invokevirtual #313                // Method getWindowHovering:(DD)Lmekanism/client/gui/element/window/GuiWindow;
+       6: astore        5
+       8: aload         5
+      10: ifnonnull     22
+      13: aload_0
+      14: dload_1
+      15: dload_3
+      16: invokespecial #476                // Method mekanism/client/gui/VirtualSlotContainerScreen.getChildAt:(DD)Ljava/util/Optional;
+      19: goto          27
+      22: aload         5
+      24: invokestatic  #480                // Method java/util/Optional.of:(Ljava/lang/Object;)Ljava/util/Optional;
+      27: areturn
+
+  public boolean mouseScrolled(double, double, double, double);
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: invokevirtual #485                // Method mekanism/common/lib/collection/LRU.peek:()Ljava/lang/Object;
+       7: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      10: astore        9
+      12: aload         9
+      14: ifnull        49
+      17: aload         9
+      19: dload_1
+      20: dload_3
+      21: dload         5
+      23: dload         7
+      25: invokevirtual #488                // Method mekanism/client/gui/element/window/GuiWindow.mouseScrolled:(DDDD)Z
+      28: istore        10
+      30: iload         10
+      32: ifne          46
+      35: aload         9
+      37: invokevirtual #235                // Method mekanism/client/gui/element/window/GuiWindow.getInteractionStrategy:()Lmekanism/client/gui/element/window/GuiWindow$InteractionStrategy;
+      40: invokevirtual #239                // Method mekanism/client/gui/element/window/GuiWindow$InteractionStrategy.allowAll:()Z
+      43: ifne          49
+      46: iload         10
+      48: ireturn
+      49: aload_0
+      50: dload_1
+      51: dload_3
+      52: dload         5
+      54: dload         7
+      56: invokespecial #492                // Method mekanism/client/gui/VirtualSlotContainerScreen.mouseScrolled:(DDDD)Z
+      59: ireturn
+
+  public boolean mouseClicked(double, double, int);
+    Code:
+       0: aload_0
+       1: iconst_1
+       2: putfield      #18                 // Field hasClicked:Z
+       5: aload_0
+       6: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       9: invokevirtual #485                // Method mekanism/common/lib/collection/LRU.peek:()Ljava/lang/Object;
+      12: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      15: astore        6
+      17: aload_0
+      18: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+      21: invokevirtual #352                // Method mekanism/common/lib/collection/LRU.iterator:()Lmekanism/common/lib/collection/LRU$LRUIterator;
+      24: astore        7
+      26: aload         7
+      28: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      33: ifeq          119
+      36: aload         7
+      38: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      43: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      46: astore        8
+      48: aload         8
+      50: dload_1
+      51: dload_3
+      52: iload         5
+      54: invokevirtual #493                // Method mekanism/client/gui/element/window/GuiWindow.mouseClicked:(DDI)Z
+      57: ifeq          116
+      60: aload_0
+      61: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+      64: aload         8
+      66: invokevirtual #497                // Method mekanism/common/lib/collection/LRU.contains:(Ljava/lang/Object;)Z
+      69: ifeq          114
+      72: aload_0
+      73: aload         8
+      75: invokevirtual #380                // Method setFocused:(Lnet/minecraft/client/gui/components/events/GuiEventListener;)V
+      78: iload         5
+      80: ifne          88
+      83: aload_0
+      84: iconst_1
+      85: invokevirtual #500                // Method setDragging:(Z)V
+      88: aload         6
+      90: aload         8
+      92: if_acmpeq     114
+      95: aload         6
+      97: invokevirtual #504                // Method mekanism/client/gui/element/window/GuiWindow.onFocusLost:()V
+     100: aload_0
+     101: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+     104: aload         8
+     106: invokevirtual #507                // Method mekanism/common/lib/collection/LRU.moveUp:(Ljava/lang/Object;)V
+     109: aload         8
+     111: invokevirtual #511                // Method mekanism/client/gui/element/window/GuiWindow.onFocused:()V
+     114: iconst_1
+     115: ireturn
+     116: goto          26
+     119: aload_0
+     120: invokevirtual #79                 // Method children:()Ljava/util/List;
+     123: dload_1
+     124: dload_3
+     125: iload         5
+     127: invokedynamic #514,  0            // InvokeDynamic #6:test:()Lmekanism/client/gui/GuiUtils$MouseClickedPredicate;
+     132: invokestatic  #517                // Method mekanism/client/gui/GuiUtils.findChild:(Ljava/util/List;DDILmekanism/client/gui/GuiUtils$MouseClickedPredicate;)Lnet/minecraft/client/gui/components/events/GuiEventListener;
+     135: astore        7
+     137: aload         7
+     139: ifnull        160
+     142: aload_0
+     143: aload         7
+     145: invokevirtual #380                // Method setFocused:(Lnet/minecraft/client/gui/components/events/GuiEventListener;)V
+     148: iload         5
+     150: ifne          158
+     153: aload_0
+     154: iconst_1
+     155: invokevirtual #500                // Method setDragging:(Z)V
+     158: iconst_1
+     159: ireturn
+     160: aload_0
+     161: invokevirtual #520                // Method clearFocus:()V
+     164: aload_0
+     165: dload_1
+     166: dload_3
+     167: iload         5
+     169: invokespecial #523                // Method mekanism/client/gui/VirtualSlotContainerScreen.mouseClicked:(DDI)Z
+     172: ireturn
+
+  public boolean mouseReleased(double, double, int);
+    Code:
+       0: aload_0
+       1: getfield      #18                 // Field hasClicked:Z
+       4: ifeq          57
+       7: aload_0
+       8: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+      11: invokevirtual #352                // Method mekanism/common/lib/collection/LRU.iterator:()Lmekanism/common/lib/collection/LRU$LRUIterator;
+      14: astore        6
+      16: aload         6
+      18: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      23: ifeq          48
+      26: aload         6
+      28: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      33: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      36: astore        7
+      38: aload         7
+      40: dload_1
+      41: dload_3
+      42: invokevirtual #524                // Method mekanism/client/gui/element/window/GuiWindow.onRelease:(DD)V
+      45: goto          16
+      48: aload_0
+      49: dload_1
+      50: dload_3
+      51: iload         5
+      53: invokespecial #528                // Method mekanism/client/gui/VirtualSlotContainerScreen.mouseReleased:(DDI)Z
+      56: ireturn
+      57: iconst_0
+      58: ireturn
+
+  public boolean keyPressed(int, int, int);
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: invokevirtual #352                // Method mekanism/common/lib/collection/LRU.iterator:()Lmekanism/common/lib/collection/LRU$LRUIterator;
+       7: astore        4
+       9: aload         4
+      11: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          47
+      19: aload         4
+      21: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      26: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      29: astore        5
+      31: aload         5
+      33: iload_1
+      34: iload_2
+      35: iload_3
+      36: invokevirtual #531                // Method mekanism/client/gui/element/window/GuiWindow.keyPressed:(III)Z
+      39: ifeq          44
+      42: iconst_1
+      43: ireturn
+      44: goto          9
+      47: aload_0
+      48: invokevirtual #79                 // Method children:()Ljava/util/List;
+      51: iload_1
+      52: iload_2
+      53: iload_3
+      54: invokedynamic #535,  0            // InvokeDynamic #7:test:()Lmekanism/client/gui/GuiUtils$KeyPressedPredicate;
+      59: invokestatic  #538                // Method mekanism/client/gui/GuiUtils.checkChildren:(Ljava/util/List;IIILmekanism/client/gui/GuiUtils$KeyPressedPredicate;)Z
+      62: ifne          75
+      65: aload_0
+      66: iload_1
+      67: iload_2
+      68: iload_3
+      69: invokespecial #542                // Method mekanism/client/gui/VirtualSlotContainerScreen.keyPressed:(III)Z
+      72: ifeq          79
+      75: iconst_1
+      76: goto          80
+      79: iconst_0
+      80: ireturn
+
+  public boolean charTyped(char, int);
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: invokevirtual #352                // Method mekanism/common/lib/collection/LRU.iterator:()Lmekanism/common/lib/collection/LRU$LRUIterator;
+       7: astore_3
+       8: aload_3
+       9: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      14: ifeq          43
+      17: aload_3
+      18: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      23: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      26: astore        4
+      28: aload         4
+      30: iload_1
+      31: iload_2
+      32: invokevirtual #543                // Method mekanism/client/gui/element/window/GuiWindow.charTyped:(CI)Z
+      35: ifeq          40
+      38: iconst_1
+      39: ireturn
+      40: goto          8
+      43: aload_0
+      44: invokevirtual #79                 // Method children:()Ljava/util/List;
+      47: iload_1
+      48: iload_2
+      49: invokedynamic #547,  0            // InvokeDynamic #8:test:()Lmekanism/client/gui/GuiUtils$CharTypedPredicate;
+      54: invokestatic  #550                // Method mekanism/client/gui/GuiUtils.checkChildrenChar:(Ljava/util/List;CILmekanism/client/gui/GuiUtils$CharTypedPredicate;)Z
+      57: ifne          69
+      60: aload_0
+      61: iload_1
+      62: iload_2
+      63: invokespecial #554                // Method mekanism/client/gui/VirtualSlotContainerScreen.charTyped:(CI)Z
+      66: ifeq          73
+      69: iconst_1
+      70: goto          74
+      73: iconst_0
+      74: ireturn
+
+  public boolean mouseDragged(double, double, int, double, double);
+    Code:
+       0: aload_0
+       1: dload_1
+       2: dload_3
+       3: iload         5
+       5: dload         6
+       7: dload         8
+       9: invokespecial #555                // Method mekanism/client/gui/VirtualSlotContainerScreen.mouseDragged:(DDIDD)Z
+      12: pop
+      13: aload_0
+      14: invokevirtual #325                // Method getFocused:()Lnet/minecraft/client/gui/components/events/GuiEventListener;
+      17: ifnull        56
+      20: aload_0
+      21: invokevirtual #559                // Method isDragging:()Z
+      24: ifeq          56
+      27: iload         5
+      29: ifne          56
+      32: aload_0
+      33: invokevirtual #325                // Method getFocused:()Lnet/minecraft/client/gui/components/events/GuiEventListener;
+      36: dload_1
+      37: dload_3
+      38: iload         5
+      40: dload         6
+      42: dload         8
+      44: invokeinterface #562,  10         // InterfaceMethod net/minecraft/client/gui/components/events/GuiEventListener.mouseDragged:(DDIDD)Z
+      49: ifeq          56
+      52: iconst_1
+      53: goto          57
+      56: iconst_0
+      57: ireturn
+
+  protected net.minecraft.world.inventory.Slot findSlot(double, double);
+    Code:
+       0: iconst_0
+       1: istore        5
+       3: iconst_0
+       4: istore        6
+       6: aconst_null
+       7: astore        7
+       9: aload_0
+      10: getfield      #563                // Field menu:Lnet/minecraft/world/inventory/AbstractContainerMenu;
+      13: getfield      #567                // Field net/minecraft/world/inventory/AbstractContainerMenu.slots:Lnet/minecraft/core/NonNullList;
+      16: invokevirtual #571                // Method net/minecraft/core/NonNullList.iterator:()Ljava/util/Iterator;
+      19: astore        8
+      21: aload         8
+      23: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      28: ifeq          257
+      31: aload         8
+      33: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      38: checkcast     #574                // class net/minecraft/world/inventory/Slot
+      41: astore        9
+      43: aload         9
+      45: invokevirtual #576                // Method net/minecraft/world/inventory/Slot.isActive:()Z
+      48: ifne          54
+      51: goto          21
+      54: aload         9
+      56: instanceof    #579                // class mekanism/common/inventory/container/slot/IVirtualSlot
+      59: istore        10
+      61: aload         9
+      63: getfield      #581                // Field net/minecraft/world/inventory/Slot.x:I
+      66: istore        11
+      68: aload         9
+      70: getfield      #584                // Field net/minecraft/world/inventory/Slot.y:I
+      73: istore        12
+      75: iload         10
+      77: ifeq          117
+      80: aload         9
+      82: checkcast     #579                // class mekanism/common/inventory/container/slot/IVirtualSlot
+      85: astore        13
+      87: aload_0
+      88: aload         13
+      90: invokevirtual #587                // Method isVirtualSlotAvailable:(Lmekanism/common/inventory/container/slot/IVirtualSlot;)Z
+      93: ifne          99
+      96: goto          21
+      99: aload         13
+     101: invokeinterface #591,  1          // InterfaceMethod mekanism/common/inventory/container/slot/IVirtualSlot.getActualX:()I
+     106: istore        11
+     108: aload         13
+     110: invokeinterface #594,  1          // InterfaceMethod mekanism/common/inventory/container/slot/IVirtualSlot.getActualY:()I
+     115: istore        12
+     117: aload_0
+     118: iload         11
+     120: iload         12
+     122: bipush        16
+     124: bipush        16
+     126: dload_1
+     127: dload_3
+     128: invokespecial #597                // Method mekanism/client/gui/VirtualSlotContainerScreen.isHovering:(IIIIDD)Z
+     131: ifeq          254
+     134: iload         5
+     136: ifne          160
+     139: iconst_1
+     140: istore        5
+     142: aload_0
+     143: dload_1
+     144: dload_3
+     145: invokevirtual #313                // Method getWindowHovering:(DD)Lmekanism/client/gui/element/window/GuiWindow;
+     148: astore        7
+     150: aload_0
+     151: aload         7
+     153: dload_1
+     154: dload_3
+     155: invokevirtual #601                // Method overNoButtons:(Lmekanism/client/gui/element/window/GuiWindow;DD)Z
+     158: istore        6
+     160: iload         6
+     162: ifeq          254
+     165: aload         9
+     167: invokevirtual #576                // Method net/minecraft/world/inventory/Slot.isActive:()Z
+     170: ifeq          254
+     173: aload         7
+     175: ifnonnull     181
+     178: aload         9
+     180: areturn
+     181: iload         10
+     183: ifeq          254
+     186: aload         7
+     188: invokevirtual #605                // Method mekanism/client/gui/element/window/GuiWindow.children:()Ljava/util/List;
+     191: invokeinterface #83,  1           // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     196: astore        13
+     198: aload         13
+     200: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+     205: ifeq          254
+     208: aload         13
+     210: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     215: checkcast     #100                // class mekanism/client/gui/element/GuiElement
+     218: astore        14
+     220: aload         14
+     222: instanceof    #606                // class mekanism/client/gui/element/slot/GuiVirtualSlot
+     225: ifeq          251
+     228: aload         14
+     230: checkcast     #606                // class mekanism/client/gui/element/slot/GuiVirtualSlot
+     233: astore        15
+     235: aload         15
+     237: aload         9
+     239: checkcast     #579                // class mekanism/common/inventory/container/slot/IVirtualSlot
+     242: invokevirtual #608                // Method mekanism/client/gui/element/slot/GuiVirtualSlot.isElementForSlot:(Lmekanism/common/inventory/container/slot/IVirtualSlot;)Z
+     245: ifeq          251
+     248: aload         9
+     250: areturn
+     251: goto          198
+     254: goto          21
+     257: aconst_null
+     258: areturn
+
+  protected boolean isMouseOverSlot(net.minecraft.world.inventory.Slot, double, double);
+    Code:
+       0: aload_1
+       1: instanceof    #579                // class mekanism/common/inventory/container/slot/IVirtualSlot
+       4: ifeq          158
+       7: aload_1
+       8: checkcast     #579                // class mekanism/common/inventory/container/slot/IVirtualSlot
+      11: astore        6
+      13: aload_0
+      14: aload         6
+      16: invokevirtual #587                // Method isVirtualSlotAvailable:(Lmekanism/common/inventory/container/slot/IVirtualSlot;)Z
+      19: ifeq          156
+      22: aload         6
+      24: invokeinterface #591,  1          // InterfaceMethod mekanism/common/inventory/container/slot/IVirtualSlot.getActualX:()I
+      29: istore        7
+      31: aload         6
+      33: invokeinterface #594,  1          // InterfaceMethod mekanism/common/inventory/container/slot/IVirtualSlot.getActualY:()I
+      38: istore        8
+      40: aload_0
+      41: iload         7
+      43: iload         8
+      45: bipush        16
+      47: bipush        16
+      49: dload_2
+      50: dload         4
+      52: invokespecial #597                // Method mekanism/client/gui/VirtualSlotContainerScreen.isHovering:(IIIIDD)Z
+      55: ifeq          156
+      58: aload_0
+      59: dload_2
+      60: dload         4
+      62: invokevirtual #313                // Method getWindowHovering:(DD)Lmekanism/client/gui/element/window/GuiWindow;
+      65: astore        9
+      67: aload         9
+      69: ifnonnull     84
+      72: aload_0
+      73: aconst_null
+      74: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      77: dload_2
+      78: dload         4
+      80: invokevirtual #601                // Method overNoButtons:(Lmekanism/client/gui/element/window/GuiWindow;DD)Z
+      83: ireturn
+      84: aload         9
+      86: invokevirtual #605                // Method mekanism/client/gui/element/window/GuiWindow.children:()Ljava/util/List;
+      89: invokeinterface #83,  1           // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      94: astore        10
+      96: aload         10
+      98: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+     103: ifeq          156
+     106: aload         10
+     108: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     113: checkcast     #100                // class mekanism/client/gui/element/GuiElement
+     116: astore        11
+     118: aload         11
+     120: instanceof    #606                // class mekanism/client/gui/element/slot/GuiVirtualSlot
+     123: ifeq          153
+     126: aload         11
+     128: checkcast     #606                // class mekanism/client/gui/element/slot/GuiVirtualSlot
+     131: astore        12
+     133: aload         12
+     135: aload         6
+     137: invokevirtual #608                // Method mekanism/client/gui/element/slot/GuiVirtualSlot.isElementForSlot:(Lmekanism/common/inventory/container/slot/IVirtualSlot;)Z
+     140: ifeq          153
+     143: aload_0
+     144: aload         9
+     146: dload_2
+     147: dload         4
+     149: invokevirtual #601                // Method overNoButtons:(Lmekanism/client/gui/element/window/GuiWindow;DD)Z
+     152: ireturn
+     153: goto          96
+     156: iconst_0
+     157: ireturn
+     158: aload_0
+     159: aload_1
+     160: getfield      #581                // Field net/minecraft/world/inventory/Slot.x:I
+     163: aload_1
+     164: getfield      #584                // Field net/minecraft/world/inventory/Slot.y:I
+     167: bipush        16
+     169: bipush        16
+     171: dload_2
+     172: dload         4
+     174: invokevirtual #611                // Method isHovering:(IIIIDD)Z
+     177: ireturn
+
+  protected boolean isHovering(int, int, int, int, double, double);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: iload_2
+       3: iload_3
+       4: iload         4
+       6: dload         5
+       8: dload         7
+      10: invokespecial #597                // Method mekanism/client/gui/VirtualSlotContainerScreen.isHovering:(IIIIDD)Z
+      13: ifeq          46
+      16: aload_0
+      17: dload         5
+      19: dload         7
+      21: invokevirtual #313                // Method getWindowHovering:(DD)Lmekanism/client/gui/element/window/GuiWindow;
+      24: ifnonnull     46
+      27: aload_0
+      28: aconst_null
+      29: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      32: dload         5
+      34: dload         7
+      36: invokevirtual #601                // Method overNoButtons:(Lmekanism/client/gui/element/window/GuiWindow;DD)Z
+      39: ifeq          46
+      42: iconst_1
+      43: goto          47
+      46: iconst_0
+      47: ireturn
+
+  protected void addSlots();
+    Code:
+       0: aload_0
+       1: getfield      #563                // Field menu:Lnet/minecraft/world/inventory/AbstractContainerMenu;
+       4: getfield      #567                // Field net/minecraft/world/inventory/AbstractContainerMenu.slots:Lnet/minecraft/core/NonNullList;
+       7: invokevirtual #623                // Method net/minecraft/core/NonNullList.size:()I
+      10: istore_1
+      11: iconst_0
+      12: istore_2
+      13: iload_2
+      14: iload_1
+      15: if_icmpge     265
+      18: aload_0
+      19: getfield      #563                // Field menu:Lnet/minecraft/world/inventory/AbstractContainerMenu;
+      22: getfield      #567                // Field net/minecraft/world/inventory/AbstractContainerMenu.slots:Lnet/minecraft/core/NonNullList;
+      25: iload_2
+      26: invokevirtual #624                // Method net/minecraft/core/NonNullList.get:(I)Ljava/lang/Object;
+      29: checkcast     #574                // class net/minecraft/world/inventory/Slot
+      32: astore_3
+      33: aload_3
+      34: instanceof    #625                // class mekanism/common/inventory/container/slot/InventoryContainerSlot
+      37: ifeq          231
+      40: aload_3
+      41: checkcast     #625                // class mekanism/common/inventory/container/slot/InventoryContainerSlot
+      44: astore        4
+      46: aload         4
+      48: invokevirtual #627                // Method mekanism/common/inventory/container/slot/InventoryContainerSlot.getSlotType:()Lmekanism/common/inventory/container/slot/ContainerSlotType;
+      51: astore        5
+      53: aload_0
+      54: aload         4
+      56: invokevirtual #631                // Method findDataType:(Lmekanism/common/inventory/container/slot/InventoryContainerSlot;)Lmekanism/common/tile/component/config/DataType;
+      59: astore        6
+      61: aload         6
+      63: ifnull        76
+      66: aload         6
+      68: invokestatic  #635                // Method mekanism/client/gui/element/slot/SlotType.get:(Lmekanism/common/tile/component/config/DataType;)Lmekanism/client/gui/element/slot/SlotType;
+      71: astore        7
+      73: goto          145
+      76: aload         5
+      78: getstatic     #640                // Field mekanism/common/inventory/container/slot/ContainerSlotType.INPUT:Lmekanism/common/inventory/container/slot/ContainerSlotType;
+      81: if_acmpeq     100
+      84: aload         5
+      86: getstatic     #646                // Field mekanism/common/inventory/container/slot/ContainerSlotType.OUTPUT:Lmekanism/common/inventory/container/slot/ContainerSlotType;
+      89: if_acmpeq     100
+      92: aload         5
+      94: getstatic     #649                // Field mekanism/common/inventory/container/slot/ContainerSlotType.EXTRA:Lmekanism/common/inventory/container/slot/ContainerSlotType;
+      97: if_acmpne     108
+     100: getstatic     #652                // Field mekanism/client/gui/element/slot/SlotType.NORMAL:Lmekanism/client/gui/element/slot/SlotType;
+     103: astore        7
+     105: goto          145
+     108: aload         5
+     110: getstatic     #656                // Field mekanism/common/inventory/container/slot/ContainerSlotType.POWER:Lmekanism/common/inventory/container/slot/ContainerSlotType;
+     113: if_acmpne     124
+     116: getstatic     #659                // Field mekanism/client/gui/element/slot/SlotType.POWER:Lmekanism/client/gui/element/slot/SlotType;
+     119: astore        7
+     121: goto          145
+     124: aload         5
+     126: getstatic     #661                // Field mekanism/common/inventory/container/slot/ContainerSlotType.NORMAL:Lmekanism/common/inventory/container/slot/ContainerSlotType;
+     129: if_acmpeq     140
+     132: aload         5
+     134: getstatic     #663                // Field mekanism/common/inventory/container/slot/ContainerSlotType.VALIDITY:Lmekanism/common/inventory/container/slot/ContainerSlotType;
+     137: if_acmpne     259
+     140: getstatic     #652                // Field mekanism/client/gui/element/slot/SlotType.NORMAL:Lmekanism/client/gui/element/slot/SlotType;
+     143: astore        7
+     145: new           #666                // class mekanism/client/gui/element/slot/GuiSlot
+     148: dup
+     149: aload         7
+     151: aload_0
+     152: aload_3
+     153: getfield      #581                // Field net/minecraft/world/inventory/Slot.x:I
+     156: iconst_1
+     157: isub
+     158: aload_3
+     159: getfield      #584                // Field net/minecraft/world/inventory/Slot.y:I
+     162: iconst_1
+     163: isub
+     164: invokespecial #668                // Method mekanism/client/gui/element/slot/GuiSlot."<init>":(Lmekanism/client/gui/element/slot/SlotType;Lmekanism/client/gui/IGuiWrapper;II)V
+     167: astore        8
+     169: aload         4
+     171: aload         8
+     173: invokevirtual #671                // Method mekanism/common/inventory/container/slot/InventoryContainerSlot.addWarnings:(Lmekanism/common/inventory/warning/ISupportsWarning;)V
+     176: aload         4
+     178: invokevirtual #675                // Method mekanism/common/inventory/container/slot/InventoryContainerSlot.getSlotOverlay:()Lmekanism/common/inventory/container/slot/SlotOverlay;
+     181: astore        9
+     183: aload         9
+     185: ifnull        196
+     188: aload         8
+     190: aload         9
+     192: invokevirtual #679                // Method mekanism/client/gui/element/slot/GuiSlot.with:(Lmekanism/common/inventory/container/slot/SlotOverlay;)Lmekanism/client/gui/element/slot/GuiSlot;
+     195: pop
+     196: aload         5
+     198: getstatic     #663                // Field mekanism/common/inventory/container/slot/ContainerSlotType.VALIDITY:Lmekanism/common/inventory/container/slot/ContainerSlotType;
+     201: if_acmpne     221
+     204: iload_2
+     205: istore        10
+     207: aload         8
+     209: aload_0
+     210: iload         10
+     212: invokedynamic #683,  0            // InvokeDynamic #9:get:(Lmekanism/client/gui/GuiMekanism;I)Ljava/util/function/Supplier;
+     217: invokevirtual #686                // Method mekanism/client/gui/element/slot/GuiSlot.validity:(Ljava/util/function/Supplier;)Lmekanism/client/gui/element/slot/GuiSlot;
+     220: pop
+     221: aload_0
+     222: aload         8
+     224: invokevirtual #110                // Method addRenderableWidget:(Lmekanism/client/gui/element/GuiElement;)Lmekanism/client/gui/element/GuiElement;
+     227: pop
+     228: goto          259
+     231: aload_0
+     232: new           #666                // class mekanism/client/gui/element/slot/GuiSlot
+     235: dup
+     236: getstatic     #652                // Field mekanism/client/gui/element/slot/SlotType.NORMAL:Lmekanism/client/gui/element/slot/SlotType;
+     239: aload_0
+     240: aload_3
+     241: getfield      #581                // Field net/minecraft/world/inventory/Slot.x:I
+     244: iconst_1
+     245: isub
+     246: aload_3
+     247: getfield      #584                // Field net/minecraft/world/inventory/Slot.y:I
+     250: iconst_1
+     251: isub
+     252: invokespecial #668                // Method mekanism/client/gui/element/slot/GuiSlot."<init>":(Lmekanism/client/gui/element/slot/SlotType;Lmekanism/client/gui/IGuiWrapper;II)V
+     255: invokevirtual #110                // Method addRenderableWidget:(Lmekanism/client/gui/element/GuiElement;)Lmekanism/client/gui/element/GuiElement;
+     258: pop
+     259: iinc          2, 1
+     262: goto          13
+     265: return
+
+  protected mekanism.common.tile.component.config.DataType findDataType(mekanism.common.inventory.container.slot.InventoryContainerSlot);
+    Code:
+       0: aload_0
+       1: getfield      #563                // Field menu:Lnet/minecraft/world/inventory/AbstractContainerMenu;
+       4: astore        4
+       6: aload         4
+       8: instanceof    #690                // class mekanism/common/inventory/container/tile/MekanismTileContainer
+      11: ifeq          51
+      14: aload         4
+      16: checkcast     #690                // class mekanism/common/inventory/container/tile/MekanismTileContainer
+      19: astore_2
+      20: aload_2
+      21: invokevirtual #692                // Method mekanism/common/inventory/container/tile/MekanismTileContainer.getTileEntity:()Lmekanism/common/tile/base/TileEntityMekanism;
+      24: astore        4
+      26: aload         4
+      28: instanceof    #696                // class mekanism/common/tile/interfaces/ISideConfiguration
+      31: ifeq          51
+      34: aload         4
+      36: checkcast     #696                // class mekanism/common/tile/interfaces/ISideConfiguration
+      39: astore_3
+      40: aload_3
+      41: aload_1
+      42: invokevirtual #698                // Method mekanism/common/inventory/container/slot/InventoryContainerSlot.getInventorySlot:()Lmekanism/api/inventory/IInventorySlot;
+      45: invokeinterface #702,  2          // InterfaceMethod mekanism/common/tile/interfaces/ISideConfiguration.getActiveDataType:(Ljava/lang/Object;)Lmekanism/common/tile/component/config/DataType;
+      50: areturn
+      51: aconst_null
+      52: areturn
+
+  protected net.minecraft.world.item.ItemStack checkValidity(int);
+    Code:
+       0: getstatic     #706                // Field net/minecraft/world/item/ItemStack.EMPTY:Lnet/minecraft/world/item/ItemStack;
+       3: areturn
+
+  protected void renderBg(net.minecraft.client.gui.GuiGraphics, float, int, int);
+    Code:
+       0: aload_1
+       1: invokestatic  #712                // Method mekanism/client/render/MekanismRenderer.resetColor:(Lnet/minecraft/client/gui/GuiGraphics;)V
+       4: aload_0
+       5: invokevirtual #157                // Method getXSize:()I
+       8: bipush        8
+      10: if_icmplt     22
+      13: aload_0
+      14: invokevirtual #715                // Method getYSize:()I
+      17: bipush        8
+      19: if_icmpge     41
+      22: getstatic     #718                // Field mekanism/common/Mekanism.logger:Lorg/slf4j/Logger;
+      25: ldc_w         #724                // String Gui: {}, was too small to draw the background of. Unable to draw a background for a gui smaller than 8 by 8.
+      28: aload_0
+      29: invokevirtual #370                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+      32: invokevirtual #726                // Method java/lang/Class.getSimpleName:()Ljava/lang/String;
+      35: invokeinterface #731,  3          // InterfaceMethod org/slf4j/Logger.warn:(Ljava/lang/String;Ljava/lang/Object;)V
+      40: return
+      41: aload_1
+      42: getstatic     #737                // Field BASE_BACKGROUND:Lnet/minecraft/resources/ResourceLocation;
+      45: iconst_4
+      46: iconst_4
+      47: aload_0
+      48: getfield      #343                // Field leftPos:I
+      51: aload_0
+      52: getfield      #346                // Field topPos:I
+      55: aload_0
+      56: getfield      #741                // Field imageWidth:I
+      59: aload_0
+      60: getfield      #744                // Field imageHeight:I
+      63: sipush        256
+      66: sipush        256
+      69: invokestatic  #747                // Method mekanism/client/gui/GuiUtils.renderBackgroundTexture:(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/ResourceLocation;IIIIIIII)V
+      72: return
+
+  public net.minecraft.client.gui.Font font();
+    Code:
+       0: aload_0
+       1: getfield      #457                // Field font:Lnet/minecraft/client/gui/Font;
+       4: areturn
+
+  public boolean currentlyQuickCrafting();
+    Code:
+       0: aload_0
+       1: getfield      #751                // Field isQuickCrafting:Z
+       4: ifeq          23
+       7: aload_0
+       8: getfield      #754                // Field quickCraftSlots:Ljava/util/Set;
+      11: invokeinterface #758,  1          // InterfaceMethod java/util/Set.isEmpty:()Z
+      16: ifne          23
+      19: iconst_1
+      20: goto          24
+      23: iconst_0
+      24: ireturn
+
+  public void addWindow(mekanism.client.gui.element.window.GuiWindow);
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: invokevirtual #485                // Method mekanism/common/lib/collection/LRU.peek:()Ljava/lang/Object;
+       7: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      10: astore_2
+      11: aload_2
+      12: ifnull        19
+      15: aload_2
+      16: invokevirtual #504                // Method mekanism/client/gui/element/window/GuiWindow.onFocusLost:()V
+      19: aload_0
+      20: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+      23: aload_1
+      24: invokevirtual #761                // Method mekanism/common/lib/collection/LRU.add:(Ljava/lang/Object;)Z
+      27: pop
+      28: aload_1
+      29: invokevirtual #511                // Method mekanism/client/gui/element/window/GuiWindow.onFocused:()V
+      32: return
+
+  public void removeWindow(mekanism.client.gui.element.window.GuiWindow);
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: invokevirtual #75                 // Method mekanism/common/lib/collection/LRU.isEmpty:()Z
+       7: ifne          70
+      10: aload_0
+      11: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+      14: invokevirtual #230                // Method mekanism/common/lib/collection/LRU.head:()Ljava/lang/Object;
+      17: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      20: astore_2
+      21: aload_0
+      22: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+      25: aload_1
+      26: invokevirtual #762                // Method mekanism/common/lib/collection/LRU.remove:(Ljava/lang/Object;)Z
+      29: pop
+      30: aload_1
+      31: aload_2
+      32: if_acmpne     70
+      35: aload_1
+      36: invokevirtual #504                // Method mekanism/client/gui/element/window/GuiWindow.onFocusLost:()V
+      39: aload_0
+      40: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+      43: invokevirtual #485                // Method mekanism/common/lib/collection/LRU.peek:()Ljava/lang/Object;
+      46: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      49: astore_3
+      50: aload_3
+      51: ifnonnull     61
+      54: aload_0
+      55: invokevirtual #765                // Method lastWindowRemoved:()V
+      58: goto          65
+      61: aload_3
+      62: invokevirtual #511                // Method mekanism/client/gui/element/window/GuiWindow.onFocused:()V
+      65: aload_0
+      66: aload_3
+      67: invokevirtual #380                // Method setFocused:(Lnet/minecraft/client/gui/components/events/GuiEventListener;)V
+      70: return
+
+  protected void lastWindowRemoved();
+    Code:
+       0: aload_0
+       1: getfield      #563                // Field menu:Lnet/minecraft/world/inventory/AbstractContainerMenu;
+       4: astore_2
+       5: aload_2
+       6: instanceof    #768                // class mekanism/common/inventory/container/MekanismContainer
+       9: ifeq          22
+      12: aload_2
+      13: checkcast     #768                // class mekanism/common/inventory/container/MekanismContainer
+      16: astore_1
+      17: aload_1
+      18: aconst_null
+      19: invokevirtual #770                // Method mekanism/common/inventory/container/MekanismContainer.setSelectedWindow:(Lmekanism/common/inventory/container/SelectedWindowData;)V
+      22: return
+
+  public void setSelectedWindow(mekanism.common.inventory.container.SelectedWindowData);
+    Code:
+       0: aload_0
+       1: getfield      #563                // Field menu:Lnet/minecraft/world/inventory/AbstractContainerMenu;
+       4: astore_3
+       5: aload_3
+       6: instanceof    #768                // class mekanism/common/inventory/container/MekanismContainer
+       9: ifeq          22
+      12: aload_3
+      13: checkcast     #768                // class mekanism/common/inventory/container/MekanismContainer
+      16: astore_2
+      17: aload_2
+      18: aload_1
+      19: invokevirtual #770                // Method mekanism/common/inventory/container/MekanismContainer.setSelectedWindow:(Lmekanism/common/inventory/container/SelectedWindowData;)V
+      22: return
+
+  public mekanism.client.gui.element.window.GuiWindow getWindowHovering(double, double);
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: invokevirtual #352                // Method mekanism/common/lib/collection/LRU.iterator:()Lmekanism/common/lib/collection/LRU$LRUIterator;
+       7: astore        5
+       9: aload         5
+      11: invokeinterface #89,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          47
+      19: aload         5
+      21: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      26: checkcast     #233                // class mekanism/client/gui/element/window/GuiWindow
+      29: astore        6
+      31: aload         6
+      33: dload_1
+      34: dload_3
+      35: invokevirtual #774                // Method mekanism/client/gui/element/window/GuiWindow.isMouseOver:(DD)Z
+      38: ifeq          44
+      41: aload         6
+      43: areturn
+      44: goto          9
+      47: aconst_null
+      48: areturn
+
+  public java.util.Collection<mekanism.client.gui.element.window.GuiWindow> getWindows();
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: areturn
+
+  public mekanism.common.lib.collection.LRU<mekanism.client.gui.element.window.GuiWindow>.LRUIterator getWindowsDescendingIterator();
+    Code:
+       0: aload_0
+       1: getfield      #12                 // Field windows:Lmekanism/common/lib/collection/LRU;
+       4: invokevirtual #775                // Method mekanism/common/lib/collection/LRU.descendingIterator:()Lmekanism/common/lib/collection/LRU$LRUIterator;
+       7: areturn
+
+  static {};
+    Code:
+       0: getstatic     #784                // Field mekanism/common/util/MekanismUtils$ResourceType.GUI:Lmekanism/common/util/MekanismUtils$ResourceType;
+       3: ldc_w         #787                // String base.png
+       6: invokestatic  #214                // Method mekanism/common/util/MekanismUtils.getResource:(Lmekanism/common/util/MekanismUtils$ResourceType;Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;
+       9: putstatic     #737                // Field BASE_BACKGROUND:Lnet/minecraft/resources/ResourceLocation;
+      12: getstatic     #784                // Field mekanism/common/util/MekanismUtils$ResourceType.GUI:Lmekanism/common/util/MekanismUtils$ResourceType;
+      15: ldc_w         #789                // String shadow.png
+      18: invokestatic  #214                // Method mekanism/common/util/MekanismUtils.getResource:(Lmekanism/common/util/MekanismUtils$ResourceType;Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;
+      21: putstatic     #791                // Field SHADOW:Lnet/minecraft/resources/ResourceLocation;
+      24: getstatic     #784                // Field mekanism/common/util/MekanismUtils$ResourceType.GUI:Lmekanism/common/util/MekanismUtils$ResourceType;
+      27: ldc_w         #794                // String blur.png
+      30: invokestatic  #214                // Method mekanism/common/util/MekanismUtils.getResource:(Lmekanism/common/util/MekanismUtils$ResourceType;Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;
+      33: putstatic     #796                // Field BLUR:Lnet/minecraft/resources/ResourceLocation;
+      36: return
+}

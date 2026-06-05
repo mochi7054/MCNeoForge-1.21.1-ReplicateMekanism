@@ -1,0 +1,134 @@
+=== javap mekanism.common.registration.impl.TileEntityTypeDeferredRegister ===
+Compiled from "TileEntityTypeDeferredRegister.java"
+public class mekanism.common.registration.impl.TileEntityTypeDeferredRegister extends mekanism.common.registration.MekanismDeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> {
+  public mekanism.common.registration.impl.TileEntityTypeDeferredRegister(java.lang.String);
+    Code:
+       0: aload_0
+       1: getstatic     #1                  // Field net/minecraft/core/registries/Registries.BLOCK_ENTITY_TYPE:Lnet/minecraft/resources/ResourceKey;
+       4: aload_1
+       5: invokedynamic #7,  0              // InvokeDynamic #0:apply:()Ljava/util/function/Function;
+      10: invokespecial #11                 // Method mekanism/common/registration/MekanismDeferredRegister."<init>":(Lnet/minecraft/resources/ResourceKey;Ljava/lang/String;Ljava/util/function/Function;)V
+      13: return
+
+  public <BE extends mekanism.common.tile.base.TileEntityMekanism> mekanism.common.registration.impl.TileEntityTypeDeferredRegister$BlockEntityTypeBuilder<BE> mekBuilder(net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.block.Block, ?>, net.minecraft.world.level.block.entity.BlockEntityType$BlockEntitySupplier<? extends BE>);
+    Code:
+       0: aload_1
+       1: invokedynamic #17,  0             // InvokeDynamic #1:getAsBoolean:(Lnet/neoforged/neoforge/registries/DeferredHolder;)Ljava/util/function/BooleanSupplier;
+       6: astore_3
+       7: aload_0
+       8: aload_1
+       9: aload_2
+      10: invokevirtual #21                 // Method builder:(Lnet/neoforged/neoforge/registries/DeferredHolder;Lnet/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier;)Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder;
+      13: getstatic     #27                 // Field mekanism/api/security/IBlockSecurityUtils.INSTANCE:Lmekanism/api/security/IBlockSecurityUtils;
+      16: invokeinterface #33,  1           // InterfaceMethod mekanism/api/security/IBlockSecurityUtils.ownerCapability:()Lnet/neoforged/neoforge/capabilities/BlockCapability;
+      21: aload_3
+      22: invokevirtual #37                 // Method mekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder.withSimple:(Lnet/neoforged/neoforge/capabilities/BlockCapability;Ljava/util/function/BooleanSupplier;)Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder;
+      25: getstatic     #27                 // Field mekanism/api/security/IBlockSecurityUtils.INSTANCE:Lmekanism/api/security/IBlockSecurityUtils;
+      28: invokeinterface #43,  1           // InterfaceMethod mekanism/api/security/IBlockSecurityUtils.securityCapability:()Lnet/neoforged/neoforge/capabilities/BlockCapability;
+      33: aload_3
+      34: invokevirtual #37                 // Method mekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder.withSimple:(Lnet/neoforged/neoforge/capabilities/BlockCapability;Ljava/util/function/BooleanSupplier;)Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder;
+      37: getstatic     #46                 // Field mekanism/common/capabilities/Capabilities.CHEMICAL:Lmekanism/common/capabilities/MultiTypeCapability;
+      40: invokevirtual #52                 // Method mekanism/common/capabilities/MultiTypeCapability.block:()Lnet/neoforged/neoforge/capabilities/BlockCapability;
+      43: getstatic     #57                 // Field mekanism/common/tile/base/CapabilityTileEntity.CHEMICAL_HANDLER_PROVIDER:Lnet/neoforged/neoforge/capabilities/ICapabilityProvider;
+      46: invokevirtual #63                 // Method mekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder.with:(Lnet/neoforged/neoforge/capabilities/BlockCapability;Lnet/neoforged/neoforge/capabilities/ICapabilityProvider;)Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder;
+      49: getstatic     #67                 // Field mekanism/common/capabilities/Capabilities.HEAT:Lnet/neoforged/neoforge/capabilities/BlockCapability;
+      52: getstatic     #71                 // Field mekanism/common/tile/base/CapabilityTileEntity.HEAT_HANDLER_PROVIDER:Lnet/neoforged/neoforge/capabilities/ICapabilityProvider;
+      55: invokevirtual #63                 // Method mekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder.with:(Lnet/neoforged/neoforge/capabilities/BlockCapability;Lnet/neoforged/neoforge/capabilities/ICapabilityProvider;)Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder;
+      58: getstatic     #74                 // Field mekanism/common/capabilities/Capabilities.ITEM:Lmekanism/common/capabilities/MultiTypeCapability;
+      61: invokevirtual #52                 // Method mekanism/common/capabilities/MultiTypeCapability.block:()Lnet/neoforged/neoforge/capabilities/BlockCapability;
+      64: getstatic     #77                 // Field mekanism/common/tile/base/CapabilityTileEntity.ITEM_HANDLER_PROVIDER:Lnet/neoforged/neoforge/capabilities/ICapabilityProvider;
+      67: invokevirtual #63                 // Method mekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder.with:(Lnet/neoforged/neoforge/capabilities/BlockCapability;Lnet/neoforged/neoforge/capabilities/ICapabilityProvider;)Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder;
+      70: getstatic     #80                 // Field mekanism/common/capabilities/Capabilities.FLUID:Lmekanism/common/capabilities/IMultiTypeCapability;
+      73: invokeinterface #84,  1           // InterfaceMethod mekanism/common/capabilities/IMultiTypeCapability.block:()Lnet/neoforged/neoforge/capabilities/BlockCapability;
+      78: getstatic     #87                 // Field mekanism/common/tile/base/CapabilityTileEntity.FLUID_HANDLER_PROVIDER:Lnet/neoforged/neoforge/capabilities/ICapabilityProvider;
+      81: invokevirtual #63                 // Method mekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder.with:(Lnet/neoforged/neoforge/capabilities/BlockCapability;Lnet/neoforged/neoforge/capabilities/ICapabilityProvider;)Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder;
+      84: astore        4
+      86: aload         4
+      88: invokestatic  #90                 // Method mekanism/common/integration/energy/EnergyCompatUtils.addBlockCapabilities:(Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder;)V
+      91: getstatic     #96                 // Field mekanism/common/Mekanism.hooks:Lmekanism/common/integration/MekanismHooks;
+      94: invokevirtual #102                // Method mekanism/common/integration/MekanismHooks.computerCompatEnabled:()Z
+      97: ifeq          111
+     100: aload         4
+     102: aload_1
+     103: invokedynamic #108,  0            // InvokeDynamic #2:getAsBoolean:(Lnet/neoforged/neoforge/registries/DeferredHolder;)Ljava/util/function/BooleanSupplier;
+     108: invokestatic  #109                // Method mekanism/common/integration/computer/ComputerCapabilityHelper.addComputerCapabilities:(Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder;Ljava/util/function/BooleanSupplier;)V
+     111: aload         4
+     113: areturn
+
+  public <BE extends net.minecraft.world.level.block.entity.BlockEntity> mekanism.common.registration.impl.TileEntityTypeDeferredRegister$BlockEntityTypeBuilder<BE> builder(net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.block.Block, ?>, net.minecraft.world.level.block.entity.BlockEntityType$BlockEntitySupplier<? extends BE>);
+    Code:
+       0: new           #38                 // class mekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder
+       3: dup
+       4: aload_0
+       5: aload_1
+       6: aload_2
+       7: invokespecial #115                // Method mekanism/common/registration/impl/TileEntityTypeDeferredRegister$BlockEntityTypeBuilder."<init>":(Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister;Lnet/neoforged/neoforge/registries/DeferredHolder;Lnet/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier;)V
+      10: areturn
+
+  private <BE extends net.minecraft.world.level.block.entity.BlockEntity> mekanism.common.registration.impl.TileEntityTypeRegistryObject<BE> registerMek(java.lang.String, java.util.function.Supplier<? extends net.minecraft.world.level.block.entity.BlockEntityType<BE>>);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: invokespecial #118                // Method mekanism/common/registration/MekanismDeferredRegister.register:(Ljava/lang/String;Ljava/util/function/Supplier;)Lmekanism/common/registration/MekanismDeferredHolder;
+       6: checkcast     #122                // class mekanism/common/registration/impl/TileEntityTypeRegistryObject
+       9: areturn
+
+  public void register(net.neoforged.bus.api.IEventBus);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #124                // Method mekanism/common/registration/MekanismDeferredRegister.register:(Lnet/neoforged/bus/api/IEventBus;)V
+       5: aload_1
+       6: aload_0
+       7: invokedynamic #127,  0            // InvokeDynamic #3:accept:(Lmekanism/common/registration/impl/TileEntityTypeDeferredRegister;)Ljava/util/function/Consumer;
+      12: invokeinterface #131,  2          // InterfaceMethod net/neoforged/bus/api/IEventBus.addListener:(Ljava/util/function/Consumer;)V
+      17: return
+
+  private void registerCapabilities(net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent);
+    Code:
+       0: aload_0
+       1: invokevirtual #137                // Method getEntries:()Ljava/util/Collection;
+       4: invokeinterface #141,  1          // InterfaceMethod java/util/Collection.iterator:()Ljava/util/Iterator;
+       9: astore_2
+      10: aload_2
+      11: invokeinterface #147,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          70
+      19: aload_2
+      20: invokeinterface #152,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      25: checkcast     #156                // class net/minecraft/core/Holder
+      28: astore_3
+      29: aload_3
+      30: instanceof    #122                // class mekanism/common/registration/impl/TileEntityTypeRegistryObject
+      33: ifeq          51
+      36: aload_3
+      37: checkcast     #122                // class mekanism/common/registration/impl/TileEntityTypeRegistryObject
+      40: astore        4
+      42: aload         4
+      44: aload_1
+      45: invokevirtual #158                // Method mekanism/common/registration/impl/TileEntityTypeRegistryObject.registerCapabilityProviders:(Lnet/neoforged/neoforge/capabilities/RegisterCapabilitiesEvent;)V
+      48: goto          67
+      51: getstatic     #162                // Field net/neoforged/fml/loading/FMLEnvironment.production:Z
+      54: ifne          67
+      57: new           #168                // class java/lang/IllegalStateException
+      60: dup
+      61: ldc           #170                // String Expected entry to be a TileEntityTypeRegistryObject
+      63: invokespecial #172                // Method java/lang/IllegalStateException."<init>":(Ljava/lang/String;)V
+      66: athrow
+      67: goto          10
+      70: return
+
+  private static boolean lambda$mekBuilder$1(net.neoforged.neoforge.registries.DeferredHolder);
+    Code:
+       0: aload_0
+       1: ldc           #175                // class mekanism/common/block/attribute/Attributes$AttributeComputerIntegration
+       3: invokestatic  #177                // InterfaceMethod mekanism/common/block/attribute/Attribute.has:(Lnet/minecraft/core/Holder;Ljava/lang/Class;)Z
+       6: ireturn
+
+  private static boolean lambda$mekBuilder$0(net.neoforged.neoforge.registries.DeferredHolder);
+    Code:
+       0: aload_0
+       1: ldc           #183                // class mekanism/common/block/attribute/Attributes$AttributeSecurity
+       3: invokestatic  #177                // InterfaceMethod mekanism/common/block/attribute/Attribute.has:(Lnet/minecraft/core/Holder;Ljava/lang/Class;)Z
+       6: ireturn
+}

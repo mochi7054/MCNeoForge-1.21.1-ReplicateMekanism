@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "replicatemekanism:block/imaginator_side",
+    "down": "replicatemekanism:block/imaginator_bottom",
+    "up": "replicatemekanism:block/imaginator_top",
+    "north": "replicatemekanism:block/imaginator_front",
+    "south": "replicatemekanism:block/imaginator_side",
+    "west": "replicatemekanism:block/imaginator_side",
+    "east": "replicatemekanism:block/imaginator_side"
+  }
+}

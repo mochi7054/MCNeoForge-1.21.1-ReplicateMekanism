@@ -151,6 +151,21 @@ dependencies {
 
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
+tasks.register("inspectMekanismGui") {
+    doLast {
+        def compileClasspath = project.sourceSets.main.compileClasspath.asPath
+        def runJavap = { className ->
+            def outFile = file("javap_guifluidgauge.txt")
+            outFile.text = "=== javap $className ===\n"
+            def proc = new ProcessBuilder("javap", "-c", "-p", "-cp", compileClasspath, className)
+                .redirectErrorStream(true)
+                .start()
+            proc.inputStream.eachLine { outFile.append(it + "\n") }
+            proc.waitFor()
+        }
+        runJavap("mekanism.client.gui.element.gauge.GuiFluidGauge")
+    }
+}
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
@@ -198,6 +213,11 @@ idea {
         downloadJavadoc = true
     }
 }
+
+
+
+
+
 
 
 

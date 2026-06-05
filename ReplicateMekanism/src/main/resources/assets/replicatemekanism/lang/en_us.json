@@ -19,5 +19,18 @@
   "replicatemekanism.configuration.items": "Item List",
   "replicatemekanism.configuration.logDirtBlock": "Log Dirt Block",
   "replicatemekanism.configuration.magicNumberIntroduction": "Magic Number Text",
-  "replicatemekanism.configuration.magicNumber": "Magic Number"
+  "replicatemekanism.configuration.magicNumber": "Magic Number",
+
+  "fluid.replicatemekanism.earth_matter": "Earth Matter",
+  "fluid.replicatemekanism.nether_matter": "Nether Matter",
+  "fluid.replicatemekanism.organic_matter": "Organic Matter",
+  "fluid.replicatemekanism.ender_matter": "Ender Matter",
+  "fluid.replicatemekanism.metallic_matter": "Metallic Matter",
+  "fluid.replicatemekanism.precious_matter": "Precious Matter",
+  "fluid.replicatemekanism.living_matter": "Living Matter",
+  "fluid.replicatemekanism.quantum_matter": "Quantum Matter",
+  
+  "block.replicatemekanism.imaginator": "Imaginator",
+  "container.replicatemekanism.imaginator": "Imaginator",
+  "description.replicatemekanism.imaginator": "Uses energy and matter fluids to solidify items."
 }

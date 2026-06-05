@@ -1,0 +1,101 @@
+=== javap mekanism.common.block.attribute.AttributeSideConfig ===
+Compiled from "AttributeSideConfig.java"
+public final class mekanism.common.block.attribute.AttributeSideConfig extends java.lang.Record implements mekanism.common.block.attribute.Attribute {
+  private final java.util.Set<mekanism.common.lib.transmitter.TransmissionType> supportedTypes;
+
+  public static final mekanism.common.block.attribute.AttributeSideConfig ELECTRIC_MACHINE;
+
+  public static final mekanism.common.block.attribute.AttributeSideConfig ADVANCED_ELECTRIC_MACHINE;
+
+  public mekanism.common.block.attribute.AttributeSideConfig(java.util.Set<mekanism.common.lib.transmitter.TransmissionType>);
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Record."<init>":()V
+       4: aload_0
+       5: aload_1
+       6: putfield      #7                  // Field supportedTypes:Ljava/util/Set;
+       9: return
+
+  public static mekanism.common.block.attribute.AttributeSideConfig create(mekanism.common.lib.transmitter.TransmissionType...);
+    Code:
+       0: aload_0
+       1: arraylength
+       2: ifne          15
+       5: new           #13                 // class java/lang/IllegalArgumentException
+       8: dup
+       9: ldc           #15                 // String Expected at least one supported transmission type
+      11: invokespecial #17                 // Method java/lang/IllegalArgumentException."<init>":(Ljava/lang/String;)V
+      14: athrow
+      15: new           #20                 // class java/util/LinkedHashSet
+      18: dup
+      19: aload_0
+      20: arraylength
+      21: invokespecial #22                 // Method java/util/LinkedHashSet."<init>":(I)V
+      24: astore_1
+      25: aload_1
+      26: aload_0
+      27: invokestatic  #25                 // Method java/util/Collections.addAll:(Ljava/util/Collection;[Ljava/lang/Object;)Z
+      30: pop
+      31: new           #8                  // class mekanism/common/block/attribute/AttributeSideConfig
+      34: dup
+      35: aload_1
+      36: invokespecial #31                 // Method "<init>":(Ljava/util/Set;)V
+      39: areturn
+
+  public final java.lang.String toString();
+    Code:
+       0: aload_0
+       1: invokedynamic #34,  0             // InvokeDynamic #0:toString:(Lmekanism/common/block/attribute/AttributeSideConfig;)Ljava/lang/String;
+       6: areturn
+
+  public final int hashCode();
+    Code:
+       0: aload_0
+       1: invokedynamic #38,  0             // InvokeDynamic #0:hashCode:(Lmekanism/common/block/attribute/AttributeSideConfig;)I
+       6: ireturn
+
+  public final boolean equals(java.lang.Object);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokedynamic #42,  0             // InvokeDynamic #0:equals:(Lmekanism/common/block/attribute/AttributeSideConfig;Ljava/lang/Object;)Z
+       7: ireturn
+
+  public java.util.Set<mekanism.common.lib.transmitter.TransmissionType> supportedTypes();
+    Code:
+       0: aload_0
+       1: getfield      #7                  // Field supportedTypes:Ljava/util/Set;
+       4: areturn
+
+  static {};
+    Code:
+       0: iconst_2
+       1: anewarray     #46                 // class mekanism/common/lib/transmitter/TransmissionType
+       4: dup
+       5: iconst_0
+       6: getstatic     #48                 // Field mekanism/common/lib/transmitter/TransmissionType.ITEM:Lmekanism/common/lib/transmitter/TransmissionType;
+       9: aastore
+      10: dup
+      11: iconst_1
+      12: getstatic     #52                 // Field mekanism/common/lib/transmitter/TransmissionType.ENERGY:Lmekanism/common/lib/transmitter/TransmissionType;
+      15: aastore
+      16: invokestatic  #55                 // Method create:([Lmekanism/common/lib/transmitter/TransmissionType;)Lmekanism/common/block/attribute/AttributeSideConfig;
+      19: putstatic     #59                 // Field ELECTRIC_MACHINE:Lmekanism/common/block/attribute/AttributeSideConfig;
+      22: iconst_3
+      23: anewarray     #46                 // class mekanism/common/lib/transmitter/TransmissionType
+      26: dup
+      27: iconst_0
+      28: getstatic     #48                 // Field mekanism/common/lib/transmitter/TransmissionType.ITEM:Lmekanism/common/lib/transmitter/TransmissionType;
+      31: aastore
+      32: dup
+      33: iconst_1
+      34: getstatic     #63                 // Field mekanism/common/lib/transmitter/TransmissionType.CHEMICAL:Lmekanism/common/lib/transmitter/TransmissionType;
+      37: aastore
+      38: dup
+      39: iconst_2
+      40: getstatic     #52                 // Field mekanism/common/lib/transmitter/TransmissionType.ENERGY:Lmekanism/common/lib/transmitter/TransmissionType;
+      43: aastore
+      44: invokestatic  #55                 // Method create:([Lmekanism/common/lib/transmitter/TransmissionType;)Lmekanism/common/block/attribute/AttributeSideConfig;
+      47: putstatic     #66                 // Field ADVANCED_ELECTRIC_MACHINE:Lmekanism/common/block/attribute/AttributeSideConfig;
+      50: return
+}

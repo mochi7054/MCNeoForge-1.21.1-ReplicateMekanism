@@ -1,0 +1,279 @@
+﻿Starting a Gradle Daemon, 1 busy and 1 incompatible and 7 stopped Daemons could not be reused, use --status for details
+
+> Task :inspectMekanismGui
+=== javap mekanism.common.block.prefab.BlockBase ===
+Compiled from "BlockBase.java"
+public class mekanism.common.block.prefab.BlockBase<TYPE extends mekanism.common.content.blocktype.BlockType> extends mekanism.common.block.BlockMekanism implements mekanism.common.block.interfaces.IHasDescription, mekanism.common.block.interfaces.ITypeBlock {
+  protected final TYPE type;
+
+  private static mekanism.common.content.blocktype.BlockType cacheType;
+
+  public mekanism.common.block.prefab.BlockBase(TYPE, java.util.function.UnaryOperator<net.minecraft.world.level.block.state.BlockBehaviour$Properties>);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: invokestatic  #1                  // Method net/minecraft/world/level/block/state/BlockBehaviour$Properties.of:()Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;
+       6: invokevirtual #7                  // Method net/minecraft/world/level/block/state/BlockBehaviour$Properties.requiresCorrectToolForDrops:()Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;
+       9: invokeinterface #10,  2           // InterfaceMethod java/util/function/UnaryOperator.apply:(Ljava/lang/Object;)Ljava/lang/Object;
+      14: checkcast     #2                  // class net/minecraft/world/level/block/state/BlockBehaviour$Properties
+      17: invokespecial #16                 // Method "<init>":(Lmekanism/common/content/blocktype/BlockType;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V
+      20: return
+
+  public mekanism.common.block.prefab.BlockBase(TYPE, net.minecraft.world.level.block.state.BlockBehaviour$Properties);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: invokestatic  #22                 // Method hack:(Lmekanism/common/content/blocktype/BlockType;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;
+       6: invokespecial #26                 // Method mekanism/common/block/BlockMekanism."<init>":(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V
+       9: aload_0
+      10: aload_1
+      11: putfield      #31                 // Field type:Lmekanism/common/content/blocktype/BlockType;
+      14: return
+
+  private static <TYPE extends mekanism.common.content.blocktype.BlockType> net.minecraft.world.level.block.state.BlockBehaviour$Properties hack(TYPE, net.minecraft.world.level.block.state.BlockBehaviour$Properties);
+    Code:
+       0: aload_0
+       1: putstatic     #35                 // Field cacheType:Lmekanism/common/content/blocktype/BlockType;
+       4: aload_0
+       5: invokevirtual #38                 // Method mekanism/common/content/blocktype/BlockType.getAll:()Ljava/util/Collection;
+       8: invokeinterface #44,  1           // InterfaceMethod java/util/Collection.iterator:()Ljava/util/Iterator;
+      13: astore_2
+      14: aload_2
+      15: invokeinterface #50,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      20: ifeq          43
+      23: aload_2
+      24: invokeinterface #56,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      29: checkcast     #60                 // class mekanism/common/block/attribute/Attribute
+      32: astore_3
+      33: aload_3
+      34: aload_1
+      35: invokeinterface #62,  2           // InterfaceMethod mekanism/common/block/attribute/Attribute.adjustProperties:(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V
+      40: goto          14
+      43: aload_1
+      44: areturn
+
+  public final mekanism.common.content.blocktype.BlockType getType();
+    Code:
+       0: aload_0
+       1: getfield      #31                 // Field type:Lmekanism/common/content/blocktype/BlockType;
+       4: ifnonnull     13
+       7: getstatic     #35                 // Field cacheType:Lmekanism/common/content/blocktype/BlockType;
+      10: goto          17
+      13: aload_0
+      14: getfield      #31                 // Field type:Lmekanism/common/content/blocktype/BlockType;
+      17: areturn
+
+  public mekanism.api.text.ILangEntry getDescription();
+    Code:
+       0: aload_0
+       1: getfield      #31                 // Field type:Lmekanism/common/content/blocktype/BlockType;
+       4: invokevirtual #65                 // Method mekanism/common/content/blocktype/BlockType.getDescription:()Lmekanism/api/text/ILangEntry;
+       7: areturn
+
+  public net.minecraft.network.chat.MutableComponent getName();
+    Code:
+       0: aload_0
+       1: astore_2
+       2: aload_2
+       3: instanceof    #69                 // class mekanism/common/block/interfaces/IColoredBlock
+       6: ifeq          38
+       9: aload_2
+      10: checkcast     #69                 // class mekanism/common/block/interfaces/IColoredBlock
+      13: astore_1
+      14: iconst_2
+      15: anewarray     #71                 // class java/lang/Object
+      18: dup
+      19: iconst_0
+      20: aload_1
+      21: invokeinterface #73,  1           // InterfaceMethod mekanism/common/block/interfaces/IColoredBlock.getColor:()Lmekanism/api/text/EnumColor;
+      26: aastore
+      27: dup
+      28: iconst_1
+      29: aload_0
+      30: invokespecial #77                 // Method mekanism/common/block/BlockMekanism.getName:()Lnet/minecraft/network/chat/MutableComponent;
+      33: aastore
+      34: invokestatic  #81                 // Method mekanism/api/text/TextComponentUtil.build:([Ljava/lang/Object;)Lnet/minecraft/network/chat/MutableComponent;
+      37: areturn
+      38: aload_0
+      39: invokevirtual #87                 // Method builtInRegistryHolder:()Lnet/minecraft/core/Holder$Reference;
+      42: invokestatic  #91                 // InterfaceMethod mekanism/common/block/attribute/Attribute.getBaseTier:(Lnet/minecraft/core/Holder;)Lmekanism/api/tier/BaseTier;
+      45: astore_1
+      46: aload_1
+      47: ifnonnull     55
+      50: aload_0
+      51: invokespecial #77                 // Method mekanism/common/block/BlockMekanism.getName:()Lnet/minecraft/network/chat/MutableComponent;
+      54: areturn
+      55: iconst_2
+      56: anewarray     #71                 // class java/lang/Object
+      59: dup
+      60: iconst_0
+      61: aload_1
+      62: invokevirtual #95                 // Method mekanism/api/tier/BaseTier.getColor:()Lnet/minecraft/network/chat/TextColor;
+      65: aastore
+      66: dup
+      67: iconst_1
+      68: aload_0
+      69: invokespecial #77                 // Method mekanism/common/block/BlockMekanism.getName:()Lnet/minecraft/network/chat/MutableComponent;
+      72: aastore
+      73: invokestatic  #81                 // Method mekanism/api/text/TextComponentUtil.build:([Ljava/lang/Object;)Lnet/minecraft/network/chat/MutableComponent;
+      76: areturn
+
+  public float getExplosionResistance(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos, net.minecraft.world.level.Explosion);
+    Code:
+       0: aload_0
+       1: getfield      #31                 // Field type:Lmekanism/common/content/blocktype/BlockType;
+       4: ldc           #100                // class mekanism/common/block/attribute/Attributes$AttributeCustomResistance
+       6: invokevirtual #102                // Method mekanism/common/content/blocktype/BlockType.get:(Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       9: checkcast     #100                // class mekanism/common/block/attribute/Attributes$AttributeCustomResistance
+      12: astore        5
+      14: aload         5
+      16: ifnonnull     31
+      19: aload_0
+      20: aload_1
+      21: aload_2
+      22: aload_3
+      23: aload         4
+      25: invokespecial #106                // Method mekanism/common/block/BlockMekanism.getExplosionResistance:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;)F
+      28: goto          36
+      31: aload         5
+      33: invokevirtual #110                // Method mekanism/common/block/attribute/Attributes$AttributeCustomResistance.resistance:()F
+      36: freturn
+
+  protected boolean isPathfindable(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.pathfinder.PathComputationType);
+    Code:
+       0: aload_0
+       1: getfield      #31                 // Field type:Lmekanism/common/content/blocktype/BlockType;
+       4: ldc           #114                // class mekanism/common/block/attribute/AttributeCustomShape
+       6: invokevirtual #116                // Method mekanism/common/content/blocktype/BlockType.has:(Ljava/lang/Class;)Z
+       9: ifne          25
+      12: aload_0
+      13: aload_1
+      14: aload_2
+      15: invokespecial #120                // Method mekanism/common/block/BlockMekanism.isPathfindable:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/pathfinder/PathComputationType;)Z
+      18: ifeq          25
+      21: iconst_1
+      22: goto          26
+      25: iconst_0
+      26: ireturn
+
+  public net.minecraft.world.level.pathfinder.PathType getBlockPathType(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos, net.minecraft.world.entity.Mob);
+    Code:
+       0: aload_0
+       1: getfield      #31                 // Field type:Lmekanism/common/content/blocktype/BlockType;
+       4: ldc           #124                // class mekanism/common/block/attribute/Attributes$AttributeCustomPathType
+       6: invokevirtual #102                // Method mekanism/common/content/blocktype/BlockType.get:(Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       9: checkcast     #124                // class mekanism/common/block/attribute/Attributes$AttributeCustomPathType
+      12: astore        5
+      14: aload         5
+      16: ifnull        44
+      19: aload         5
+      21: invokevirtual #126                // Method mekanism/common/block/attribute/Attributes$AttributeCustomPathType.pathCheck:()Lmekanism/common/block/attribute/Attributes$PathCheck;
+      24: aload_1
+      25: aload_2
+      26: aload_3
+      27: aload         4
+      29: invokeinterface #130,  5          // InterfaceMethod mekanism/common/block/attribute/Attributes$PathCheck.getBlockPathType:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Mob;)Lnet/minecraft/world/level/pathfinder/PathType;
+      34: astore        6
+      36: aload         6
+      38: ifnull        44
+      41: aload         6
+      43: areturn
+      44: aload_0
+      45: aload_1
+      46: aload_2
+      47: aload_3
+      48: aload         4
+      50: invokespecial #136                // Method mekanism/common/block/BlockMekanism.getBlockPathType:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Mob;)Lnet/minecraft/world/level/pathfinder/PathType;
+      53: areturn
+
+  protected net.minecraft.world.phys.shapes.VoxelShape getShape(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos, net.minecraft.world.phys.shapes.CollisionContext);
+    Code:
+       0: aload_0
+       1: getfield      #31                 // Field type:Lmekanism/common/content/blocktype/BlockType;
+       4: ldc           #114                // class mekanism/common/block/attribute/AttributeCustomShape
+       6: invokevirtual #102                // Method mekanism/common/content/blocktype/BlockType.get:(Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       9: checkcast     #114                // class mekanism/common/block/attribute/AttributeCustomShape
+      12: astore        5
+      14: aload         5
+      16: ifnull        95
+      19: aload         5
+      21: invokevirtual #137                // Method mekanism/common/block/attribute/AttributeCustomShape.bounds:()[Lnet/minecraft/world/phys/shapes/VoxelShape;
+      24: astore        6
+      26: aload         6
+      28: arraylength
+      29: iconst_1
+      30: if_icmpne     38
+      33: aload         6
+      35: iconst_0
+      36: aaload
+      37: areturn
+      38: aload_0
+      39: getfield      #31                 // Field type:Lmekanism/common/content/blocktype/BlockType;
+      42: ldc           #141                // class mekanism/common/block/attribute/AttributeStateFacing
+      44: invokevirtual #102                // Method mekanism/common/content/blocktype/BlockType.get:(Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+      47: checkcast     #141                // class mekanism/common/block/attribute/AttributeStateFacing
+      50: astore        7
+      52: aload         7
+      54: ifnonnull     61
+      57: iconst_0
+      58: goto          87
+      61: aload         7
+      63: aload_1
+      64: invokevirtual #143                // Method mekanism/common/block/attribute/AttributeStateFacing.getDirection:(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/core/Direction;
+      67: invokevirtual #147                // Method net/minecraft/core/Direction.ordinal:()I
+      70: aload         7
+      72: invokevirtual #153                // Method mekanism/common/block/attribute/AttributeStateFacing.getFacingProperty:()Lnet/minecraft/world/level/block/state/properties/DirectionProperty;
+      75: getstatic     #157                // Field net/minecraft/world/level/block/state/properties/BlockStateProperties.FACING:Lnet/minecraft/world/level/block/state/properties/DirectionProperty;
+      78: if_acmpne     85
+      81: iconst_0
+      82: goto          86
+      85: iconst_2
+      86: isub
+      87: istore        8
+      89: aload         6
+      91: iload         8
+      93: aaload
+      94: areturn
+      95: aload_0
+      96: aload_1
+      97: aload_2
+      98: aload_3
+      99: aload         4
+     101: invokespecial #163                // Method mekanism/common/block/BlockMekanism.getShape:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/shapes/CollisionContext;)Lnet/minecraft/world/phys/shapes/VoxelShape;
+     104: areturn
+
+  protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.Level, net.minecraft.core.BlockPos, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand, net.minecraft.world.phys.BlockHitResult);
+    Code:
+       0: aload         5
+       2: invokevirtual #167                // Method net/minecraft/world/entity/player/Player.isShiftKeyDown:()Z
+       5: ifeq          36
+       8: aload_1
+       9: invokestatic  #172                // Method mekanism/common/util/MekanismUtils.canUseAsWrench:(Lnet/minecraft/world/item/ItemStack;)Z
+      12: ifeq          36
+      15: aload_3
+      16: getfield      #178                // Field net/minecraft/world/level/Level.isClientSide:Z
+      19: ifne          32
+      22: aload_2
+      23: aload_3
+      24: aload         4
+      26: aload         5
+      28: aload_1
+      29: invokestatic  #184                // Method mekanism/common/util/WorldUtils.dismantleBlock:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V
+      32: getstatic     #190                // Field net/minecraft/world/ItemInteractionResult.SUCCESS:Lnet/minecraft/world/ItemInteractionResult;
+      35: areturn
+      36: getstatic     #196                // Field net/minecraft/world/ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION:Lnet/minecraft/world/ItemInteractionResult;
+      39: areturn
+}
+
+[Incubating] Problems report is available at: file:///C:/Users/mochi/.gemini/antigravity/scratch/MCNeoForge-1.21.1-ReplicateMekanism/ReplicateMekanism/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.2.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 9s
+1 actionable task: 1 executed
