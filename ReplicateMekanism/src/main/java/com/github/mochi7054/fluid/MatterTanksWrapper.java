@@ -62,27 +62,17 @@ public class MatterTanksWrapper implements IMatterHandler {
 
     @Override
     public MatterStack drain(MatterStack stack, FluidAction action) {
-        ReplicateMekanism.LOGGER.info("[RMTanksWrapper] drain(MatterStack: {}, action: {}) called for {} tanks", stack.getAmount(), action, this.tanks.size());
         if (stack == null || stack.isEmpty()) return MatterStack.EMPTY;
         MatterStack totalDrained = MatterStack.EMPTY;
         MatterStack target = stack.copy();
         for (int i = 0; i < this.tanks.size(); i++) {
             IMatterTank tank = this.tanks.get(i);
-            ReplicateMekanism.LOGGER.info("[RMTanksWrapper]   Tank {} class: {}, current matter: {}, capacity: {}", 
-                    i, tank.getClass().getName(), 
-                    tank.getMatter() != null ? tank.getMatter().getAmount() : 0,
-                    tank.getCapacity());
-            
             MatterStack drained;
             if (tank instanceof MatterTankComponent component) {
-                ReplicateMekanism.LOGGER.info("[RMTanksWrapper]     Tank is MatterTankComponent. Action: {}", component.getTankAction());
                 drained = component.drainForced(target, action);
             } else {
-                ReplicateMekanism.LOGGER.info("[RMTanksWrapper]     Tank is NOT MatterTankComponent, calling normal drain.");
                 drained = tank.drain(target, action);
             }
-            
-            ReplicateMekanism.LOGGER.info("[RMTanksWrapper]     drained result: {}", drained != null ? drained.getAmount() : "null");
             
             if (drained != null && !drained.isEmpty()) {
                 if (totalDrained.isEmpty()) {
@@ -99,40 +89,28 @@ public class MatterTanksWrapper implements IMatterHandler {
 
     @Override
     public MatterStack drain(double amount, FluidAction action) {
-        ReplicateMekanism.LOGGER.info("[RMTanksWrapper] drain(amount: {}, action: {}) called for {} tanks", amount, action, this.tanks.size());
         if (amount <= 0) return MatterStack.EMPTY;
         MatterStack totalDrained = MatterStack.EMPTY;
         double targetAmount = amount;
         for (int i = 0; i < this.tanks.size(); i++) {
             IMatterTank tank = this.tanks.get(i);
             MatterStack inTank = tank.getMatter();
-            ReplicateMekanism.LOGGER.info("[RMTanksWrapper]   Tank {} class: {}, current matter: {}, capacity: {}", 
-                    i, tank.getClass().getName(), 
-                    inTank != null ? inTank.getAmount() : 0,
-                    tank.getCapacity());
             
             if (inTank == null || inTank.isEmpty()) {
-                ReplicateMekanism.LOGGER.info("[RMTanksWrapper]     Tank is empty, skipping.");
                 continue;
             }
             
             if (!totalDrained.isEmpty() && !totalDrained.getMatterType().equals(inTank.getMatterType())) {
-                ReplicateMekanism.LOGGER.info("[RMTanksWrapper]     Tank matter type {} does not match already drained type {}, skipping.", 
-                        inTank.getMatterType().getName(), totalDrained.getMatterType().getName());
                 continue;
             }
             
             MatterStack toDrain = new MatterStack(inTank.getMatterType(), targetAmount);
             MatterStack drained;
             if (tank instanceof MatterTankComponent component) {
-                ReplicateMekanism.LOGGER.info("[RMTanksWrapper]     Tank is MatterTankComponent. Action: {}", component.getTankAction());
                 drained = component.drainForced(toDrain, action);
             } else {
-                ReplicateMekanism.LOGGER.info("[RMTanksWrapper]     Tank is NOT MatterTankComponent, calling normal drain.");
                 drained = tank.drain(toDrain, action);
             }
-            
-            ReplicateMekanism.LOGGER.info("[RMTanksWrapper]     drained result: {}", drained != null ? drained.getAmount() : "null");
             
             if (drained != null && !drained.isEmpty()) {
                 if (totalDrained.isEmpty()) {

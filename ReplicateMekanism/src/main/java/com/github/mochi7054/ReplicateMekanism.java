@@ -166,7 +166,6 @@ public class ReplicateMekanism {
 
         net.neoforged.neoforge.capabilities.IBlockCapabilityProvider<net.neoforged.neoforge.fluids.capability.IFluidHandler, net.minecraft.core.Direction> blockFluidProvider = (level, pos, state, be, side) -> {
             if (be == null) return null;
-            LOGGER.info("[RMFluidProvider] Querying MATTER_HANDLER for Block at {} on side {}", pos, side);
             var matterHandler = level.getCapability(
                     com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                     pos,
@@ -175,7 +174,6 @@ public class ReplicateMekanism {
                     side
             );
             if (matterHandler == null) {
-                LOGGER.info("[RMFluidProvider]   Side {} was null, trying side-agnostic (null)", side);
                 matterHandler = level.getCapability(
                         com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                         pos,
@@ -185,11 +183,9 @@ public class ReplicateMekanism {
                 );
             }
             if (matterHandler == null) {
-                LOGGER.info("[RMFluidProvider]   MATTER_HANDLER is null, trying fallback to IMatterTanksSupplier");
                 if (be instanceof com.buuz135.replication.api.network.IMatterTanksSupplier supplier) {
                     var tanks = supplier.getTanks();
                     if (tanks != null && !tanks.isEmpty()) {
-                        LOGGER.info("[RMFluidProvider]     Found IMatterTanksSupplier with {} tanks!", tanks.size());
                         @SuppressWarnings("unchecked")
                         java.util.List<com.buuz135.replication.api.matter_fluid.IMatterTank> typedTanks = (java.util.List<com.buuz135.replication.api.matter_fluid.IMatterTank>) (Object) tanks;
                         matterHandler = new com.github.mochi7054.fluid.MatterTanksWrapper(typedTanks);
@@ -197,10 +193,8 @@ public class ReplicateMekanism {
                 }
             }
             if (matterHandler == null) {
-                LOGGER.info("[RMFluidProvider]   MATTER_HANDLER is null!");
                 return null;
             }
-            LOGGER.info("[RMFluidProvider]   Successfully wrapped MATTER_HANDLER!");
             return new com.github.mochi7054.fluid.MatterFluidWrapper(matterHandler);
         };
 
@@ -222,7 +216,6 @@ public class ReplicateMekanism {
                         net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                         matterTankType,
                         (be, side) -> {
-                            LOGGER.info("[RMBEProvider] Querying FluidHandler for MatterTankBE at {} on side {}", be.getBlockPos(), side);
                             return blockFluidProvider.getCapability(be.getLevel(), be.getBlockPos(), be.getBlockState(), be, side);
                         }
                 );
@@ -233,7 +226,6 @@ public class ReplicateMekanism {
                         net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                         creativeMatterTankType,
                         (be, side) -> {
-                            LOGGER.info("[RMBEProvider] Querying FluidHandler for CreativeMatterTankBE at {} on side {}", be.getBlockPos(), side);
                             return blockFluidProvider.getCapability(be.getLevel(), be.getBlockPos(), be.getBlockState(), be, side);
                         }
                 );
@@ -244,7 +236,6 @@ public class ReplicateMekanism {
                         net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                         disintegratorType,
                         (be, side) -> {
-                            LOGGER.info("[RMBEProvider] Querying FluidHandler for DisintegratorBE at {} on side {}", be.getBlockPos(), side);
                             return blockFluidProvider.getCapability(be.getLevel(), be.getBlockPos(), be.getBlockState(), be, side);
                         }
                 );
@@ -255,7 +246,6 @@ public class ReplicateMekanism {
                         net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                         replicatorType,
                         (be, side) -> {
-                            LOGGER.info("[RMBEProvider] Querying FluidHandler for ReplicatorBE at {} on side {}", be.getBlockPos(), side);
                             return blockFluidProvider.getCapability(be.getLevel(), be.getBlockPos(), be.getBlockState(), be, side);
                         }
                 );

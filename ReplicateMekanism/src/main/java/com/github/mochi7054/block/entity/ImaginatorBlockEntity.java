@@ -173,44 +173,8 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         ItemStack inputStack = inputSlot.getStack();
         MatterCompound recipeCompound = null;
 
-        boolean debugTick = (this.ticker % 20 == 0);
-        if (debugTick) {
-            ReplicateMekanism.LOGGER.info("[RMSolidifier] --- DEBUG TICK START ---");
-            ReplicateMekanism.LOGGER.info("[RMSolidifier] Input Stack: {}, empty? {}", inputStack, inputStack.isEmpty());
-            ReplicateMekanism.LOGGER.info("[RMSolidifier] Tanks: earth={}/{}, nether={}/{}, organic={}/{}, ender={}/{}, metallic={}/{}, precious={}/{}, living={}/{}, quantum={}/{}",
-                earthTank.getFluidAmount(), earthTank.getFluid().getTranslationKey(),
-                netherTank.getFluidAmount(), netherTank.getFluid().getTranslationKey(),
-                organicTank.getFluidAmount(), organicTank.getFluid().getTranslationKey(),
-                enderTank.getFluidAmount(), enderTank.getFluid().getTranslationKey(),
-                metallicTank.getFluidAmount(), metallicTank.getFluid().getTranslationKey(),
-                preciousTank.getFluidAmount(), preciousTank.getFluid().getTranslationKey(),
-                livingTank.getFluidAmount(), livingTank.getFluid().getTranslationKey(),
-                quantumTank.getFluidAmount(), quantumTank.getFluid().getTranslationKey());
-            List<BasicFluidTank> tanks = getMatterTanks();
-            for (int i = 0; i < tanks.size(); i++) {
-                BasicFluidTank tank = tanks.get(i);
-                FluidStack sf = tank.getFluid();
-                if (!sf.isEmpty()) {
-                    boolean isMatterFluidType = sf.getFluid().getFluidType() instanceof MatterFluidType;
-                    String typeClassName = sf.getFluid().getFluidType().getClass().getName();
-                    String matterTypeName = "null";
-                    if (isMatterFluidType) {
-                        IMatterType mt = ((MatterFluidType) sf.getFluid().getFluidType()).getMatterType();
-                        if (mt != null) {
-                            matterTypeName = mt.getName();
-                        }
-                    }
-                    ReplicateMekanism.LOGGER.info("[RMSolidifier] Tank {} content: amount={}, typeClass={}, isMatter={}, matterName={}",
-                        i, sf.getAmount(), typeClassName, isMatterFluidType, matterTypeName);
-                }
-            }
-        }
-
         if (canFunction() && !inputStack.isEmpty()) {
             recipeCompound = ReplicationCalculation.getMatterCompound(inputStack);
-            if (debugTick) {
-                ReplicateMekanism.LOGGER.info("[RMSolidifier] Recipe Compound: {}, empty? {}", recipeCompound, recipeCompound == null ? "null" : recipeCompound.getValues().isEmpty());
-            }
 
             if (recipeCompound != null && !recipeCompound.getValues().isEmpty()) {
                 boolean allFluidsAvailable = true;
@@ -230,13 +194,6 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                         }
                     }
                     
-                    if (debugTick) {
-                        ReplicateMekanism.LOGGER.info("[RMSolidifier] Matter Check - type: {}, needed: {}, tank found: {}, stored: {}", 
-                            neededMatterType.getName(), neededAmount, 
-                            matchingTank != null, 
-                            matchingTank != null ? matchingTank.getFluid().getAmount() : 0);
-                    }
-                    
                     if (matchingTank == null || matchingTank.getFluid().getAmount() < neededAmount) {
                         allFluidsAvailable = false;
                         break;
@@ -248,10 +205,6 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                     ItemStack copyStack = inputStack.copy();
                     copyStack.setCount(1);
                     boolean outputCompatible = outputStack.isEmpty() || (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize());
-                    if (debugTick) {
-                        ReplicateMekanism.LOGGER.info("[RMSolidifier] Output slot compatible? {}", outputCompatible);
-                        ReplicateMekanism.LOGGER.info("[RMSolidifier] Energy Check: stored {} >= needed {}", energyContainer.getEnergy(), energyUsage);
-                    }
 
                     if (outputCompatible) {
                         if (energyContainer.getEnergy() >= energyUsage) {
@@ -260,11 +213,6 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                     }
                 }
             }
-        }
-
-        if (debugTick) {
-            ReplicateMekanism.LOGGER.info("[RMSolidifier] canOperate resolved to: {}", canOperate);
-            ReplicateMekanism.LOGGER.info("[RMSolidifier] --- DEBUG TICK END ---");
         }
 
         boolean wasActive = getActive();
