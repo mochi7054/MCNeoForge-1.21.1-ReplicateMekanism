@@ -70,7 +70,7 @@ public class MatterFluidWrapper implements IFluidHandler {
     @Override
     public boolean isFluidValid(int tank, FluidStack stack) {
         IMatterType matterType = getMatterTypeFromFluid(stack.getFluid());
-        if (matterType == com.buuz135.replication.ReplicationRegistry.Matter.EMPTY.get()) {
+        if (matterType.getName().equals(com.buuz135.replication.ReplicationRegistry.Matter.EMPTY.get().getName())) {
             return false;
         }
         return matterHandler.isMatterValid(tank, new MatterStack(matterType, stack.getAmount()));
@@ -79,7 +79,7 @@ public class MatterFluidWrapper implements IFluidHandler {
     @Override
     public int fill(FluidStack stack, FluidAction action) {
         IMatterType matterType = getMatterTypeFromFluid(stack.getFluid());
-        if (matterType == com.buuz135.replication.ReplicationRegistry.Matter.EMPTY.get()) {
+        if (matterType.getName().equals(com.buuz135.replication.ReplicationRegistry.Matter.EMPTY.get().getName())) {
             return 0;
         }
         double filled = matterHandler.fill(new MatterStack(matterType, stack.getAmount()), action);
@@ -89,7 +89,7 @@ public class MatterFluidWrapper implements IFluidHandler {
     @Override
     public FluidStack drain(FluidStack stack, FluidAction action) {
         IMatterType matterType = getMatterTypeFromFluid(stack.getFluid());
-        if (matterType == com.buuz135.replication.ReplicationRegistry.Matter.EMPTY.get()) return FluidStack.EMPTY;
+        if (matterType.getName().equals(com.buuz135.replication.ReplicationRegistry.Matter.EMPTY.get().getName())) return FluidStack.EMPTY;
         MatterStack drained = matterHandler.drain(new MatterStack(matterType, stack.getAmount()), action);
         if (drained == null || drained.isEmpty()) return FluidStack.EMPTY;
         return new FluidStack(stack.getFluid(), (int) Math.round(drained.getAmount()));

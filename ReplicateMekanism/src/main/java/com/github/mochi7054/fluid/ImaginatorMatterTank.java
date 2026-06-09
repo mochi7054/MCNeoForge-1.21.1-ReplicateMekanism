@@ -20,13 +20,11 @@ public class ImaginatorMatterTank implements IMatterTank {
 
     @Override
     public MatterStack getMatter() {
+        IMatterType matterType = MatterFluidWrapper.getMatterTypeFromFluid(matterFluid);
         FluidStack fs = tank.getFluid();
-        if (fs.isEmpty()) return MatterStack.EMPTY;
-        IMatterType matterType = MatterFluidWrapper.getMatterTypeFromFluid(fs.getFluid());
-        if (matterType == com.buuz135.replication.ReplicationRegistry.Matter.EMPTY.get()) {
-            return MatterStack.EMPTY;
-        }
-        return new MatterStack(matterType, fs.getAmount());
+        double amount = fs.isEmpty() ? 0 : fs.getAmount();
+        // Always return a typed stack (even at 0 amount) so BiPredicate type matching works in network transfer
+        return new MatterStack(matterType, amount);
     }
 
     @Override
@@ -43,7 +41,7 @@ public class ImaginatorMatterTank implements IMatterTank {
     public boolean isMatterValid(MatterStack stack) {
         if (stack == null || stack.isEmpty()) return false;
         IMatterType matterType = MatterFluidWrapper.getMatterTypeFromFluid(matterFluid);
-        if (matterType != stack.getMatterType()) return false;
+        if (!matterType.getName().equals(stack.getMatterType().getName())) return false;
         return tank.isFluidValid(new FluidStack(matterFluid, (int) Math.round(stack.getAmount())));
     }
 
@@ -51,7 +49,7 @@ public class ImaginatorMatterTank implements IMatterTank {
     public double fill(MatterStack stack, FluidAction action) {
         if (stack == null || stack.isEmpty()) return 0;
         IMatterType matterType = MatterFluidWrapper.getMatterTypeFromFluid(matterFluid);
-        if (matterType != stack.getMatterType()) return 0;
+        if (!matterType.getName().equals(stack.getMatterType().getName())) return 0;
         return tank.fill(new FluidStack(matterFluid, (int) Math.round(stack.getAmount())), action);
     }
 
@@ -70,7 +68,7 @@ public class ImaginatorMatterTank implements IMatterTank {
     public MatterStack drain(MatterStack stack, FluidAction action) {
         if (stack == null || stack.isEmpty()) return MatterStack.EMPTY;
         IMatterType matterType = MatterFluidWrapper.getMatterTypeFromFluid(matterFluid);
-        if (matterType != stack.getMatterType()) return MatterStack.EMPTY;
+        if (!matterType.getName().equals(stack.getMatterType().getName())) return MatterStack.EMPTY;
         FluidStack drained = tank.drain((int) Math.round(stack.getAmount()), action);
         if (drained.isEmpty()) return MatterStack.EMPTY;
         return new MatterStack(stack.getMatterType(), drained.getAmount());

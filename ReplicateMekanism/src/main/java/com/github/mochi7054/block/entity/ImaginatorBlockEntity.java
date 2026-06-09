@@ -10,8 +10,6 @@ import mekanism.api.Action;
 import mekanism.api.AutomationType;
 import mekanism.api.IContentsListener;
 import mekanism.api.Upgrade;
-import mekanism.api.fluid.IExtendedFluidTank;
-import mekanism.api.inventory.IInventorySlot;
 import mekanism.common.capabilities.energy.MachineEnergyContainer;
 import mekanism.common.capabilities.fluid.BasicFluidTank;
 import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
@@ -42,11 +40,9 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 public class ImaginatorBlockEntity extends TileEntityConfigurableMachine implements MenuProvider {
 
@@ -86,7 +82,13 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
 
     public ImaginatorBlockEntity(BlockPos pos, BlockState state) {
         super(ReplicateMekanism.IMAGINATOR, pos, state);
-        configComponent.setupItemIOConfig(null, outputSlot, energySlot);
+        // ITEM config: no item input (null は内部NPEの可能性ありのでList版を使用)
+        configComponent.setupItemIOConfig(
+            java.util.Collections.emptyList(),   // no item input
+            java.util.Collections.singletonList(outputSlot), // item output
+            energySlot,
+            false
+        );
         
         // Setup fluid config with all 8 tanks
         mekanism.common.tile.component.config.ConfigInfo fluidConfig = configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID);
@@ -186,16 +188,75 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
     }
 
     private void cancelActiveTask() {
-        if (activeCraftingStack != ItemStack.EMPTY && inputSlot != null) {
+        if (!activeCraftingStack.isEmpty() && inputSlot != null) {
             ItemStack inputStack = inputSlot.getStack();
             if (ItemStack.isSameItemSameComponents(inputStack, activeCraftingStack)) {
-                inputSlot.setStack(ItemStack.EMPTY);
+                inputSlot.setStackUnchecked(ItemStack.EMPTY);
             }
         }
         this.activeTask = null;
         this.activeTaskUuid = null;
         this.activeCraftingStack = ItemStack.EMPTY;
         this.operatingTicks = 0;
+    }
+
+    /**
+     * ネットワーク上のSupplier/Holderから各種マターを能動的にpullしてローカルタンクに充填する。
+     * MatterNetwork.update()のBiPredicateに依存しない確実な搬入方式。
+     */
+    private void pullMatterFromNetwork(com.buuz135.replication.network.MatterNetwork network) {
+        // Pull from both pure suppliers and holders (both implement IMatterTanksSupplier)
+        java.util.List<com.hrznstudio.titanium.block_network.element.NetworkElement> sources = new java.util.ArrayList<>();
+        sources.addAll(network.getMatterStacksSuppliers());
+        sources.addAll(network.getMatterStacksHolders());
+        if (sources.isEmpty()) return;
+
+        for (com.hrznstudio.titanium.block_network.element.NetworkElement element : sources) {
+            // Skip self
+            if (element.getPos().equals(worldPosition)) continue;
+
+            net.minecraft.world.level.block.entity.BlockEntity be = level.getBlockEntity(element.getPos());
+            if (!(be instanceof com.buuz135.replication.api.network.IMatterTanksSupplier supplier)) continue;
+
+            for (com.buuz135.replication.api.matter_fluid.IMatterTank sourceTank : supplier.getTanks()) {
+                com.buuz135.replication.api.matter_fluid.MatterStack matter = sourceTank.getMatter();
+                if (matter == null || matter.isEmpty()) continue;
+
+                // Determine the fluid corresponding to this matter type
+                net.minecraft.world.level.material.Fluid targetFluid =
+                    com.github.mochi7054.fluid.MatterFluidWrapper.getFluidFromMatterType(matter.getMatterType());
+                if (targetFluid == net.minecraft.world.level.material.Fluids.EMPTY) continue;
+
+                // Find the local tank that accepts this fluid
+                for (BasicFluidTank localTank : getMatterTanks()) {
+                    int space = localTank.getCapacity() - localTank.getFluidAmount();
+                    if (space <= 0) continue;
+
+                    // Check if this tank accepts the fluid (uses the == validator set in getInitialFluidTanks)
+                    net.neoforged.neoforge.fluids.FluidStack probe =
+                        new net.neoforged.neoforge.fluids.FluidStack(targetFluid, 1);
+                    if (!localTank.isFluidValid(probe)) continue;
+
+                    // How much to transfer
+                    int toTransfer = Math.min(space, (int) Math.ceil(matter.getAmount()));
+                    if (toTransfer <= 0) continue;
+
+                    // Simulate drain from source, then fill + drain execute
+                    com.buuz135.replication.api.matter_fluid.MatterStack simDrain =
+                        sourceTank.drain(toTransfer, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
+                    if (simDrain == null || simDrain.isEmpty() || simDrain.getAmount() <= 0) break;
+
+                    int drainAmt = (int) Math.ceil(simDrain.getAmount());
+                    net.neoforged.neoforge.fluids.FluidStack fillStack =
+                        new net.neoforged.neoforge.fluids.FluidStack(targetFluid, drainAmt);
+                    int filled = localTank.fill(fillStack, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                    if (filled > 0) {
+                        sourceTank.drain(filled, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                    }
+                    break; // Found matching local tank — no need to check others for this source tank
+                }
+            }
+        }
     }
 
     @Override
@@ -205,6 +266,13 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         if (energySlot != null) {
             energySlot.fillContainerOrConvert();
         }
+
+        // タンクに空きがある場合、ネットワークからマターをpull（10tick毎）
+        com.buuz135.replication.network.MatterNetwork pullNetwork = getNetwork();
+        if (pullNetwork != null && this.ticker % 10 == 0) {
+            pullMatterFromNetwork(pullNetwork);
+        }
+
 
         if (activeTask != null && inputSlot != null) {
             ItemStack currentInput = inputSlot.getStack();
@@ -221,6 +289,8 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
 
         boolean canOperate = false;
         ItemStack inputStack = inputSlot.getStack();
+        // sourceStack: the item being replicated (from inputSlot for manual, activeCraftingStack for task)
+        ItemStack sourceStack = activeTask != null ? activeCraftingStack : inputStack;
         MatterCompound recipeCompound = null;
 
         com.buuz135.replication.network.MatterNetwork network = getNetwork();
@@ -248,7 +318,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                 activeTask = task;
                 activeCraftingStack = task.getReplicatingStack();
                 if (inputSlot != null) {
-                    inputSlot.setStack(activeCraftingStack.copyWithCount(1));
+                    inputSlot.setStackUnchecked(activeCraftingStack.copyWithCount(1));
                 }
             } else {
                 cancelActiveTask();
@@ -257,91 +327,84 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         }
 
         if (canFunction()) {
-            if (!inputStack.isEmpty()) {
-                // Manual Replication Mode (higher priority)
-                if (activeTask != null) {
-                    cancelActiveTask();
-                    sendUpdate = true;
-                }
+            if (!inputStack.isEmpty() && activeTask == null) {
+                // Manual Replication Mode (no active network task)
                 recipeCompound = ReplicationCalculation.getMatterCompound(inputStack);
-
-                if (recipeCompound != null && !recipeCompound.getValues().isEmpty()) {
-                    boolean allFluidsAvailable = true;
-                    for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
-                        IMatterType neededMatterType = entry.getKey();
-                        int neededAmount = (int) Math.ceil(entry.getValue().getAmount());
-                        
-                        BasicFluidTank matchingTank = null;
-                        for (BasicFluidTank tank : getMatterTanks()) {
-                            FluidStack storedFluid = tank.getFluid();
-                            if (!storedFluid.isEmpty() && storedFluid.getFluid().getFluidType() instanceof MatterFluidType matterFluidType) {
-                                IMatterType storedMatterType = matterFluidType.getMatterType();
-                                if (storedMatterType != null && storedMatterType.getName().equals(neededMatterType.getName())) {
-                                    matchingTank = tank;
-                                    break;
-                                }
-                            }
-                        }
-                        
-                        if (matchingTank == null || matchingTank.getFluid().getAmount() < neededAmount) {
-                            allFluidsAvailable = false;
-                            break;
-                        }
-                    }
-
-                    if (allFluidsAvailable) {
-                        ItemStack outputStack = outputSlot.getStack();
-                        ItemStack copyStack = inputStack.copy();
-                        copyStack.setCount(1);
-                        boolean outputCompatible = outputStack.isEmpty() || (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize());
-
-                        if (outputCompatible) {
-                            if (energyContainer.getEnergy() >= energyUsage) {
-                                canOperate = true;
-                            }
-                        }
-                    }
-                }
             } else if (network != null && this.ticker % 4 == 0) {
-                // Automatic Replication Network Mode
+                // Automatic Replication Network Mode - task management
                 if (activeTask == null) {
                     ItemStack outputStack = outputSlot.getStack();
-                    // Only fetch new task if output slot can fit at least one replicated item (or is empty)
                     if (outputStack.isEmpty() || outputStack.getCount() < outputStack.getMaxStackSize()) {
-                        com.buuz135.replication.api.task.IReplicationTask task = network.getTaskManager().findTaskForReplicator(getBlockPos(), network);
+                        // findTaskForReplicator の計算が不安定なため直接イテレート
+                        com.buuz135.replication.api.task.IReplicationTask task = null;
+                        for (com.buuz135.replication.api.task.IReplicationTask candidate :
+                                network.getTaskManager().getPendingTasks().values()) {
+                            // canAcceptReplicator(pos, 1): 既にこのposが割当済みでなく、かつ未割当のタスクを取得
+                            if (candidate.canAcceptReplicator(getBlockPos(), 1)) {
+                                task = candidate;
+                                break;
+                            }
+                        }
                         if (task != null) {
                             task.acceptReplicator(getBlockPos());
                             activeTask = task;
                             activeTaskUuid = task.getUuid().toString();
-                            activeCraftingStack = task.getReplicatingStack();
+                            // .copy() でライブ参照によるアイテム不一致を防ぐ
+                            activeCraftingStack = task.getReplicatingStack().copy();
                             if (inputSlot != null) {
-                                inputSlot.setStack(activeCraftingStack.copyWithCount(1));
+                                inputSlot.setStackUnchecked(activeCraftingStack.copyWithCount(1));
                             }
                             network.onTaskValueChanged(task, (net.minecraft.server.level.ServerLevel) level);
                             sendUpdate = true;
                         }
                     }
                 } else {
-                    // Check if task was cancelled or finished
+                    // Check if task was cancelled externally
                     if (!network.getTaskManager().getPendingTasks().containsKey(activeTaskUuid)) {
                         cancelActiveTask();
                         sendUpdate = true;
-                    } else if (!activeTask.getStoredMatterStack().containsKey(getBlockPos().asLong())) {
-                        activeTask.storeMatterStacksFor(level, getBlockPos(), network);
                     }
                 }
             }
-        }
 
-        // Check canOperate for active task
-        if (activeTask != null && activeTask.getStoredMatterStack().containsKey(getBlockPos().asLong())) {
-            // Verify output is still compatible with task target stack
-            ItemStack outputStack = outputSlot.getStack();
-            ItemStack copyStack = activeCraftingStack.copy();
-            copyStack.setCount(1);
-            boolean outputCompatible = outputStack.isEmpty() || (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize());
-            if (outputCompatible && energyContainer.getEnergy() >= energyUsage) {
-                canOperate = true;
+            // For task mode, get compound from the task's target item
+            if (activeTask != null && !activeCraftingStack.isEmpty() && recipeCompound == null) {
+                recipeCompound = ReplicationCalculation.getMatterCompound(activeCraftingStack);
+            }
+
+            // Check if tanks have enough matter (same logic for both modes)
+            if (!sourceStack.isEmpty() && recipeCompound != null && !recipeCompound.getValues().isEmpty()) {
+                boolean allFluidsAvailable = true;
+                for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
+                    IMatterType neededMatterType = entry.getKey();
+                    int neededAmount = (int) Math.ceil(entry.getValue().getAmount());
+
+                    BasicFluidTank matchingTank = null;
+                    for (BasicFluidTank tank : getMatterTanks()) {
+                        FluidStack storedFluid = tank.getFluid();
+                        if (!storedFluid.isEmpty() && storedFluid.getFluid().getFluidType() instanceof MatterFluidType matterFluidType) {
+                            IMatterType storedMatterType = matterFluidType.getMatterType();
+                            if (storedMatterType != null && storedMatterType.getName().equals(neededMatterType.getName())) {
+                                matchingTank = tank;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (matchingTank == null || matchingTank.getFluid().getAmount() < neededAmount) {
+                        allFluidsAvailable = false;
+                        break;
+                    }
+                }
+
+                if (allFluidsAvailable) {
+                    ItemStack outputStack = outputSlot.getStack();
+                    ItemStack copyStack = sourceStack.copyWithCount(1);
+                    boolean outputCompatible = outputStack.isEmpty() || (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize());
+                    if (outputCompatible && energyContainer.getEnergy() >= energyUsage) {
+                        canOperate = true;
+                    }
+                }
             }
         }
 
@@ -352,13 +415,13 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             operatingTicks++;
             if (operatingTicks >= ticksRequired) {
                 operatingTicks = 0;
-                
-                if (recipeCompound != null) {
-                    // Manual Replication Finalize
+
+                if (recipeCompound != null && !recipeCompound.getValues().isEmpty()) {
+                    // Drain matter from own tanks (same for both modes)
                     for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
                         IMatterType neededMatterType = entry.getKey();
                         int neededAmount = (int) Math.ceil(entry.getValue().getAmount());
-                        
+
                         for (BasicFluidTank tank : getMatterTanks()) {
                             FluidStack storedFluid = tank.getFluid();
                             if (!storedFluid.isEmpty() && storedFluid.getFluid().getFluidType() instanceof MatterFluidType matterFluidType) {
@@ -371,48 +434,43 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                         }
                     }
 
-                    int outputCount = 1;
-                    if (getComponent() != null && getComponent().isUpgradeInstalled(ReplicateMekanism.REPLICA_UPGRADE_TYPE)) {
-                        outputCount = 2;
-                    }
+                    if (activeTask != null) {
+                        // Task Mode Finalize: notify network, send item to terminal
+                        activeTask.finalizeReplication(level, getBlockPos(), network);
+                        network.onTaskValueChanged(activeTask, (net.minecraft.server.level.ServerLevel) level);
 
-                    ItemStack outputStack = outputSlot.getStack();
-                    if (outputStack.isEmpty()) {
-                        ItemStack newOutput = inputStack.copy();
-                        newOutput.setCount(outputCount);
-                        outputSlot.setStack(newOutput);
-                    } else {
-                        outputSlot.growStack(outputCount, Action.EXECUTE);
-                    }
-                } else if (activeTask != null) {
-                    // Automatic Replication Network Finalize
-                    activeTask.finalizeReplication(level, getBlockPos(), network);
-                    network.onTaskValueChanged(activeTask, (net.minecraft.server.level.ServerLevel) level);
+                        BlockPos source = activeTask.getSource();
+                        ItemStack copyStack = activeCraftingStack.copyWithCount(1);
 
-                    BlockPos source = activeTask.getSource();
-                    ItemStack copyStack = activeCraftingStack.copyWithCount(1);
-
-                    if (!getBlockPos().equals(source)) {
-                        net.neoforged.neoforge.items.IItemHandler itemHandler = level.getCapability(
-                            net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                            source,
-                            Direction.UP
-                        );
-                        if (itemHandler != null) {
-                            ItemStack remaining = ItemHandlerHelper.insertItem(itemHandler, copyStack, false);
-                            if (!remaining.isEmpty()) {
-                                // Fallback: try to put in Imaginator output, else drop in world
+                        if (!getBlockPos().equals(source)) {
+                            net.neoforged.neoforge.items.IItemHandler itemHandler = level.getCapability(
+                                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                                source,
+                                Direction.UP
+                            );
+                            if (itemHandler != null) {
+                                ItemStack remaining = net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(itemHandler, copyStack, false);
+                                if (!remaining.isEmpty()) {
+                                    ItemStack outputStack = outputSlot.getStack();
+                                    if (outputStack.isEmpty()) {
+                                        outputSlot.setStack(remaining);
+                                    } else if (ItemStack.isSameItemSameComponents(outputStack, remaining) && outputStack.getCount() + remaining.getCount() <= outputStack.getMaxStackSize()) {
+                                        outputSlot.growStack(remaining.getCount(), Action.EXECUTE);
+                                    } else {
+                                        net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), remaining);
+                                    }
+                                }
+                            } else {
                                 ItemStack outputStack = outputSlot.getStack();
                                 if (outputStack.isEmpty()) {
-                                    outputSlot.setStack(remaining);
-                                } else if (ItemStack.isSameItemSameComponents(outputStack, remaining) && outputStack.getCount() + remaining.getCount() <= outputStack.getMaxStackSize()) {
-                                    outputSlot.growStack(remaining.getCount(), Action.EXECUTE);
+                                    outputSlot.setStack(copyStack);
+                                } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
+                                    outputSlot.growStack(1, Action.EXECUTE);
                                 } else {
-                                    net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), remaining);
+                                    net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
                                 }
                             }
                         } else {
-                            // Fallback
                             ItemStack outputStack = outputSlot.getStack();
                             if (outputStack.isEmpty()) {
                                 outputSlot.setStack(copyStack);
@@ -422,18 +480,24 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                                 net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
                             }
                         }
+
+                        cancelActiveTask();
                     } else {
+                        // Manual Mode Finalize: output to own slot
+                        int outputCount = 1;
+                        if (getComponent() != null && getComponent().isUpgradeInstalled(ReplicateMekanism.REPLICA_UPGRADE_TYPE)) {
+                            outputCount = 2;
+                        }
+
                         ItemStack outputStack = outputSlot.getStack();
                         if (outputStack.isEmpty()) {
-                            outputSlot.setStack(copyStack);
-                        } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
-                            outputSlot.growStack(1, Action.EXECUTE);
+                            ItemStack newOutput = sourceStack.copy();
+                            newOutput.setCount(outputCount);
+                            outputSlot.setStack(newOutput);
                         } else {
-                            net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
+                            outputSlot.growStack(outputCount, Action.EXECUTE);
                         }
                     }
-
-                    cancelActiveTask();
                 }
                 sendUpdate = true;
             }

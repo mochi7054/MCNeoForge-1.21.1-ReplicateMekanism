@@ -34,6 +34,8 @@ public class ReplicateMekanismClient {
     @SubscribeEvent
     static void registerScreens(RegisterMenuScreensEvent event) {
         mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_CONTAINER_TYPE, com.github.mochi7054.client.gui.ImaginatorScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_CONTAINER_TYPE, com.github.mochi7054.client.gui.CollapserScreen::new);
+
     }
 }
 
