@@ -54,41 +54,41 @@ public class ImaginatorScreen extends GuiConfigurableTile<ImaginatorBlockEntity,
             // Progress Bar
             this.addElement(new ReplicationGuiProgress(() -> tile.getScaledProgress(), this, 95, 41));
         } else {
-            // Shrunk fluid slots (8 slots) at Y=6
-            int fluidStartX = tile.getTier() == com.github.mochi7054.block.ReplicaTier.ULTIMATE ? 25 : 8;
-            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX, 6));
-            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.earthTank, tile.getFluidTanks(null)), fluidStartX + 1, 7, 16, 16, false));
+            // Shrunk fluid slots (8 slots) at Y=63, centered horizontally
+            int fluidStartX = tile.getTier() == com.github.mochi7054.block.ReplicaTier.ULTIMATE ? 33 : 16;
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX, 63));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.earthTank, tile.getFluidTanks(null)), fluidStartX + 1, 64, 16, 16, false));
 
-            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 18, 6));
-            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.netherTank, tile.getFluidTanks(null)), fluidStartX + 19, 7, 16, 16, false));
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 18, 63));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.netherTank, tile.getFluidTanks(null)), fluidStartX + 19, 64, 16, 16, false));
 
-            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 36, 6));
-            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.organicTank, tile.getFluidTanks(null)), fluidStartX + 37, 7, 16, 16, false));
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 36, 63));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.organicTank, tile.getFluidTanks(null)), fluidStartX + 37, 64, 16, 16, false));
 
-            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 54, 6));
-            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.enderTank, tile.getFluidTanks(null)), fluidStartX + 55, 7, 16, 16, false));
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 54, 63));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.enderTank, tile.getFluidTanks(null)), fluidStartX + 55, 64, 16, 16, false));
 
-            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 72, 6));
-            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.metallicTank, tile.getFluidTanks(null)), fluidStartX + 73, 7, 16, 16, false));
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 72, 63));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.metallicTank, tile.getFluidTanks(null)), fluidStartX + 73, 64, 16, 16, false));
 
-            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 90, 6));
-            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.preciousTank, tile.getFluidTanks(null)), fluidStartX + 91, 7, 16, 16, false));
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 90, 63));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.preciousTank, tile.getFluidTanks(null)), fluidStartX + 91, 64, 16, 16, false));
 
-            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 108, 6));
-            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.livingTank, tile.getFluidTanks(null)), fluidStartX + 109, 7, 16, 16, false));
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 108, 63));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.livingTank, tile.getFluidTanks(null)), fluidStartX + 109, 64, 16, 16, false));
 
-            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 126, 6));
-            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.quantumTank, tile.getFluidTanks(null)), fluidStartX + 127, 7, 16, 16, false));
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, fluidStartX + 126, 63));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.quantumTank, tile.getFluidTanks(null)), fluidStartX + 127, 64, 16, 16, false));
 
             // Energy Bar on the right (shifted to X=204 for Ultimate, X=170 otherwise)
             this.addElement(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), tile.getTier() == com.github.mochi7054.block.ReplicaTier.ULTIMATE ? 204 : 170, 6, 80));
 
-            // Progress Bars (Downward arrows)
+            // Progress Bars (Downward arrows) at Y=29
             int center = tile.getTier() == com.github.mochi7054.block.ReplicaTier.ULTIMATE ? 105 : 88;
             int startX = center - (18 * tile.getTier().getSlotCount()) / 2 + 1;
             for (int i = 0; i < tile.getTier().getSlotCount(); i++) {
                 final int idx = i;
-                this.addElement(new GuiProgress(() -> tile.getScaledProgress(idx), ProgressType.DOWN, this, startX + idx * 18 + 4, 48));
+                this.addElement(new GuiProgress(() -> tile.getScaledProgress(idx), ProgressType.DOWN, this, startX + idx * 18 + 4, 29));
             }
         }
 

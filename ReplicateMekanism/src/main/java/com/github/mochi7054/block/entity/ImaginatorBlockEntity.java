@@ -204,12 +204,12 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             int startX = center - (18 * slotCount) / 2 + 1;
             for (int i = 0; i < slotCount; i++) {
                 inputCoords[i][0] = startX + i * 18;
-                inputCoords[i][1] = 31;
+                inputCoords[i][1] = 11;
                 outputCoords[i][0] = startX + i * 18;
-                outputCoords[i][1] = 69;
+                outputCoords[i][1] = 45;
             }
             energyX = tier == ReplicaTier.ULTIMATE ? 187 : 153;
-            energyY = 7;
+            energyY = 11;
         }
 
         if (inputSlots == null) {

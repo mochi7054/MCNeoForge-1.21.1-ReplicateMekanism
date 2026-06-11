@@ -198,7 +198,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                 inputCoords[i][1] = 26;
             }
             energyX = tier == ReplicaTier.ULTIMATE ? 187 : 153;
-            energyY = 12;
+            energyY = 26;
         }
 
         if (inputSlots == null) {
