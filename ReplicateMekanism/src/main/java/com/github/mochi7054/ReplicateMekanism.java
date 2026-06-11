@@ -88,10 +88,11 @@ public class ReplicateMekanism {
     public static final DeferredItem<Item> REPLICA_INCOMPLETE_CONTROL_CIRCUIT = ITEMS.registerSimpleItem("replica_incomplete_control_circuit", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_CONTROL_CIRCUIT = ITEMS.registerSimpleItem("replica_control_circuit", new Item.Properties());
     public static final DeferredItem<Item> REPLICA_UPGRADE = ITEMS.register("replica_upgrade", () -> new ReplicaUpgradeItem(new Item.Properties()));
+    public static final DeferredItem<Item> REPLICA_TIER_INSTALLER = ITEMS.register("replica_tier_installer", () -> new com.github.mochi7054.item.ReplicaTierInstallerItem(new Item.Properties().stacksTo(16)));
 
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.ImaginatorBlock, com.github.mochi7054.item.ImaginatorBlockItem> IMAGINATOR =
             BLOCKS.register("imaginator",
-                    () -> new com.github.mochi7054.block.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F)),
+                    () -> new com.github.mochi7054.block.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F), com.github.mochi7054.block.ReplicaTier.STANDARD, () -> ReplicateMekanism.IMAGINATOR_TILE, () -> ReplicateMekanism.IMAGINATOR_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_BASIC),
                     com.github.mochi7054.item.ImaginatorBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.ImaginatorBlockEntity> IMAGINATOR_TILE = BLOCK_ENTITIES.mekBuilder(IMAGINATOR, com.github.mochi7054.block.entity.ImaginatorBlockEntity::new)
@@ -104,9 +105,73 @@ public class ReplicateMekanism {
                     com.github.mochi7054.block.entity.ImaginatorBlockEntity.class,
                     com.github.mochi7054.inventory.container.ImaginatorMenu::new);
 
+    // IMAGINATOR BASIC
+    public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.ImaginatorBlock, com.github.mochi7054.item.ImaginatorBlockItem> IMAGINATOR_BASIC =
+            BLOCKS.register("imaginator_basic",
+                    () -> new com.github.mochi7054.block.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F), com.github.mochi7054.block.ReplicaTier.BASIC, () -> ReplicateMekanism.IMAGINATOR_BASIC_TILE, () -> ReplicateMekanism.IMAGINATOR_BASIC_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_ADVANCED),
+                    com.github.mochi7054.item.ImaginatorBlockItem::new);
+
+    public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.ImaginatorBlockEntity> IMAGINATOR_BASIC_TILE = BLOCK_ENTITIES.mekBuilder(IMAGINATOR_BASIC, com.github.mochi7054.block.entity.ImaginatorBlockEntity::new)
+            .clientTicker(mekanism.common.tile.base.TileEntityMekanism::tickClient)
+            .serverTicker(mekanism.common.tile.base.TileEntityMekanism::tickServer)
+            .build();
+
+    public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.inventory.container.ImaginatorMenu> IMAGINATOR_BASIC_CONTAINER_TYPE =
+            MENU_TYPES.register("imaginator_basic",
+                    com.github.mochi7054.block.entity.ImaginatorBlockEntity.class,
+                    com.github.mochi7054.inventory.container.ImaginatorMenu::new);
+
+    // IMAGINATOR ADVANCED
+    public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.ImaginatorBlock, com.github.mochi7054.item.ImaginatorBlockItem> IMAGINATOR_ADVANCED =
+            BLOCKS.register("imaginator_advanced",
+                    () -> new com.github.mochi7054.block.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F), com.github.mochi7054.block.ReplicaTier.ADVANCED, () -> ReplicateMekanism.IMAGINATOR_ADVANCED_TILE, () -> ReplicateMekanism.IMAGINATOR_ADVANCED_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_ELITE),
+                    com.github.mochi7054.item.ImaginatorBlockItem::new);
+
+    public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.ImaginatorBlockEntity> IMAGINATOR_ADVANCED_TILE = BLOCK_ENTITIES.mekBuilder(IMAGINATOR_ADVANCED, com.github.mochi7054.block.entity.ImaginatorBlockEntity::new)
+            .clientTicker(mekanism.common.tile.base.TileEntityMekanism::tickClient)
+            .serverTicker(mekanism.common.tile.base.TileEntityMekanism::tickServer)
+            .build();
+
+    public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.inventory.container.ImaginatorMenu> IMAGINATOR_ADVANCED_CONTAINER_TYPE =
+            MENU_TYPES.register("imaginator_advanced",
+                    com.github.mochi7054.block.entity.ImaginatorBlockEntity.class,
+                    com.github.mochi7054.inventory.container.ImaginatorMenu::new);
+
+    // IMAGINATOR ELITE
+    public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.ImaginatorBlock, com.github.mochi7054.item.ImaginatorBlockItem> IMAGINATOR_ELITE =
+            BLOCKS.register("imaginator_elite",
+                    () -> new com.github.mochi7054.block.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F), com.github.mochi7054.block.ReplicaTier.ELITE, () -> ReplicateMekanism.IMAGINATOR_ELITE_TILE, () -> ReplicateMekanism.IMAGINATOR_ELITE_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_ULTIMATE),
+                    com.github.mochi7054.item.ImaginatorBlockItem::new);
+
+    public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.ImaginatorBlockEntity> IMAGINATOR_ELITE_TILE = BLOCK_ENTITIES.mekBuilder(IMAGINATOR_ELITE, com.github.mochi7054.block.entity.ImaginatorBlockEntity::new)
+            .clientTicker(mekanism.common.tile.base.TileEntityMekanism::tickClient)
+            .serverTicker(mekanism.common.tile.base.TileEntityMekanism::tickServer)
+            .build();
+
+    public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.inventory.container.ImaginatorMenu> IMAGINATOR_ELITE_CONTAINER_TYPE =
+            MENU_TYPES.register("imaginator_elite",
+                    com.github.mochi7054.block.entity.ImaginatorBlockEntity.class,
+                    com.github.mochi7054.inventory.container.ImaginatorMenu::new);
+
+    // IMAGINATOR ULTIMATE
+    public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.ImaginatorBlock, com.github.mochi7054.item.ImaginatorBlockItem> IMAGINATOR_ULTIMATE =
+            BLOCKS.register("imaginator_ultimate",
+                    () -> new com.github.mochi7054.block.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F), com.github.mochi7054.block.ReplicaTier.ULTIMATE, () -> ReplicateMekanism.IMAGINATOR_ULTIMATE_TILE, () -> ReplicateMekanism.IMAGINATOR_ULTIMATE_CONTAINER_TYPE, null),
+                    com.github.mochi7054.item.ImaginatorBlockItem::new);
+
+    public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.ImaginatorBlockEntity> IMAGINATOR_ULTIMATE_TILE = BLOCK_ENTITIES.mekBuilder(IMAGINATOR_ULTIMATE, com.github.mochi7054.block.entity.ImaginatorBlockEntity::new)
+            .clientTicker(mekanism.common.tile.base.TileEntityMekanism::tickClient)
+            .serverTicker(mekanism.common.tile.base.TileEntityMekanism::tickServer)
+            .build();
+
+    public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.inventory.container.ImaginatorMenu> IMAGINATOR_ULTIMATE_CONTAINER_TYPE =
+            MENU_TYPES.register("imaginator_ultimate",
+                    com.github.mochi7054.block.entity.ImaginatorBlockEntity.class,
+                    com.github.mochi7054.inventory.container.ImaginatorMenu::new);
+
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.CollapserBlock, com.github.mochi7054.item.CollapserBlockItem> COLLAPSER =
             BLOCKS.register("collapser",
-                    () -> new com.github.mochi7054.block.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F)),
+                    () -> new com.github.mochi7054.block.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F), com.github.mochi7054.block.ReplicaTier.STANDARD, () -> ReplicateMekanism.COLLAPSER_TILE, () -> ReplicateMekanism.COLLAPSER_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_BASIC),
                     com.github.mochi7054.item.CollapserBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.CollapserBlockEntity> COLLAPSER_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER, com.github.mochi7054.block.entity.CollapserBlockEntity::new)
@@ -116,6 +181,70 @@ public class ReplicateMekanism {
 
     public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.inventory.container.CollapserMenu> COLLAPSER_CONTAINER_TYPE =
             MENU_TYPES.register("collapser",
+                    com.github.mochi7054.block.entity.CollapserBlockEntity.class,
+                    com.github.mochi7054.inventory.container.CollapserMenu::new);
+
+    // COLLAPSER BASIC
+    public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.CollapserBlock, com.github.mochi7054.item.CollapserBlockItem> COLLAPSER_BASIC =
+            BLOCKS.register("collapser_basic",
+                    () -> new com.github.mochi7054.block.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F), com.github.mochi7054.block.ReplicaTier.BASIC, () -> ReplicateMekanism.COLLAPSER_BASIC_TILE, () -> ReplicateMekanism.COLLAPSER_BASIC_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_ADVANCED),
+                    com.github.mochi7054.item.CollapserBlockItem::new);
+
+    public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.CollapserBlockEntity> COLLAPSER_BASIC_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER_BASIC, com.github.mochi7054.block.entity.CollapserBlockEntity::new)
+            .clientTicker(mekanism.common.tile.base.TileEntityMekanism::tickClient)
+            .serverTicker(mekanism.common.tile.base.TileEntityMekanism::tickServer)
+            .build();
+
+    public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.inventory.container.CollapserMenu> COLLAPSER_BASIC_CONTAINER_TYPE =
+            MENU_TYPES.register("collapser_basic",
+                    com.github.mochi7054.block.entity.CollapserBlockEntity.class,
+                    com.github.mochi7054.inventory.container.CollapserMenu::new);
+
+    // COLLAPSER ADVANCED
+    public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.CollapserBlock, com.github.mochi7054.item.CollapserBlockItem> COLLAPSER_ADVANCED =
+            BLOCKS.register("collapser_advanced",
+                    () -> new com.github.mochi7054.block.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F), com.github.mochi7054.block.ReplicaTier.ADVANCED, () -> ReplicateMekanism.COLLAPSER_ADVANCED_TILE, () -> ReplicateMekanism.COLLAPSER_ADVANCED_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_ELITE),
+                    com.github.mochi7054.item.CollapserBlockItem::new);
+
+    public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.CollapserBlockEntity> COLLAPSER_ADVANCED_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER_ADVANCED, com.github.mochi7054.block.entity.CollapserBlockEntity::new)
+            .clientTicker(mekanism.common.tile.base.TileEntityMekanism::tickClient)
+            .serverTicker(mekanism.common.tile.base.TileEntityMekanism::tickServer)
+            .build();
+
+    public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.inventory.container.CollapserMenu> COLLAPSER_ADVANCED_CONTAINER_TYPE =
+            MENU_TYPES.register("collapser_advanced",
+                    com.github.mochi7054.block.entity.CollapserBlockEntity.class,
+                    com.github.mochi7054.inventory.container.CollapserMenu::new);
+
+    // COLLAPSER ELITE
+    public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.CollapserBlock, com.github.mochi7054.item.CollapserBlockItem> COLLAPSER_ELITE =
+            BLOCKS.register("collapser_elite",
+                    () -> new com.github.mochi7054.block.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F), com.github.mochi7054.block.ReplicaTier.ELITE, () -> ReplicateMekanism.COLLAPSER_ELITE_TILE, () -> ReplicateMekanism.COLLAPSER_ELITE_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_ULTIMATE),
+                    com.github.mochi7054.item.CollapserBlockItem::new);
+
+    public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.CollapserBlockEntity> COLLAPSER_ELITE_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER_ELITE, com.github.mochi7054.block.entity.CollapserBlockEntity::new)
+            .clientTicker(mekanism.common.tile.base.TileEntityMekanism::tickClient)
+            .serverTicker(mekanism.common.tile.base.TileEntityMekanism::tickServer)
+            .build();
+
+    public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.inventory.container.CollapserMenu> COLLAPSER_ELITE_CONTAINER_TYPE =
+            MENU_TYPES.register("collapser_elite",
+                    com.github.mochi7054.block.entity.CollapserBlockEntity.class,
+                    com.github.mochi7054.inventory.container.CollapserMenu::new);
+
+    // COLLAPSER ULTIMATE
+    public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.block.CollapserBlock, com.github.mochi7054.item.CollapserBlockItem> COLLAPSER_ULTIMATE =
+            BLOCKS.register("collapser_ultimate",
+                    () -> new com.github.mochi7054.block.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F), com.github.mochi7054.block.ReplicaTier.ULTIMATE, () -> ReplicateMekanism.COLLAPSER_ULTIMATE_TILE, () -> ReplicateMekanism.COLLAPSER_ULTIMATE_CONTAINER_TYPE, null),
+                    com.github.mochi7054.item.CollapserBlockItem::new);
+
+    public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.block.entity.CollapserBlockEntity> COLLAPSER_ULTIMATE_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER_ULTIMATE, com.github.mochi7054.block.entity.CollapserBlockEntity::new)
+            .clientTicker(mekanism.common.tile.base.TileEntityMekanism::tickClient)
+            .serverTicker(mekanism.common.tile.base.TileEntityMekanism::tickServer)
+            .build();
+
+    public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.inventory.container.CollapserMenu> COLLAPSER_ULTIMATE_CONTAINER_TYPE =
+            MENU_TYPES.register("collapser_ultimate",
                     com.github.mochi7054.block.entity.CollapserBlockEntity.class,
                     com.github.mochi7054.inventory.container.CollapserMenu::new);
 
@@ -131,8 +260,17 @@ public class ReplicateMekanism {
                 output.accept(REPLICA_INCOMPLETE_CONTROL_CIRCUIT.get());
                 output.accept(REPLICA_CONTROL_CIRCUIT.get());
                 output.accept(REPLICA_UPGRADE.get());// Add the example item to the tab. For your own tabs, this method is preferred over the event
+                output.accept(REPLICA_TIER_INSTALLER.get());
                 output.accept(IMAGINATOR.asItem());
+                output.accept(IMAGINATOR_BASIC.asItem());
+                output.accept(IMAGINATOR_ADVANCED.asItem());
+                output.accept(IMAGINATOR_ELITE.asItem());
+                output.accept(IMAGINATOR_ULTIMATE.asItem());
                 output.accept(COLLAPSER.asItem());
+                output.accept(COLLAPSER_BASIC.asItem());
+                output.accept(COLLAPSER_ADVANCED.asItem());
+                output.accept(COLLAPSER_ELITE.asItem());
+                output.accept(COLLAPSER_ULTIMATE.asItem());
             }).build());
 
 
@@ -263,9 +401,27 @@ public class ReplicateMekanism {
             event.registerBlockEntity(
                     com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                     ReplicateMekanism.IMAGINATOR_TILE.get(),
-                    (be, side) -> {
-                        return new com.github.mochi7054.fluid.ImaginatorMatterHandler(be);
-                    }
+                    (be, side) -> new com.github.mochi7054.fluid.ImaginatorMatterHandler(be)
+            );
+            event.registerBlockEntity(
+                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
+                    ReplicateMekanism.IMAGINATOR_BASIC_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ImaginatorMatterHandler(be)
+            );
+            event.registerBlockEntity(
+                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
+                    ReplicateMekanism.IMAGINATOR_ADVANCED_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ImaginatorMatterHandler(be)
+            );
+            event.registerBlockEntity(
+                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
+                    ReplicateMekanism.IMAGINATOR_ELITE_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ImaginatorMatterHandler(be)
+            );
+            event.registerBlockEntity(
+                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
+                    ReplicateMekanism.IMAGINATOR_ULTIMATE_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ImaginatorMatterHandler(be)
             );
         } catch (Exception e) {
             LOGGER.error("Failed to register FluidHandler wrapper capabilities for Replication Blocks/BlockEntities", e);

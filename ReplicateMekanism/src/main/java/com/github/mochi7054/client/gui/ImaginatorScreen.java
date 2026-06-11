@@ -34,30 +34,59 @@ public class ImaginatorScreen extends GuiConfigurableTile<ImaginatorBlockEntity,
     protected void addGuiElements() {
         super.addGuiElements();
         ImaginatorBlockEntity tile = menu.getTileEntity();
+        com.github.mochi7054.block.ReplicaTier tier = tile.getTier();
 
-        // Fluid Tank Bars on the left for each of the 8 matter types
-        this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.earthTank, tile.getFluidTanks(null)), 8, 20, 5, 42, false));
-        this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.netherTank, tile.getFluidTanks(null)), 16, 20, 5, 42, false));
-        this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.organicTank, tile.getFluidTanks(null)), 24, 20, 5, 42, false));
-        this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.enderTank, tile.getFluidTanks(null)), 32, 20, 5, 42, false));
-        this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.metallicTank, tile.getFluidTanks(null)), 40, 20, 5, 42, false));
-        this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.preciousTank, tile.getFluidTanks(null)), 48, 20, 5, 42, false));
-        this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.livingTank, tile.getFluidTanks(null)), 56, 20, 5, 42, false));
-        this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.quantumTank, tile.getFluidTanks(null)), 64, 20, 5, 42, false));
+        if (tier == com.github.mochi7054.block.ReplicaTier.STANDARD) {
+            // Fluid Tank Bars on the left for each of the 8 matter types
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.earthTank, tile.getFluidTanks(null)), 8, 20, 5, 42, false));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.netherTank, tile.getFluidTanks(null)), 16, 20, 5, 42, false));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.organicTank, tile.getFluidTanks(null)), 24, 20, 5, 42, false));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.enderTank, tile.getFluidTanks(null)), 32, 20, 5, 42, false));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.metallicTank, tile.getFluidTanks(null)), 40, 20, 5, 42, false));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.preciousTank, tile.getFluidTanks(null)), 48, 20, 5, 42, false));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.livingTank, tile.getFluidTanks(null)), 56, 20, 5, 42, false));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.quantumTank, tile.getFluidTanks(null)), 64, 20, 5, 42, false));
 
-        // Energy Bar on the right
-        this.addElement(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 162, 20, 42));
+            // Energy Bar on the right
+            this.addElement(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 162, 20, 42));
+
+            // Progress Bar
+            this.addElement(new ReplicationGuiProgress(() -> tile.getScaledProgress(), this, 95, 36));
+        } else {
+            // Shrunk fluid slots (8 slots) at Y=10
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, 8, 10));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.earthTank, tile.getFluidTanks(null)), 9, 11, 16, 16, false));
+
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, 26, 10));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.netherTank, tile.getFluidTanks(null)), 27, 11, 16, 16, false));
+
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, 44, 10));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.organicTank, tile.getFluidTanks(null)), 45, 11, 16, 16, false));
+
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, 62, 10));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.enderTank, tile.getFluidTanks(null)), 63, 11, 16, 16, false));
+
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, 80, 10));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.metallicTank, tile.getFluidTanks(null)), 81, 11, 16, 16, false));
+
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, 98, 10));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.preciousTank, tile.getFluidTanks(null)), 99, 11, 16, 16, false));
+
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, 116, 10));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.livingTank, tile.getFluidTanks(null)), 117, 11, 16, 16, false));
+
+            this.addElement(new GuiSlot(SlotType.NORMAL, this, 134, 10));
+            this.addElement(new GuiFluidBar(this, GuiFluidBar.getProvider(tile.quantumTank, tile.getFluidTanks(null)), 135, 11, 16, 16, false));
+
+            // Energy Bar on the right (shifted to X=170, aligned to Y=10 with height 74)
+            this.addElement(new GuiVerticalPowerBar(this, tile.getEnergyContainer(), 170, 10, 74));
+
+            // Progress Bar (Downward arrow at X=84, Y=47)
+            this.addElement(new GuiProgress(tile::getScaledProgress, ProgressType.DOWN, this, 84, 47));
+        }
 
         // Energy Tab on the left
         this.addElement(new GuiEnergyTab(this, tile.getEnergyContainer(), () -> true));
-
-        // Progress Bar
-        this.addElement(new ReplicationGuiProgress(
-            () -> tile.getScaledProgress(),
-            this,
-            95,
-            36
-        ));
 
         // Hide the top-left machine icon/preview holder, leave other tabs at default Mekanism positions
         for (net.minecraft.client.gui.components.events.GuiEventListener listener : this.children()) {

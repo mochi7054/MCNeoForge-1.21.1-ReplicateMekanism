@@ -8,12 +8,12 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
-public class ImaginatorMatterTank implements IMatterTank {
+public class MekanismMatterTank implements IMatterTank {
 
     private final BasicFluidTank tank;
     private final Fluid matterFluid;
 
-    public ImaginatorMatterTank(BasicFluidTank tank, Fluid matterFluid) {
+    public MekanismMatterTank(BasicFluidTank tank, Fluid matterFluid) {
         this.tank = tank;
         this.matterFluid = matterFluid;
     }

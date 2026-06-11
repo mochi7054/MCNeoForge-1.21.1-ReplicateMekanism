@@ -18,7 +18,8 @@
     "BasicEnergyContainerMixin",
     "TileEntityFormulaicAssemblicatorMixin",
     "MekanismRendererMixin",
-    "ImaginatorBlockEntityMixin"
+    "ImaginatorBlockEntityMixin",
+    "CollapserBlockEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

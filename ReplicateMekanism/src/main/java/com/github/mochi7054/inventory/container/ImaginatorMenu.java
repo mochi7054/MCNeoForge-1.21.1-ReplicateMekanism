@@ -15,7 +15,20 @@ import com.buuz135.replication.calculation.ReplicationCalculation;
 public class ImaginatorMenu extends MekanismTileContainer<ImaginatorBlockEntity> {
 
     public ImaginatorMenu(int containerId, Inventory inv, ImaginatorBlockEntity tile) {
-        super(ReplicateMekanism.IMAGINATOR_CONTAINER_TYPE, containerId, inv, tile);
+        super(getContainerTypeForTile(tile), containerId, inv, tile);
+    }
+
+    private static mekanism.common.registration.impl.ContainerTypeRegistryObject<ImaginatorMenu> getContainerTypeForTile(ImaginatorBlockEntity tile) {
+        if (tile == null) {
+            return ReplicateMekanism.IMAGINATOR_CONTAINER_TYPE;
+        }
+        return switch (tile.getTier()) {
+            case STANDARD -> ReplicateMekanism.IMAGINATOR_CONTAINER_TYPE;
+            case BASIC -> ReplicateMekanism.IMAGINATOR_BASIC_CONTAINER_TYPE;
+            case ADVANCED -> ReplicateMekanism.IMAGINATOR_ADVANCED_CONTAINER_TYPE;
+            case ELITE -> ReplicateMekanism.IMAGINATOR_ELITE_CONTAINER_TYPE;
+            case ULTIMATE -> ReplicateMekanism.IMAGINATOR_ULTIMATE_CONTAINER_TYPE;
+        };
     }
 
     public ImaginatorMenu(int containerId, Inventory inv, RegistryFriendlyByteBuf buf) {
@@ -52,58 +65,57 @@ public class ImaginatorMenu extends MekanismTileContainer<ImaginatorBlockEntity>
         }
     }
 
-    private int getInputSlotId() {
-        for (int i = 0; i < this.slots.size(); i++) {
-            Slot slot = this.slots.get(i);
-            if (slot instanceof mekanism.common.inventory.container.slot.InventoryContainerSlot containerSlot) {
-                if (containerSlot.getInventorySlot() == getTileEntity().getInputSlot()) {
-                    return i;
-                }
+    private boolean isInputSlot(Slot slot) {
+        if (slot instanceof mekanism.common.inventory.container.slot.InventoryContainerSlot containerSlot) {
+            ImaginatorBlockEntity tile = getTileEntity();
+            if (tile != null) {
+                return tile.inputSlots.contains(containerSlot.getInventorySlot());
             }
         }
-        return -1;
+        return false;
     }
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        int inputSlotId = getInputSlotId();
-        if (inputSlotId != -1 && slotId == inputSlotId) {
+        if (slotId >= 0 && slotId < this.slots.size()) {
             Slot slot = this.slots.get(slotId);
-            ItemStack carried = this.getCarried();
+            if (isInputSlot(slot)) {
+                ItemStack carried = this.getCarried();
 
-            if (clickType == ClickType.QUICK_MOVE) {
-                slot.set(ItemStack.EMPTY);
-                this.broadcastChanges();
-                return;
-            }
-
-            if (clickType == ClickType.PICKUP) {
-                ItemStack currentStack = slot.getItem();
-                if (carried.isEmpty()) {
+                if (clickType == ClickType.QUICK_MOVE) {
                     slot.set(ItemStack.EMPTY);
-                } else {
-                    MatterCompound compound = ReplicationCalculation.getMatterCompound(carried);
-                    if (compound != null && !compound.getValues().isEmpty()) {
-                        if (!currentStack.isEmpty() && ItemStack.isSameItemSameComponents(carried, currentStack)) {
-                            slot.set(ItemStack.EMPTY);
-                        } else {
-                            ItemStack copy = carried.copy();
-                            copy.setCount(1);
-                            slot.set(copy);
+                    this.broadcastChanges();
+                    return;
+                }
+
+                if (clickType == ClickType.PICKUP) {
+                    ItemStack currentStack = slot.getItem();
+                    if (carried.isEmpty()) {
+                        slot.set(ItemStack.EMPTY);
+                    } else {
+                        MatterCompound compound = ReplicationCalculation.getMatterCompound(carried);
+                        if (compound != null && !compound.getValues().isEmpty()) {
+                            if (!currentStack.isEmpty() && ItemStack.isSameItemSameComponents(carried, currentStack)) {
+                                slot.set(ItemStack.EMPTY);
+                            } else {
+                                ItemStack copy = carried.copy();
+                                copy.setCount(1);
+                                slot.set(copy);
+                            }
                         }
                     }
+                    this.broadcastChanges();
+                    return;
                 }
-                this.broadcastChanges();
+
+                if (clickType == ClickType.THROW) {
+                    slot.set(ItemStack.EMPTY);
+                    this.broadcastChanges();
+                    return;
+                }
+
                 return;
             }
-
-            if (clickType == ClickType.THROW) {
-                slot.set(ItemStack.EMPTY);
-                this.broadcastChanges();
-                return;
-            }
-
-            return;
         }
 
         super.clicked(slotId, button, clickType, player);
@@ -111,16 +123,14 @@ public class ImaginatorMenu extends MekanismTileContainer<ImaginatorBlockEntity>
 
     @Override
     public ItemStack quickMoveStack(Player player, int slotId) {
-        int inputSlotId = getInputSlotId();
-        if (slotId == inputSlotId) {
-            Slot slot = this.slots.get(slotId);
-            slot.set(ItemStack.EMPTY);
-            this.broadcastChanges();
-            return ItemStack.EMPTY;
-        }
-
         if (slotId >= 0 && slotId < this.slots.size()) {
             Slot slot = this.slots.get(slotId);
+            if (isInputSlot(slot)) {
+                slot.set(ItemStack.EMPTY);
+                this.broadcastChanges();
+                return ItemStack.EMPTY;
+            }
+
             if (slot instanceof mekanism.common.inventory.container.slot.MainInventorySlot || 
                 slot instanceof mekanism.common.inventory.container.slot.HotBarSlot) {
                 
@@ -128,18 +138,40 @@ public class ImaginatorMenu extends MekanismTileContainer<ImaginatorBlockEntity>
                     ItemStack stack = slot.getItem();
                     MatterCompound compound = ReplicationCalculation.getMatterCompound(stack);
                     if (compound != null && !compound.getValues().isEmpty()) {
-                        if (inputSlotId != -1) {
-                            Slot inputSlot = this.slots.get(inputSlotId);
-                            ItemStack currentInput = inputSlot.getItem();
-                            if (!currentInput.isEmpty() && ItemStack.isSameItemSameComponents(stack, currentInput)) {
-                                inputSlot.set(ItemStack.EMPTY);
-                            } else {
-                                ItemStack copy = stack.copy();
-                                copy.setCount(1);
-                                inputSlot.set(copy);
+                        ImaginatorBlockEntity tile = getTileEntity();
+                        if (tile != null) {
+                            Slot targetSlot = null;
+                            for (Slot s : this.slots) {
+                                if (isInputSlot(s)) {
+                                    ItemStack inputItem = s.getItem();
+                                    if (!inputItem.isEmpty() && ItemStack.isSameItemSameComponents(stack, inputItem)) {
+                                        targetSlot = s;
+                                        break;
+                                    }
+                                }
                             }
-                            this.broadcastChanges();
-                            return ItemStack.EMPTY;
+                            if (targetSlot == null) {
+                                for (Slot s : this.slots) {
+                                    if (isInputSlot(s)) {
+                                        if (s.getItem().isEmpty()) {
+                                            targetSlot = s;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            if (targetSlot != null) {
+                                ItemStack currentInput = targetSlot.getItem();
+                                if (!currentInput.isEmpty() && ItemStack.isSameItemSameComponents(stack, currentInput)) {
+                                    targetSlot.set(ItemStack.EMPTY);
+                                } else {
+                                    ItemStack copy = stack.copy();
+                                    copy.setCount(1);
+                                    targetSlot.set(copy);
+                                }
+                                this.broadcastChanges();
+                                return ItemStack.EMPTY;
+                            }
                         }
                     }
                 }

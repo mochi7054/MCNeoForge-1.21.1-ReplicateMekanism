@@ -16,11 +16,11 @@
       "item": "replicatemekanism:replica_alloy"
     },
     "P": {
-      "item": "replication:replicator"
+      "item": "mekanism:ultimate_tier_installer"
     }
   },
   "result": {
-    "id": "replicatemekanism:imaginator",
+    "id": "replicatemekanism:replica_tier_installer",
     "count": 1
   }
 }

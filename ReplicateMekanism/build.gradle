@@ -184,6 +184,29 @@ tasks.register("inspectReplication") {
         runJavap("com.buuz135.replication.api.network.IMatterTanksSupplier", "javap_supplier.txt")
     }
 }
+tasks.register("inspectTileUpgrade") {
+    doLast {
+        def compileClasspath = project.sourceSets.main.compileClasspath.asPath
+        def runJavap = { className, filename ->
+            def outFile = file(filename)
+            outFile.text = "=== javap $className ===\n"
+            def proc = new ProcessBuilder("javap", "-c", "-p", "-cp", compileClasspath, className)
+                .redirectErrorStream(true)
+                .start()
+            proc.inputStream.eachLine { outFile.append(it + "\n") }
+            proc.waitFor()
+        }
+        runJavap("mekanism.common.tile.base.TileEntityMekanism", "javap_tileentitymekanism.txt")
+        runJavap("mekanism.common.upgrade.MachineUpgradeData", "javap_machineupgradedata.txt")
+        runJavap("mekanism.common.tile.prefab.TileEntityElectricMachine", "javap_tileentityelectricmachine.txt")
+        runJavap("mekanism.common.tile.prefab.TileEntityAdvancedElectricMachine", "javap_tileentityadvancedelectricmachine.txt")
+        runJavap("mekanism.common.tile.TileEntityFluidTank", "javap_tileentityfluidtank.txt")
+        runJavap("mekanism.common.item.ItemTierInstaller", "javap_itemtierinstaller.txt")
+        runJavap("mekanism.common.block.attribute.Attribute", "javap_attribute.txt")
+        runJavap("mekanism.common.block.attribute.AttributeTier", "javap_attributetier.txt")
+        runJavap("mekanism.common.block.attribute.AttributeUpgradeable", "javap_attributeupgradeable.txt")
+    }
+}
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
             minecraft_version      : minecraft_version,

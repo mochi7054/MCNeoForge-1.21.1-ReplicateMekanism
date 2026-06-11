@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "active=false,facing=north": { "model": "replicatemekanism:block/collapser" },
+    "active=false,facing=south": { "model": "replicatemekanism:block/collapser", "y": 180 },
+    "active=false,facing=west": { "model": "replicatemekanism:block/collapser", "y": 270 },
+    "active=false,facing=east": { "model": "replicatemekanism:block/collapser", "y": 90 },
+    "active=true,facing=north": { "model": "replicatemekanism:block/collapser_base" },
+    "active=true,facing=south": { "model": "replicatemekanism:block/collapser_base", "y": 180 },
+    "active=true,facing=west": { "model": "replicatemekanism:block/collapser_base", "y": 270 },
+    "active=true,facing=east": { "model": "replicatemekanism:block/collapser_base", "y": 90 }
+  }
+}

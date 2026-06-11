@@ -15,7 +15,20 @@ import net.minecraft.world.item.ItemStack;
 public class CollapserMenu extends MekanismTileContainer<CollapserBlockEntity> {
 
     public CollapserMenu(int containerId, Inventory inv, CollapserBlockEntity tile) {
-        super(ReplicateMekanism.COLLAPSER_CONTAINER_TYPE, containerId, inv, tile);
+        super(getContainerTypeForTile(tile), containerId, inv, tile);
+    }
+
+    private static mekanism.common.registration.impl.ContainerTypeRegistryObject<CollapserMenu> getContainerTypeForTile(CollapserBlockEntity tile) {
+        if (tile == null) {
+            return ReplicateMekanism.COLLAPSER_CONTAINER_TYPE;
+        }
+        return switch (tile.getTier()) {
+            case STANDARD -> ReplicateMekanism.COLLAPSER_CONTAINER_TYPE;
+            case BASIC -> ReplicateMekanism.COLLAPSER_BASIC_CONTAINER_TYPE;
+            case ADVANCED -> ReplicateMekanism.COLLAPSER_ADVANCED_CONTAINER_TYPE;
+            case ELITE -> ReplicateMekanism.COLLAPSER_ELITE_CONTAINER_TYPE;
+            case ULTIMATE -> ReplicateMekanism.COLLAPSER_ULTIMATE_CONTAINER_TYPE;
+        };
     }
 
     public CollapserMenu(int containerId, Inventory inv, RegistryFriendlyByteBuf buf) {
@@ -52,100 +65,4 @@ public class CollapserMenu extends MekanismTileContainer<CollapserBlockEntity> {
         }
     }
 
-    private int getInputSlotId() {
-        for (int i = 0; i < this.slots.size(); i++) {
-            Slot slot = this.slots.get(i);
-            if (slot instanceof mekanism.common.inventory.container.slot.InventoryContainerSlot containerSlot) {
-                if (containerSlot.getInventorySlot() == getTileEntity().getInputSlot()) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-    @Override
-    public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        int inputSlotId = getInputSlotId();
-        if (inputSlotId != -1 && slotId == inputSlotId) {
-            Slot slot = this.slots.get(slotId);
-            ItemStack carried = this.getCarried();
-
-            if (clickType == ClickType.QUICK_MOVE) {
-                slot.set(ItemStack.EMPTY);
-                this.broadcastChanges();
-                return;
-            }
-
-            if (clickType == ClickType.PICKUP) {
-                ItemStack currentStack = slot.getItem();
-                if (carried.isEmpty()) {
-                    slot.set(ItemStack.EMPTY);
-                } else {
-                    MatterCompound compound = ReplicationCalculation.getMatterCompound(carried);
-                    if (compound != null && !compound.getValues().isEmpty()) {
-                        if (!currentStack.isEmpty() && ItemStack.isSameItemSameComponents(carried, currentStack)) {
-                            slot.set(ItemStack.EMPTY);
-                        } else {
-                            ItemStack copy = carried.copy();
-                            copy.setCount(1);
-                            slot.set(copy);
-                        }
-                    }
-                }
-                this.broadcastChanges();
-                return;
-            }
-
-            if (clickType == ClickType.THROW) {
-                slot.set(ItemStack.EMPTY);
-                this.broadcastChanges();
-                return;
-            }
-
-            return;
-        }
-
-        super.clicked(slotId, button, clickType, player);
-    }
-
-    @Override
-    public ItemStack quickMoveStack(Player player, int slotId) {
-        int inputSlotId = getInputSlotId();
-        if (slotId == inputSlotId) {
-            Slot slot = this.slots.get(slotId);
-            slot.set(ItemStack.EMPTY);
-            this.broadcastChanges();
-            return ItemStack.EMPTY;
-        }
-
-        if (slotId >= 0 && slotId < this.slots.size()) {
-            Slot slot = this.slots.get(slotId);
-            if (slot instanceof mekanism.common.inventory.container.slot.MainInventorySlot || 
-                slot instanceof mekanism.common.inventory.container.slot.HotBarSlot) {
-                
-                if (slot.hasItem()) {
-                    ItemStack stack = slot.getItem();
-                    MatterCompound compound = ReplicationCalculation.getMatterCompound(stack);
-                    if (compound != null && !compound.getValues().isEmpty()) {
-                        if (inputSlotId != -1) {
-                            Slot inputSlot = this.slots.get(inputSlotId);
-                            ItemStack currentInput = inputSlot.getItem();
-                            if (!currentInput.isEmpty() && ItemStack.isSameItemSameComponents(stack, currentInput)) {
-                                inputSlot.set(ItemStack.EMPTY);
-                            } else {
-                                ItemStack copy = stack.copy();
-                                copy.setCount(1);
-                                inputSlot.set(copy);
-                            }
-                            this.broadcastChanges();
-                            return ItemStack.EMPTY;
-                        }
-                    }
-                }
-            }
-        }
-
-        return super.quickMoveStack(player, slotId);
-    }
 }
