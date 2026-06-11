@@ -1,0 +1,39 @@
+=== javap mekanism.common.block.attribute.AttributeTier ===
+Compiled from "AttributeTier.java"
+public final class mekanism.common.block.attribute.AttributeTier<TIER extends mekanism.api.tier.ITier> extends java.lang.Record implements mekanism.common.block.attribute.Attribute {
+  private final TIER tier;
+
+  public mekanism.common.block.attribute.AttributeTier(TIER);
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Record."<init>":()V
+       4: aload_0
+       5: aload_1
+       6: putfield      #7                  // Field tier:Lmekanism/api/tier/ITier;
+       9: return
+
+  public final java.lang.String toString();
+    Code:
+       0: aload_0
+       1: invokedynamic #13,  0             // InvokeDynamic #0:toString:(Lmekanism/common/block/attribute/AttributeTier;)Ljava/lang/String;
+       6: areturn
+
+  public final int hashCode();
+    Code:
+       0: aload_0
+       1: invokedynamic #17,  0             // InvokeDynamic #0:hashCode:(Lmekanism/common/block/attribute/AttributeTier;)I
+       6: ireturn
+
+  public final boolean equals(java.lang.Object);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokedynamic #21,  0             // InvokeDynamic #0:equals:(Lmekanism/common/block/attribute/AttributeTier;Ljava/lang/Object;)Z
+       7: ireturn
+
+  public TIER tier();
+    Code:
+       0: aload_0
+       1: getfield      #7                  // Field tier:Lmekanism/api/tier/ITier;
+       4: areturn
+}

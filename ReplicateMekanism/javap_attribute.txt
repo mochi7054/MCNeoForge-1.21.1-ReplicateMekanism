@@ -1,0 +1,273 @@
+=== javap mekanism.common.block.attribute.Attribute ===
+Compiled from "Attribute.java"
+public interface mekanism.common.block.attribute.Attribute {
+  public default void adjustProperties(net.minecraft.world.level.block.state.BlockBehaviour$Properties);
+    Code:
+       0: return
+
+  public static boolean has(net.minecraft.world.level.block.state.BlockState, java.lang.Class<? extends mekanism.common.block.attribute.Attribute>);
+    Code:
+       0: aload_0
+       1: invokevirtual #1                  // Method net/minecraft/world/level/block/state/BlockState.getBlockHolder:()Lnet/minecraft/core/Holder;
+       4: aload_1
+       5: invokestatic  #7                  // InterfaceMethod has:(Lnet/minecraft/core/Holder;Ljava/lang/Class;)Z
+       8: ireturn
+
+  public static boolean has(net.minecraft.core.Holder<net.minecraft.world.level.block.Block>, java.lang.Class<? extends mekanism.common.block.attribute.Attribute>);
+    Code:
+       0: aload_0
+       1: invokeinterface #13,  1           // InterfaceMethod net/minecraft/core/Holder.value:()Ljava/lang/Object;
+       6: checkcast     #19                 // class net/minecraft/world/level/block/Block
+       9: aload_1
+      10: invokestatic  #21                 // InterfaceMethod has:(Lnet/minecraft/world/level/block/Block;Ljava/lang/Class;)Z
+      13: ireturn
+
+  public static boolean has(net.minecraft.world.level.block.Block, java.lang.Class<? extends mekanism.common.block.attribute.Attribute>);
+    Code:
+       0: aload_0
+       1: instanceof    #24                 // class mekanism/common/block/interfaces/ITypeBlock
+       4: ifeq          29
+       7: aload_0
+       8: checkcast     #24                 // class mekanism/common/block/interfaces/ITypeBlock
+      11: astore_2
+      12: aload_2
+      13: invokeinterface #26,  1           // InterfaceMethod mekanism/common/block/interfaces/ITypeBlock.getType:()Lmekanism/common/content/blocktype/BlockType;
+      18: aload_1
+      19: invokevirtual #30                 // Method mekanism/common/content/blocktype/BlockType.has:(Ljava/lang/Class;)Z
+      22: ifeq          29
+      25: iconst_1
+      26: goto          30
+      29: iconst_0
+      30: ireturn
+
+  public static <ATTRIBUTE extends mekanism.common.block.attribute.Attribute> ATTRIBUTE get(net.minecraft.world.level.block.state.BlockState, java.lang.Class<ATTRIBUTE>);
+    Code:
+       0: aload_0
+       1: invokevirtual #1                  // Method net/minecraft/world/level/block/state/BlockState.getBlockHolder:()Lnet/minecraft/core/Holder;
+       4: aload_1
+       5: invokestatic  #35                 // InterfaceMethod get:(Lnet/minecraft/core/Holder;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       8: areturn
+
+  public static <ATTRIBUTE extends mekanism.common.block.attribute.Attribute> ATTRIBUTE get(net.minecraft.core.Holder<net.minecraft.world.level.block.Block>, java.lang.Class<ATTRIBUTE>);
+    Code:
+       0: aload_0
+       1: invokeinterface #13,  1           // InterfaceMethod net/minecraft/core/Holder.value:()Ljava/lang/Object;
+       6: checkcast     #19                 // class net/minecraft/world/level/block/Block
+       9: aload_1
+      10: invokestatic  #39                 // InterfaceMethod get:(Lnet/minecraft/world/level/block/Block;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+      13: areturn
+
+  public static <ATTRIBUTE extends mekanism.common.block.attribute.Attribute> ATTRIBUTE get(net.minecraft.world.level.block.Block, java.lang.Class<ATTRIBUTE>);
+    Code:
+       0: aload_0
+       1: instanceof    #24                 // class mekanism/common/block/interfaces/ITypeBlock
+       4: ifeq          25
+       7: aload_0
+       8: checkcast     #24                 // class mekanism/common/block/interfaces/ITypeBlock
+      11: astore_2
+      12: aload_2
+      13: invokeinterface #26,  1           // InterfaceMethod mekanism/common/block/interfaces/ITypeBlock.getType:()Lmekanism/common/content/blocktype/BlockType;
+      18: aload_1
+      19: invokevirtual #42                 // Method mekanism/common/content/blocktype/BlockType.get:(Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+      22: goto          26
+      25: aconst_null
+      26: areturn
+
+  public static <ATTRIBUTE extends mekanism.common.block.attribute.Attribute> ATTRIBUTE getOrThrow(net.minecraft.world.level.block.state.BlockState, java.lang.Class<ATTRIBUTE>);
+    Code:
+       0: aload_0
+       1: invokevirtual #1                  // Method net/minecraft/world/level/block/state/BlockState.getBlockHolder:()Lnet/minecraft/core/Holder;
+       4: aload_1
+       5: invokestatic  #45                 // InterfaceMethod getOrThrow:(Lnet/minecraft/core/Holder;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       8: areturn
+
+  public static <ATTRIBUTE extends mekanism.common.block.attribute.Attribute> ATTRIBUTE getOrThrow(net.minecraft.core.Holder<net.minecraft.world.level.block.Block>, java.lang.Class<ATTRIBUTE>);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #35                 // InterfaceMethod get:(Lnet/minecraft/core/Holder;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       5: astore_2
+       6: aload_2
+       7: ifnonnull     36
+      10: new           #48                 // class java/lang/IllegalStateException
+      13: dup
+      14: aload_0
+      15: invokeinterface #13,  1           // InterfaceMethod net/minecraft/core/Holder.value:()Ljava/lang/Object;
+      20: invokestatic  #50                 // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+      23: aload_1
+      24: invokevirtual #56                 // Method java/lang/Class.getSimpleName:()Ljava/lang/String;
+      27: invokedynamic #62,  0             // InvokeDynamic #0:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      32: invokespecial #66                 // Method java/lang/IllegalStateException."<init>":(Ljava/lang/String;)V
+      35: athrow
+      36: aload_2
+      37: areturn
+
+  public static java.util.Collection<mekanism.common.block.attribute.Attribute> getAll(net.minecraft.core.Holder<net.minecraft.world.level.block.Block>);
+    Code:
+       0: aload_0
+       1: invokeinterface #13,  1           // InterfaceMethod net/minecraft/core/Holder.value:()Ljava/lang/Object;
+       6: astore_2
+       7: aload_2
+       8: instanceof    #24                 // class mekanism/common/block/interfaces/ITypeBlock
+      11: ifeq          31
+      14: aload_2
+      15: checkcast     #24                 // class mekanism/common/block/interfaces/ITypeBlock
+      18: astore_1
+      19: aload_1
+      20: invokeinterface #26,  1           // InterfaceMethod mekanism/common/block/interfaces/ITypeBlock.getType:()Lmekanism/common/content/blocktype/BlockType;
+      25: invokevirtual #70                 // Method mekanism/common/content/blocktype/BlockType.getAll:()Ljava/util/Collection;
+      28: goto          34
+      31: invokestatic  #74                 // Method java/util/Collections.emptyList:()Ljava/util/List;
+      34: areturn
+
+  public static <ATTRIBUTE extends mekanism.common.block.attribute.Attribute> boolean matches(net.minecraft.core.Holder<net.minecraft.world.level.block.Block>, java.lang.Class<ATTRIBUTE>, java.util.function.Predicate<? super ATTRIBUTE>);
+    Code:
+       0: aload_0
+       1: invokeinterface #13,  1           // InterfaceMethod net/minecraft/core/Holder.value:()Ljava/lang/Object;
+       6: checkcast     #19                 // class net/minecraft/world/level/block/Block
+       9: aload_1
+      10: aload_2
+      11: invokestatic  #80                 // InterfaceMethod matches:(Lnet/minecraft/world/level/block/Block;Ljava/lang/Class;Ljava/util/function/Predicate;)Z
+      14: ireturn
+
+  public static <ATTRIBUTE extends mekanism.common.block.attribute.Attribute> boolean matches(net.minecraft.world.level.block.Block, java.lang.Class<ATTRIBUTE>, java.util.function.Predicate<? super ATTRIBUTE>);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #39                 // InterfaceMethod get:(Lnet/minecraft/world/level/block/Block;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       5: astore_3
+       6: aload_3
+       7: ifnull        24
+      10: aload_2
+      11: aload_3
+      12: invokeinterface #84,  2           // InterfaceMethod java/util/function/Predicate.test:(Ljava/lang/Object;)Z
+      17: ifeq          24
+      20: iconst_1
+      21: goto          25
+      24: iconst_0
+      25: ireturn
+
+  public static <ATTRIBUTE extends mekanism.common.block.attribute.Attribute> void ifPresent(net.minecraft.core.Holder<net.minecraft.world.level.block.Block>, java.lang.Class<ATTRIBUTE>, java.util.function.Consumer<? super ATTRIBUTE>);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #35                 // InterfaceMethod get:(Lnet/minecraft/core/Holder;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       5: astore_3
+       6: aload_3
+       7: ifnull        17
+      10: aload_2
+      11: aload_3
+      12: invokeinterface #90,  2           // InterfaceMethod java/util/function/Consumer.accept:(Ljava/lang/Object;)V
+      17: return
+
+  public static net.minecraft.core.Direction getFacing(net.minecraft.world.level.block.state.BlockState);
+    Code:
+       0: aload_0
+       1: ldc           #96                 // class mekanism/common/block/attribute/AttributeStateFacing
+       3: invokestatic  #98                 // InterfaceMethod get:(Lnet/minecraft/world/level/block/state/BlockState;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       6: checkcast     #96                 // class mekanism/common/block/attribute/AttributeStateFacing
+       9: astore_1
+      10: aload_1
+      11: ifnonnull     18
+      14: aconst_null
+      15: goto          23
+      18: aload_1
+      19: aload_0
+      20: invokevirtual #101                // Method mekanism/common/block/attribute/AttributeStateFacing.getDirection:(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/core/Direction;
+      23: areturn
+
+  public static net.minecraft.world.level.block.state.BlockState setFacing(net.minecraft.world.level.block.state.BlockState, net.minecraft.core.Direction);
+    Code:
+       0: aload_0
+       1: ldc           #96                 // class mekanism/common/block/attribute/AttributeStateFacing
+       3: invokestatic  #98                 // InterfaceMethod get:(Lnet/minecraft/world/level/block/state/BlockState;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       6: checkcast     #96                 // class mekanism/common/block/attribute/AttributeStateFacing
+       9: astore_2
+      10: aload_2
+      11: ifnonnull     18
+      14: aconst_null
+      15: goto          24
+      18: aload_2
+      19: aload_0
+      20: aload_1
+      21: invokevirtual #105                // Method mekanism/common/block/attribute/AttributeStateFacing.setDirection:(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Lnet/minecraft/world/level/block/state/BlockState;
+      24: areturn
+
+  public static boolean isActive(net.minecraft.world.level.block.state.BlockState);
+    Code:
+       0: aload_0
+       1: ldc           #109                // class mekanism/common/block/attribute/AttributeStateActive
+       3: invokestatic  #98                 // InterfaceMethod get:(Lnet/minecraft/world/level/block/state/BlockState;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       6: checkcast     #109                // class mekanism/common/block/attribute/AttributeStateActive
+       9: astore_1
+      10: aload_1
+      11: ifnull        26
+      14: aload_1
+      15: aload_0
+      16: invokevirtual #111                // Method mekanism/common/block/attribute/AttributeStateActive.isActive:(Lnet/minecraft/world/level/block/state/BlockState;)Z
+      19: ifeq          26
+      22: iconst_1
+      23: goto          27
+      26: iconst_0
+      27: ireturn
+
+  public static net.minecraft.world.level.block.state.BlockState setActive(net.minecraft.world.level.block.state.BlockState, boolean);
+    Code:
+       0: aload_0
+       1: ldc           #109                // class mekanism/common/block/attribute/AttributeStateActive
+       3: invokestatic  #98                 // InterfaceMethod get:(Lnet/minecraft/world/level/block/state/BlockState;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       6: checkcast     #109                // class mekanism/common/block/attribute/AttributeStateActive
+       9: astore_2
+      10: aload_2
+      11: ifnonnull     18
+      14: aload_0
+      15: goto          24
+      18: aload_2
+      19: aload_0
+      20: iload_1
+      21: invokevirtual #115                // Method mekanism/common/block/attribute/AttributeStateActive.setActive:(Lnet/minecraft/world/level/block/state/BlockState;Z)Lnet/minecraft/world/level/block/state/BlockState;
+      24: areturn
+
+  public static <TIER extends mekanism.api.tier.ITier> TIER getTier(net.minecraft.core.Holder<net.minecraft.world.level.block.Block>, java.lang.Class<TIER>);
+    Code:
+       0: aload_0
+       1: invokeinterface #13,  1           // InterfaceMethod net/minecraft/core/Holder.value:()Ljava/lang/Object;
+       6: checkcast     #19                 // class net/minecraft/world/level/block/Block
+       9: aload_1
+      10: invokestatic  #119                // InterfaceMethod getTier:(Lnet/minecraft/world/level/block/Block;Ljava/lang/Class;)Lmekanism/api/tier/ITier;
+      13: areturn
+
+  public static <TIER extends mekanism.api.tier.ITier> TIER getTier(net.minecraft.world.level.block.Block, java.lang.Class<TIER>);
+    Code:
+       0: aload_0
+       1: ldc           #123                // class mekanism/common/block/attribute/AttributeTier
+       3: invokestatic  #39                 // InterfaceMethod get:(Lnet/minecraft/world/level/block/Block;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       6: checkcast     #123                // class mekanism/common/block/attribute/AttributeTier
+       9: astore_2
+      10: aload_2
+      11: ifnonnull     18
+      14: aconst_null
+      15: goto          29
+      18: aload_1
+      19: aload_2
+      20: invokevirtual #125                // Method mekanism/common/block/attribute/AttributeTier.tier:()Lmekanism/api/tier/ITier;
+      23: invokevirtual #129                // Method java/lang/Class.cast:(Ljava/lang/Object;)Ljava/lang/Object;
+      26: checkcast     #133                // class mekanism/api/tier/ITier
+      29: areturn
+
+  public static mekanism.api.tier.BaseTier getBaseTier(net.minecraft.core.Holder<net.minecraft.world.level.block.Block>);
+    Code:
+       0: aload_0
+       1: ldc           #123                // class mekanism/common/block/attribute/AttributeTier
+       3: invokestatic  #35                 // InterfaceMethod get:(Lnet/minecraft/core/Holder;Ljava/lang/Class;)Lmekanism/common/block/attribute/Attribute;
+       6: checkcast     #123                // class mekanism/common/block/attribute/AttributeTier
+       9: astore_1
+      10: aload_1
+      11: ifnonnull     18
+      14: aconst_null
+      15: goto          27
+      18: aload_1
+      19: invokevirtual #125                // Method mekanism/common/block/attribute/AttributeTier.tier:()Lmekanism/api/tier/ITier;
+      22: invokeinterface #135,  1          // InterfaceMethod mekanism/api/tier/ITier.getBaseTier:()Lmekanism/api/tier/BaseTier;
+      27: areturn
+}

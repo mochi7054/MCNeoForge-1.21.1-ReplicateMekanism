@@ -16,7 +16,7 @@
       "item": "replicatemekanism:replica_alloy"
     },
     "P": {
-      "item": "mekanism:ultimate_tier_installer"
+      "tag": "minecraft:planks"
     }
   },
   "result": {

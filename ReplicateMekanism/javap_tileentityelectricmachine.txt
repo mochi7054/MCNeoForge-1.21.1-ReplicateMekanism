@@ -1,0 +1,322 @@
+=== javap mekanism.common.tile.prefab.TileEntityElectricMachine ===
+Compiled from "TileEntityElectricMachine.java"
+public abstract class mekanism.common.tile.prefab.TileEntityElectricMachine extends mekanism.common.tile.prefab.TileEntityProgressMachine<mekanism.api.recipes.ItemStackToItemStackRecipe> implements mekanism.common.recipe.lookup.ISingleRecipeLookupHandler$ItemRecipeLookupHandler<mekanism.api.recipes.ItemStackToItemStackRecipe> {
+  private static final java.util.List<mekanism.api.recipes.cache.CachedRecipe$OperationTracker$RecipeError> TRACKED_ERROR_TYPES;
+
+  public static final int BASE_TICKS_REQUIRED;
+
+  protected final mekanism.api.recipes.inputs.IInputHandler<net.minecraft.world.item.ItemStack> inputHandler;
+
+  protected final mekanism.api.recipes.outputs.IOutputHandler<net.minecraft.world.item.ItemStack> outputHandler;
+
+  private mekanism.common.capabilities.energy.MachineEnergyContainer<mekanism.common.tile.prefab.TileEntityElectricMachine> energyContainer;
+
+  mekanism.common.inventory.slot.InputInventorySlot inputSlot;
+
+  mekanism.common.inventory.slot.OutputInventorySlot outputSlot;
+
+  mekanism.common.inventory.slot.EnergyInventorySlot energySlot;
+
+  public mekanism.common.tile.prefab.TileEntityElectricMachine(net.minecraft.core.Holder<net.minecraft.world.level.block.Block>, net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: getstatic     #3                  // Field TRACKED_ERROR_TYPES:Ljava/util/List;
+       7: iload         4
+       9: invokespecial #9                  // Method mekanism/common/tile/prefab/TileEntityProgressMachine."<init>":(Lnet/minecraft/core/Holder;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Ljava/util/List;I)V
+      12: aload_0
+      13: getfield      #15                 // Field configComponent:Lmekanism/common/tile/component/TileComponentConfig;
+      16: aload_0
+      17: getfield      #19                 // Field inputSlot:Lmekanism/common/inventory/slot/InputInventorySlot;
+      20: aload_0
+      21: getfield      #23                 // Field outputSlot:Lmekanism/common/inventory/slot/OutputInventorySlot;
+      24: aload_0
+      25: getfield      #27                 // Field energySlot:Lmekanism/common/inventory/slot/EnergyInventorySlot;
+      28: invokevirtual #31                 // Method mekanism/common/tile/component/TileComponentConfig.setupItemIOConfig:(Lmekanism/api/inventory/IInventorySlot;Lmekanism/api/inventory/IInventorySlot;Lmekanism/api/inventory/IInventorySlot;)Lmekanism/common/tile/component/config/ConfigInfo;
+      31: pop
+      32: aload_0
+      33: getfield      #15                 // Field configComponent:Lmekanism/common/tile/component/TileComponentConfig;
+      36: getstatic     #37                 // Field mekanism/common/lib/transmitter/TransmissionType.ENERGY:Lmekanism/common/lib/transmitter/TransmissionType;
+      39: aload_0
+      40: getfield      #43                 // Field energyContainer:Lmekanism/common/capabilities/energy/MachineEnergyContainer;
+      43: invokevirtual #47                 // Method mekanism/common/tile/component/TileComponentConfig.setupInputConfig:(Lmekanism/common/lib/transmitter/TransmissionType;Ljava/lang/Object;)Lmekanism/common/tile/component/config/ConfigInfo;
+      46: pop
+      47: aload_0
+      48: new           #51                 // class mekanism/common/tile/component/TileComponentEjector
+      51: dup
+      52: aload_0
+      53: invokespecial #53                 // Method mekanism/common/tile/component/TileComponentEjector."<init>":(Lmekanism/common/tile/base/TileEntityMekanism;)V
+      56: putfield      #56                 // Field ejectorComponent:Lmekanism/common/tile/component/TileComponentEjector;
+      59: aload_0
+      60: getfield      #56                 // Field ejectorComponent:Lmekanism/common/tile/component/TileComponentEjector;
+      63: aload_0
+      64: getfield      #15                 // Field configComponent:Lmekanism/common/tile/component/TileComponentConfig;
+      67: iconst_1
+      68: anewarray     #38                 // class mekanism/common/lib/transmitter/TransmissionType
+      71: dup
+      72: iconst_0
+      73: getstatic     #60                 // Field mekanism/common/lib/transmitter/TransmissionType.ITEM:Lmekanism/common/lib/transmitter/TransmissionType;
+      76: aastore
+      77: invokevirtual #63                 // Method mekanism/common/tile/component/TileComponentEjector.setOutputData:(Lmekanism/common/tile/component/TileComponentConfig;[Lmekanism/common/lib/transmitter/TransmissionType;)Lmekanism/common/tile/component/TileComponentEjector;
+      80: pop
+      81: aload_0
+      82: aload_0
+      83: getfield      #19                 // Field inputSlot:Lmekanism/common/inventory/slot/InputInventorySlot;
+      86: getstatic     #67                 // Field mekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError.NOT_ENOUGH_INPUT:Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;
+      89: invokestatic  #73                 // Method mekanism/api/recipes/inputs/InputHelper.getInputHandler:(Lmekanism/api/inventory/IInventorySlot;Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;)Lmekanism/api/recipes/inputs/IInputHandler;
+      92: putfield      #79                 // Field inputHandler:Lmekanism/api/recipes/inputs/IInputHandler;
+      95: aload_0
+      96: aload_0
+      97: getfield      #23                 // Field outputSlot:Lmekanism/common/inventory/slot/OutputInventorySlot;
+     100: getstatic     #83                 // Field mekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError.NOT_ENOUGH_OUTPUT_SPACE:Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;
+     103: invokestatic  #86                 // Method mekanism/api/recipes/outputs/OutputHelper.getOutputHandler:(Lmekanism/api/inventory/IInventorySlot;Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;)Lmekanism/api/recipes/outputs/IOutputHandler;
+     106: putfield      #92                 // Field outputHandler:Lmekanism/api/recipes/outputs/IOutputHandler;
+     109: return
+
+  protected mekanism.common.capabilities.holder.energy.IEnergyContainerHolder getInitialEnergyContainers(mekanism.api.IContentsListener, mekanism.api.IContentsListener, mekanism.api.IContentsListener);
+    Code:
+       0: aload_0
+       1: invokestatic  #96                 // Method mekanism/common/capabilities/holder/energy/EnergyContainerHelper.forSideWithConfig:(Lmekanism/common/tile/interfaces/ISideConfiguration;)Lmekanism/common/capabilities/holder/energy/EnergyContainerHelper;
+       4: astore        4
+       6: aload         4
+       8: aload_0
+       9: aload_0
+      10: aload_3
+      11: invokestatic  #102                // Method mekanism/common/capabilities/energy/MachineEnergyContainer.input:(Lmekanism/common/tile/base/TileEntityMekanism;Lmekanism/api/IContentsListener;)Lmekanism/common/capabilities/energy/MachineEnergyContainer;
+      14: dup_x1
+      15: putfield      #43                 // Field energyContainer:Lmekanism/common/capabilities/energy/MachineEnergyContainer;
+      18: invokevirtual #108                // Method mekanism/common/capabilities/holder/energy/EnergyContainerHelper.addContainer:(Lmekanism/api/energy/IEnergyContainer;)Lmekanism/api/energy/IEnergyContainer;
+      21: pop
+      22: aload         4
+      24: invokevirtual #112                // Method mekanism/common/capabilities/holder/energy/EnergyContainerHelper.build:()Lmekanism/common/capabilities/holder/energy/IEnergyContainerHolder;
+      27: areturn
+
+  protected mekanism.common.capabilities.holder.slot.IInventorySlotHolder getInitialInventory(mekanism.api.IContentsListener, mekanism.api.IContentsListener, mekanism.api.IContentsListener);
+    Code:
+       0: aload_0
+       1: invokestatic  #116                // Method mekanism/common/capabilities/holder/slot/InventorySlotHelper.forSideWithConfig:(Lmekanism/common/tile/interfaces/ISideConfiguration;)Lmekanism/common/capabilities/holder/slot/InventorySlotHelper;
+       4: astore        4
+       6: aload         4
+       8: aload_0
+       9: aload_0
+      10: invokedynamic #121,  0            // InvokeDynamic #0:test:(Lmekanism/common/tile/prefab/TileEntityElectricMachine;)Ljava/util/function/Predicate;
+      15: aload_2
+      16: bipush        64
+      18: bipush        17
+      20: invokestatic  #125                // Method mekanism/common/inventory/slot/InputInventorySlot.at:(Ljava/util/function/Predicate;Lmekanism/api/IContentsListener;II)Lmekanism/common/inventory/slot/InputInventorySlot;
+      23: dup_x1
+      24: putfield      #19                 // Field inputSlot:Lmekanism/common/inventory/slot/InputInventorySlot;
+      27: invokevirtual #131                // Method mekanism/common/capabilities/holder/slot/InventorySlotHelper.addSlot:(Lmekanism/api/inventory/IInventorySlot;)Lmekanism/api/inventory/IInventorySlot;
+      30: checkcast     #126                // class mekanism/common/inventory/slot/InputInventorySlot
+      33: aload_0
+      34: invokedynamic #135,  0            // InvokeDynamic #1:accept:(Lmekanism/common/tile/prefab/TileEntityElectricMachine;)Ljava/util/function/Consumer;
+      39: invokevirtual #139                // Method mekanism/common/inventory/slot/InputInventorySlot.tracksWarnings:(Ljava/util/function/Consumer;)V
+      42: aload         4
+      44: aload_0
+      45: aload_3
+      46: bipush        116
+      48: bipush        35
+      50: invokestatic  #143                // Method mekanism/common/inventory/slot/OutputInventorySlot.at:(Lmekanism/api/IContentsListener;II)Lmekanism/common/inventory/slot/OutputInventorySlot;
+      53: dup_x1
+      54: putfield      #23                 // Field outputSlot:Lmekanism/common/inventory/slot/OutputInventorySlot;
+      57: invokevirtual #131                // Method mekanism/common/capabilities/holder/slot/InventorySlotHelper.addSlot:(Lmekanism/api/inventory/IInventorySlot;)Lmekanism/api/inventory/IInventorySlot;
+      60: checkcast     #144                // class mekanism/common/inventory/slot/OutputInventorySlot
+      63: aload_0
+      64: invokedynamic #148,  0            // InvokeDynamic #2:accept:(Lmekanism/common/tile/prefab/TileEntityElectricMachine;)Ljava/util/function/Consumer;
+      69: invokevirtual #149                // Method mekanism/common/inventory/slot/OutputInventorySlot.tracksWarnings:(Ljava/util/function/Consumer;)V
+      72: aload         4
+      74: aload_0
+      75: aload_0
+      76: getfield      #43                 // Field energyContainer:Lmekanism/common/capabilities/energy/MachineEnergyContainer;
+      79: aload_0
+      80: invokedynamic #150,  0            // InvokeDynamic #3:get:(Lmekanism/common/tile/prefab/TileEntityElectricMachine;)Ljava/util/function/Supplier;
+      85: aload_1
+      86: bipush        64
+      88: bipush        53
+      90: invokestatic  #154                // Method mekanism/common/inventory/slot/EnergyInventorySlot.fillOrConvert:(Lmekanism/api/energy/IEnergyContainer;Ljava/util/function/Supplier;Lmekanism/api/IContentsListener;II)Lmekanism/common/inventory/slot/EnergyInventorySlot;
+      93: dup_x1
+      94: putfield      #27                 // Field energySlot:Lmekanism/common/inventory/slot/EnergyInventorySlot;
+      97: invokevirtual #131                // Method mekanism/common/capabilities/holder/slot/InventorySlotHelper.addSlot:(Lmekanism/api/inventory/IInventorySlot;)Lmekanism/api/inventory/IInventorySlot;
+     100: pop
+     101: aload         4
+     103: invokevirtual #160                // Method mekanism/common/capabilities/holder/slot/InventorySlotHelper.build:()Lmekanism/common/capabilities/holder/slot/IInventorySlotHolder;
+     106: areturn
+
+  protected boolean onUpdateServer();
+    Code:
+       0: aload_0
+       1: invokespecial #163                // Method mekanism/common/tile/prefab/TileEntityProgressMachine.onUpdateServer:()Z
+       4: istore_1
+       5: aload_0
+       6: getfield      #27                 // Field energySlot:Lmekanism/common/inventory/slot/EnergyInventorySlot;
+       9: invokevirtual #167                // Method mekanism/common/inventory/slot/EnergyInventorySlot.fillContainerOrConvert:()V
+      12: aload_0
+      13: getfield      #171                // Field recipeCacheLookupMonitor:Lmekanism/common/recipe/lookup/monitor/RecipeCacheLookupMonitor;
+      16: invokevirtual #175                // Method mekanism/common/recipe/lookup/monitor/RecipeCacheLookupMonitor.updateAndProcess:()Z
+      19: pop
+      20: iload_1
+      21: ireturn
+
+  public mekanism.api.recipes.ItemStackToItemStackRecipe getRecipe(int);
+    Code:
+       0: aload_0
+       1: aload_0
+       2: getfield      #79                 // Field inputHandler:Lmekanism/api/recipes/inputs/IInputHandler;
+       5: invokevirtual #180                // Method findFirstRecipe:(Lmekanism/api/recipes/inputs/IInputHandler;)Lmekanism/api/recipes/MekanismRecipe;
+       8: checkcast     #184                // class mekanism/api/recipes/ItemStackToItemStackRecipe
+      11: areturn
+
+  public mekanism.api.recipes.cache.CachedRecipe<mekanism.api.recipes.ItemStackToItemStackRecipe> createNewCachedRecipe(mekanism.api.recipes.ItemStackToItemStackRecipe, int);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: getfield      #186                // Field recheckAllRecipeErrors:Ljava/util/function/BooleanSupplier;
+       5: aload_0
+       6: getfield      #79                 // Field inputHandler:Lmekanism/api/recipes/inputs/IInputHandler;
+       9: aload_0
+      10: getfield      #92                 // Field outputHandler:Lmekanism/api/recipes/outputs/IOutputHandler;
+      13: invokestatic  #190                // Method mekanism/api/recipes/cache/OneInputCachedRecipe.itemToItem:(Lmekanism/api/recipes/ItemStackToItemStackRecipe;Ljava/util/function/BooleanSupplier;Lmekanism/api/recipes/inputs/IInputHandler;Lmekanism/api/recipes/outputs/IOutputHandler;)Lmekanism/api/recipes/cache/OneInputCachedRecipe;
+      16: aload_0
+      17: invokedynamic #196,  0            // InvokeDynamic #4:accept:(Lmekanism/common/tile/prefab/TileEntityElectricMachine;)Ljava/util/function/Consumer;
+      22: invokevirtual #197                // Method mekanism/api/recipes/cache/OneInputCachedRecipe.setErrorsChanged:(Ljava/util/function/Consumer;)Lmekanism/api/recipes/cache/CachedRecipe;
+      25: aload_0
+      26: invokedynamic #201,  0            // InvokeDynamic #5:getAsBoolean:(Lmekanism/common/tile/prefab/TileEntityElectricMachine;)Ljava/util/function/BooleanSupplier;
+      31: invokevirtual #205                // Method mekanism/api/recipes/cache/CachedRecipe.setCanHolderFunction:(Ljava/util/function/BooleanSupplier;)Lmekanism/api/recipes/cache/CachedRecipe;
+      34: aload_0
+      35: invokedynamic #211,  0            // InvokeDynamic #6:accept:(Lmekanism/common/tile/prefab/TileEntityElectricMachine;)Lit/unimi/dsi/fastutil/booleans/BooleanConsumer;
+      40: invokevirtual #214                // Method mekanism/api/recipes/cache/CachedRecipe.setActive:(Lit/unimi/dsi/fastutil/booleans/BooleanConsumer;)Lmekanism/api/recipes/cache/CachedRecipe;
+      43: aload_0
+      44: getfield      #43                 // Field energyContainer:Lmekanism/common/capabilities/energy/MachineEnergyContainer;
+      47: dup
+      48: invokestatic  #218                // Method java/util/Objects.requireNonNull:(Ljava/lang/Object;)Ljava/lang/Object;
+      51: pop
+      52: invokedynamic #224,  0            // InvokeDynamic #7:getAsLong:(Lmekanism/common/capabilities/energy/MachineEnergyContainer;)Ljava/util/function/LongSupplier;
+      57: aload_0
+      58: getfield      #43                 // Field energyContainer:Lmekanism/common/capabilities/energy/MachineEnergyContainer;
+      61: invokevirtual #228                // Method mekanism/api/recipes/cache/CachedRecipe.setEnergyRequirements:(Ljava/util/function/LongSupplier;Lmekanism/api/energy/IEnergyContainer;)Lmekanism/api/recipes/cache/CachedRecipe;
+      64: aload_0
+      65: invokedynamic #232,  0            // InvokeDynamic #8:getAsInt:(Lmekanism/common/tile/prefab/TileEntityElectricMachine;)Ljava/util/function/IntSupplier;
+      70: invokevirtual #236                // Method mekanism/api/recipes/cache/CachedRecipe.setRequiredTicks:(Ljava/util/function/IntSupplier;)Lmekanism/api/recipes/cache/CachedRecipe;
+      73: aload_0
+      74: invokedynamic #240,  0            // InvokeDynamic #9:run:(Lmekanism/common/tile/prefab/TileEntityElectricMachine;)Ljava/lang/Runnable;
+      79: invokevirtual #244                // Method mekanism/api/recipes/cache/CachedRecipe.setOnFinish:(Ljava/lang/Runnable;)Lmekanism/api/recipes/cache/CachedRecipe;
+      82: aload_0
+      83: invokedynamic #248,  0            // InvokeDynamic #10:accept:(Lmekanism/common/tile/prefab/TileEntityElectricMachine;)Ljava/util/function/IntConsumer;
+      88: invokevirtual #251                // Method mekanism/api/recipes/cache/CachedRecipe.setOperatingTicksChanged:(Ljava/util/function/IntConsumer;)Lmekanism/api/recipes/cache/CachedRecipe;
+      91: areturn
+
+  public mekanism.common.upgrade.MachineUpgradeData getUpgradeData(net.minecraft.core.HolderLookup$Provider);
+    Code:
+       0: new           #255                // class mekanism/common/upgrade/MachineUpgradeData
+       3: dup
+       4: aload_1
+       5: aload_0
+       6: getfield      #257                // Field redstone:Z
+       9: aload_0
+      10: invokevirtual #261                // Method getControlType:()Lmekanism/common/tile/interfaces/IRedstoneControl$RedstoneControl;
+      13: aload_0
+      14: invokevirtual #265                // Method getEnergyContainer:()Lmekanism/common/capabilities/energy/MachineEnergyContainer;
+      17: aload_0
+      18: invokevirtual #269                // Method getOperatingTicks:()I
+      21: aload_0
+      22: getfield      #27                 // Field energySlot:Lmekanism/common/inventory/slot/EnergyInventorySlot;
+      25: aload_0
+      26: getfield      #19                 // Field inputSlot:Lmekanism/common/inventory/slot/InputInventorySlot;
+      29: aload_0
+      30: getfield      #23                 // Field outputSlot:Lmekanism/common/inventory/slot/OutputInventorySlot;
+      33: aload_0
+      34: invokevirtual #273                // Method getComponents:()Ljava/util/List;
+      37: invokespecial #277                // Method mekanism/common/upgrade/MachineUpgradeData."<init>":(Lnet/minecraft/core/HolderLookup$Provider;ZLmekanism/common/tile/interfaces/IRedstoneControl$RedstoneControl;Lmekanism/api/energy/IEnergyContainer;ILmekanism/common/inventory/slot/EnergyInventorySlot;Lmekanism/common/inventory/slot/InputInventorySlot;Lmekanism/common/inventory/slot/OutputInventorySlot;Ljava/util/List;)V
+      40: areturn
+
+  public mekanism.common.capabilities.energy.MachineEnergyContainer<mekanism.common.tile.prefab.TileEntityElectricMachine> getEnergyContainer();
+    Code:
+       0: aload_0
+       1: getfield      #43                 // Field energyContainer:Lmekanism/common/capabilities/energy/MachineEnergyContainer;
+       4: areturn
+
+  public boolean isConfigurationDataCompatible(net.minecraft.world.level.block.Block);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #280                // Method mekanism/common/tile/prefab/TileEntityProgressMachine.isConfigurationDataCompatible:(Lnet/minecraft/world/level/block/Block;)Z
+       5: ifne          19
+       8: aload_0
+       9: invokevirtual #284                // Method getBlockHolder:()Lnet/minecraft/core/Holder;
+      12: aload_1
+      13: invokestatic  #288                // Method mekanism/common/util/MekanismUtils.isSameTypeFactory:(Lnet/minecraft/core/Holder;Lnet/minecraft/world/level/block/Block;)Z
+      16: ifeq          23
+      19: iconst_1
+      20: goto          24
+      23: iconst_0
+      24: ireturn
+
+  long getEnergyUsage();
+    Code:
+       0: aload_0
+       1: invokevirtual #294                // Method getActive:()Z
+       4: ifeq          17
+       7: aload_0
+       8: getfield      #43                 // Field energyContainer:Lmekanism/common/capabilities/energy/MachineEnergyContainer;
+      11: invokevirtual #297                // Method mekanism/common/capabilities/energy/MachineEnergyContainer.getEnergyPerTick:()J
+      14: goto          18
+      17: lconst_0
+      18: lreturn
+
+  public mekanism.api.recipes.cache.CachedRecipe createNewCachedRecipe(mekanism.api.recipes.MekanismRecipe, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: checkcast     #184                // class mekanism/api/recipes/ItemStackToItemStackRecipe
+       5: iload_2
+       6: invokevirtual #301                // Method createNewCachedRecipe:(Lmekanism/api/recipes/ItemStackToItemStackRecipe;I)Lmekanism/api/recipes/cache/CachedRecipe;
+       9: areturn
+
+  public mekanism.api.recipes.MekanismRecipe getRecipe(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #305                // Method getRecipe:(I)Lmekanism/api/recipes/ItemStackToItemStackRecipe;
+       5: areturn
+
+  public mekanism.common.upgrade.IUpgradeData getUpgradeData(net.minecraft.core.HolderLookup$Provider);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #309                // Method getUpgradeData:(Lnet/minecraft/core/HolderLookup$Provider;)Lmekanism/common/upgrade/MachineUpgradeData;
+       5: areturn
+
+  private void lambda$getInitialInventory$1(mekanism.common.inventory.warning.ISupportsWarning);
+    Code:
+       0: aload_1
+       1: getstatic     #313                // Field mekanism/common/inventory/warning/WarningTracker$WarningType.NO_SPACE_IN_OUTPUT:Lmekanism/common/inventory/warning/WarningTracker$WarningType;
+       4: aload_0
+       5: getstatic     #83                 // Field mekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError.NOT_ENOUGH_OUTPUT_SPACE:Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;
+       8: invokevirtual #319                // Method getWarningCheck:(Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;)Ljava/util/function/BooleanSupplier;
+      11: invokeinterface #323,  3          // InterfaceMethod mekanism/common/inventory/warning/ISupportsWarning.warning:(Lmekanism/common/inventory/warning/WarningTracker$WarningType;Ljava/util/function/BooleanSupplier;)Lmekanism/common/inventory/warning/ISupportsWarning;
+      16: pop
+      17: return
+
+  private void lambda$getInitialInventory$0(mekanism.common.inventory.warning.ISupportsWarning);
+    Code:
+       0: aload_1
+       1: getstatic     #329                // Field mekanism/common/inventory/warning/WarningTracker$WarningType.NO_MATCHING_RECIPE:Lmekanism/common/inventory/warning/WarningTracker$WarningType;
+       4: aload_0
+       5: getstatic     #67                 // Field mekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError.NOT_ENOUGH_INPUT:Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;
+       8: invokevirtual #319                // Method getWarningCheck:(Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;)Ljava/util/function/BooleanSupplier;
+      11: invokeinterface #323,  3          // InterfaceMethod mekanism/common/inventory/warning/ISupportsWarning.warning:(Lmekanism/common/inventory/warning/WarningTracker$WarningType;Ljava/util/function/BooleanSupplier;)Lmekanism/common/inventory/warning/ISupportsWarning;
+      16: pop
+      17: return
+
+  static {};
+    Code:
+       0: getstatic     #332                // Field mekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError.NOT_ENOUGH_ENERGY:Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;
+       3: getstatic     #67                 // Field mekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError.NOT_ENOUGH_INPUT:Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;
+       6: getstatic     #83                 // Field mekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError.NOT_ENOUGH_OUTPUT_SPACE:Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;
+       9: getstatic     #335                // Field mekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT:Lmekanism/api/recipes/cache/CachedRecipe$OperationTracker$RecipeError;
+      12: invokestatic  #338                // InterfaceMethod java/util/List.of:(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/List;
+      15: putstatic     #3                  // Field TRACKED_ERROR_TYPES:Ljava/util/List;
+      18: return
+}

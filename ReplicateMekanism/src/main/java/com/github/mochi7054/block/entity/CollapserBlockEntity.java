@@ -29,6 +29,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -51,7 +52,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
     public static final int BASE_TICKS_REQUIRED = 100;
     public static final long BASE_ENERGY_USAGE = 50L;
 
-    public int operatingTicks = 0;
+    public int[] operatingTicks;
     public int ticksRequired = BASE_TICKS_REQUIRED;
 
     private MachineEnergyContainer<CollapserBlockEntity> energyContainer;
@@ -179,23 +180,25 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         InventorySlotHelper builder = InventorySlotHelper.forSideWithConfig(this);
         ReplicaTier tier = getTierSafe();
         int slotCount = tier.getSlotCount();
+        this.operatingTicks = new int[slotCount];
         
         int[][] inputCoords = new int[slotCount][2];
         int energyX;
         int energyY;
         if (tier == ReplicaTier.STANDARD) {
             inputCoords[0][0] = 16;
-            inputCoords[0][1] = 35;
+            inputCoords[0][1] = 40;
             energyX = 141;
-            energyY = 35;
+            energyY = 40;
         } else {
-            int startX = 88 - (18 * slotCount) / 2 + 1;
+            int center = tier == ReplicaTier.ULTIMATE ? 105 : 88;
+            int startX = center - (18 * slotCount) / 2 + 1;
             for (int i = 0; i < slotCount; i++) {
                 inputCoords[i][0] = startX + i * 18;
-                inputCoords[i][1] = 29;
+                inputCoords[i][1] = 26;
             }
-            energyX = 153;
-            energyY = 11;
+            energyX = tier == ReplicaTier.ULTIMATE ? 187 : 153;
+            energyY = 12;
         }
 
         if (inputSlots == null) {
@@ -263,9 +266,8 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         ticksRequired = MekanismUtils.getTicks(this, BASE_TICKS_REQUIRED);
         long energyUsage = MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_USAGE);
 
-        boolean canOperate = false;
-        int activeSlotIndex = -1;
-        MatterCompound recipeCompound = null;
+        boolean[] canOperate = new boolean[inputSlots.size()];
+        MatterCompound[] slotCompounds = new MatterCompound[inputSlots.size()];
 
         if (canFunction()) {
             for (int i = 0; i < inputSlots.size(); i++) {
@@ -285,48 +287,58 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                             }
                         }
 
-                        if (allTanksHaveSpace && energyContainer.getEnergy() >= energyUsage) {
-                            canOperate = true;
-                            activeSlotIndex = i;
-                            recipeCompound = compound;
-                            break;
+                        if (allTanksHaveSpace) {
+                            canOperate[i] = true;
+                            slotCompounds[i] = compound;
                         }
                     }
                 }
             }
         }
 
+        boolean anyOperating = false;
         boolean wasActive = getActive();
-        if (canOperate) {
-            setActive(true);
-            energyContainer.extract(energyUsage, Action.EXECUTE, AutomationType.INTERNAL);
-            operatingTicks++;
+        for (int i = 0; i < inputSlots.size(); i++) {
+            if (canOperate[i]) {
+                if (energyContainer.getEnergy() >= energyUsage) {
+                    energyContainer.extract(energyUsage, Action.EXECUTE, AutomationType.INTERNAL);
+                    operatingTicks[i]++;
+                    anyOperating = true;
 
-            if (operatingTicks >= ticksRequired) {
-                operatingTicks = 0;
-                if (recipeCompound != null && activeSlotIndex != -1) {
-                    for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
-                        IMatterType matterType = entry.getKey();
-                        int amount = (int) Math.ceil(entry.getValue().getAmount());
-                        BasicFluidTank targetTank = getTankForMatterType(matterType);
-                        if (targetTank != null) {
-                            Fluid fluid = MatterFluidWrapper.getFluidFromMatterType(matterType);
-                            if (fluid != net.minecraft.world.level.material.Fluids.EMPTY) {
-                                targetTank.insert(new FluidStack(fluid, amount), Action.EXECUTE, AutomationType.INTERNAL);
+                    if (operatingTicks[i] >= ticksRequired) {
+                        operatingTicks[i] = 0;
+                        MatterCompound compound = slotCompounds[i];
+                        if (compound != null) {
+                            for (Map.Entry<IMatterType, MatterValue> entry : compound.getValues().entrySet()) {
+                                IMatterType matterType = entry.getKey();
+                                int amount = (int) Math.ceil(entry.getValue().getAmount());
+                                BasicFluidTank targetTank = getTankForMatterType(matterType);
+                                if (targetTank != null) {
+                                    Fluid fluid = MatterFluidWrapper.getFluidFromMatterType(matterType);
+                                    if (fluid != net.minecraft.world.level.material.Fluids.EMPTY) {
+                                        targetTank.insert(new FluidStack(fluid, amount), Action.EXECUTE, AutomationType.INTERNAL);
+                                    }
+                                }
                             }
+                            inputSlots.get(i).extractItem(1, Action.EXECUTE, AutomationType.INTERNAL);
                         }
+                        sendUpdate = true;
                     }
-                    inputSlots.get(activeSlotIndex).extractItem(1, Action.EXECUTE, AutomationType.INTERNAL);
+                } else {
+                    if (operatingTicks[i] > 0) {
+                        operatingTicks[i] = Math.max(0, operatingTicks[i] - 2);
+                        sendUpdate = true;
+                    }
                 }
-                sendUpdate = true;
-            }
-        } else {
-            setActive(false);
-            if (operatingTicks > 0) {
-                operatingTicks = Math.max(0, operatingTicks - 2);
-                sendUpdate = true;
+            } else {
+                if (operatingTicks[i] > 0) {
+                    operatingTicks[i] = Math.max(0, operatingTicks[i] - 2);
+                    sendUpdate = true;
+                }
             }
         }
+
+        setActive(anyOperating);
 
         if (wasActive != getActive()) {
             sendUpdate = true;
@@ -351,8 +363,15 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         };
     }
 
+    public double getScaledProgress(int slotIndex) {
+        if (this.operatingTicks == null || slotIndex < 0 || slotIndex >= this.operatingTicks.length) {
+            return 0;
+        }
+        return (double) this.operatingTicks[slotIndex] / (double) ticksRequired;
+    }
+
     public double getScaledProgress() {
-        return (double) operatingTicks / (double) ticksRequired;
+        return getScaledProgress(0);
     }
 
     public MachineEnergyContainer<CollapserBlockEntity> getEnergyContainer() {
@@ -373,20 +392,40 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
     @Override
     public void addContainerTrackers(MekanismContainer container) {
         super.addContainerTrackers(container);
-        container.track(SyncableInt.create(() -> operatingTicks, value -> operatingTicks = value));
+        if (this.operatingTicks != null) {
+            for (int i = 0; i < this.operatingTicks.length; i++) {
+                final int idx = i;
+                container.track(SyncableInt.create(() -> this.operatingTicks[idx], value -> this.operatingTicks[idx] = value));
+            }
+        }
         container.track(SyncableInt.create(() -> ticksRequired, value -> ticksRequired = value));
     }
 
     @Override
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.operatingTicks = tag.getInt("operatingTicks");
+        if (this.operatingTicks != null) {
+            if (tag.contains("operatingTicksArray", Tag.TAG_INT_ARRAY)) {
+                int[] saved = tag.getIntArray("operatingTicksArray");
+                System.arraycopy(saved, 0, this.operatingTicks, 0, Math.min(this.operatingTicks.length, saved.length));
+            } else if (tag.contains("operatingTicks", Tag.TAG_INT)) {
+                int legacy = tag.getInt("operatingTicks");
+                if (this.operatingTicks.length > 0) {
+                    this.operatingTicks[0] = legacy;
+                }
+            }
+        }
     }
 
     @Override
     public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putInt("operatingTicks", this.operatingTicks);
+        if (this.operatingTicks != null) {
+            tag.putIntArray("operatingTicksArray", this.operatingTicks);
+            if (this.operatingTicks.length > 0) {
+                tag.putInt("operatingTicks", this.operatingTicks[0]);
+            }
+        }
     }
 
     // ITierUpgradable Implementation
@@ -408,7 +447,9 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                 component.read(data.componentNbt, provider);
             }
             
-            this.operatingTicks = data.operatingTicks;
+            if (data.operatingTicks != null && this.operatingTicks != null) {
+                System.arraycopy(data.operatingTicks, 0, this.operatingTicks, 0, Math.min(this.operatingTicks.length, data.operatingTicks.length));
+            }
         }
     }
 
@@ -436,7 +477,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             energyStack,
             fluids,
             componentsTag,
-            this.operatingTicks
+            this.operatingTicks != null ? this.operatingTicks.clone() : new int[0]
         );
     }
 
@@ -446,9 +487,9 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         public final ItemStack energySlotStack;
         public final List<FluidStack> fluidStacks;
         public final CompoundTag componentNbt;
-        public final int operatingTicks;
+        public final int[] operatingTicks;
         
-        public CollapserUpgradeData(long energy, List<ItemStack> inputStacks, ItemStack energySlotStack, List<FluidStack> fluidStacks, CompoundTag componentNbt, int operatingTicks) {
+        public CollapserUpgradeData(long energy, List<ItemStack> inputStacks, ItemStack energySlotStack, List<FluidStack> fluidStacks, CompoundTag componentNbt, int[] operatingTicks) {
             this.energy = energy;
             this.inputStacks = inputStacks;
             this.energySlotStack = energySlotStack;

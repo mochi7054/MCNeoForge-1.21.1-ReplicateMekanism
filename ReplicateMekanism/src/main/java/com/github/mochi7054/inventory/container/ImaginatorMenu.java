@@ -44,8 +44,8 @@ public class ImaginatorMenu extends MekanismTileContainer<ImaginatorBlockEntity>
 
     @Override
     protected void addInventorySlots(Inventory playerInventory) {
-        int yOffset = 80;
-        int xOffset = 8;
+        int yOffset = 94;
+        int xOffset = getTileEntity() != null && getTileEntity().getTier() == com.github.mochi7054.block.ReplicaTier.ULTIMATE ? 25 : 8;
         
         // Main Inventory (3 rows of 9 slots)
         for (int row = 0; row < 3; row++) {
@@ -58,7 +58,7 @@ public class ImaginatorMenu extends MekanismTileContainer<ImaginatorBlockEntity>
         }
         
         // Hotbar (9 slots)
-        int hotbarY = 138;
+        int hotbarY = 152;
         for (int col = 0; col < 9; col++) {
             int x = xOffset + col * 18;
             this.addSlot(this.createHotBarSlot(playerInventory, col, x, hotbarY));

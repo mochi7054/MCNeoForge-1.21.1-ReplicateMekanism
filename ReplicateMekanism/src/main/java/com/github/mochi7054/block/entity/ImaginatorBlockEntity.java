@@ -54,7 +54,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
     public static final int BASE_TICKS_REQUIRED = 100;
     public static final long BASE_ENERGY_USAGE = 50L;
 
-    public int operatingTicks = 0;
+    public int[] operatingTicks;
     public int ticksRequired = BASE_TICKS_REQUIRED;
 
     // Replication Task variables
@@ -186,6 +186,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         InventorySlotHelper builder = InventorySlotHelper.forSideWithConfig(this);
         ReplicaTier tier = getTierSafe();
         int slotCount = tier.getSlotCount();
+        this.operatingTicks = new int[slotCount];
         
         int[][] inputCoords = new int[slotCount][2];
         int[][] outputCoords = new int[slotCount][2];
@@ -193,21 +194,22 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         int energyY;
         if (tier == ReplicaTier.STANDARD) {
             inputCoords[0][0] = 75;
-            inputCoords[0][1] = 35;
+            inputCoords[0][1] = 40;
             outputCoords[0][0] = 122;
-            outputCoords[0][1] = 35;
+            outputCoords[0][1] = 40;
             energyX = 141;
-            energyY = 35;
+            energyY = 40;
         } else {
-            int startX = 88 - (18 * slotCount) / 2 + 1;
+            int center = tier == ReplicaTier.ULTIMATE ? 105 : 88;
+            int startX = center - (18 * slotCount) / 2 + 1;
             for (int i = 0; i < slotCount; i++) {
                 inputCoords[i][0] = startX + i * 18;
-                inputCoords[i][1] = 29;
+                inputCoords[i][1] = 31;
                 outputCoords[i][0] = startX + i * 18;
-                outputCoords[i][1] = 67;
+                outputCoords[i][1] = 69;
             }
-            energyX = 153;
-            energyY = 11;
+            energyX = tier == ReplicaTier.ULTIMATE ? 187 : 153;
+            energyY = 7;
         }
 
         if (inputSlots == null) {
@@ -268,7 +270,9 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         this.activeTask = null;
         this.activeTaskUuid = null;
         this.activeCraftingStack = ItemStack.EMPTY;
-        this.operatingTicks = 0;
+        if (this.operatingTicks != null && this.operatingTicks.length > 0) {
+            this.operatingTicks[0] = 0;
+        }
     }
 
     private void pullMatterFromNetwork(com.buuz135.replication.network.MatterNetwork network) {
@@ -319,6 +323,101 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         }
     }
 
+    private BasicFluidTank getMatchingTank(IMatterType neededMatterType) {
+        for (BasicFluidTank tank : getMatterTanks()) {
+            FluidStack storedFluid = tank.getFluid();
+            if (!storedFluid.isEmpty() && storedFluid.getFluid().getFluidType() instanceof MatterFluidType matterFluidType) {
+                IMatterType storedMatterType = matterFluidType.getMatterType();
+                if (storedMatterType != null && storedMatterType.getName().equals(neededMatterType.getName())) {
+                    return tank;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void performReplication(int activeSlotIndex, MatterCompound recipeCompound, com.buuz135.replication.network.MatterNetwork network) {
+        if (recipeCompound != null && !recipeCompound.getValues().isEmpty()) {
+            for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
+                IMatterType neededMatterType = entry.getKey();
+                int neededAmount = (int) Math.ceil(entry.getValue().getAmount());
+
+                BasicFluidTank matchingTank = getMatchingTank(neededMatterType);
+                if (matchingTank != null) {
+                    matchingTank.extract(neededAmount, Action.EXECUTE, AutomationType.INTERNAL);
+                }
+            }
+
+            if (activeTask != null) {
+                activeTask.finalizeReplication(level, getBlockPos(), network);
+                network.onTaskValueChanged(activeTask, (net.minecraft.server.level.ServerLevel) level);
+
+                BlockPos source = activeTask.getSource();
+                ItemStack copyStack = activeCraftingStack.copyWithCount(1);
+
+                if (!getBlockPos().equals(source)) {
+                    net.neoforged.neoforge.items.IItemHandler itemHandler = level.getCapability(
+                        net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                        source,
+                        Direction.UP
+                    );
+                    if (itemHandler != null) {
+                        ItemStack remaining = net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(itemHandler, copyStack, false);
+                        if (!remaining.isEmpty()) {
+                            OutputInventorySlot outputSlot0 = outputSlots.get(0);
+                            ItemStack outputStack = outputSlot0.getStack();
+                            if (outputStack.isEmpty()) {
+                                outputSlot0.setStack(remaining);
+                            } else if (ItemStack.isSameItemSameComponents(outputStack, remaining) && outputStack.getCount() + remaining.getCount() <= outputStack.getMaxStackSize()) {
+                                outputSlot0.growStack(remaining.getCount(), Action.EXECUTE);
+                            } else {
+                                net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), remaining);
+                            }
+                        }
+                    } else {
+                        OutputInventorySlot outputSlot0 = outputSlots.get(0);
+                        ItemStack outputStack = outputSlot0.getStack();
+                        if (outputStack.isEmpty()) {
+                            outputSlot0.setStack(copyStack);
+                        } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
+                            outputSlot0.growStack(1, Action.EXECUTE);
+                        } else {
+                            net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
+                        }
+                    }
+                } else {
+                    OutputInventorySlot outputSlot0 = outputSlots.get(0);
+                    ItemStack outputStack = outputSlot0.getStack();
+                    if (outputStack.isEmpty()) {
+                        outputSlot0.setStack(copyStack);
+                    } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
+                        outputSlot0.growStack(1, Action.EXECUTE);
+                    } else {
+                        net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
+                    }
+                }
+
+                cancelActiveTask();
+            } else {
+                int outputCount = 1;
+                if (getComponent() != null && getComponent().isUpgradeInstalled(ReplicateMekanism.REPLICA_UPGRADE_TYPE)) {
+                    outputCount = 2;
+                }
+
+                OutputInventorySlot outputSlot = outputSlots.get(activeSlotIndex);
+                ItemStack sourceStack = inputSlots.get(activeSlotIndex).getStack();
+                ItemStack outputStack = outputSlot.getStack();
+                if (outputStack.isEmpty()) {
+                    ItemStack newOutput = sourceStack.copy();
+                    newOutput.setCount(outputCount);
+                    outputSlot.setStack(newOutput);
+                } else {
+                    outputSlot.growStack(outputCount, Action.EXECUTE);
+                }
+            }
+        }
+    }
+
     @Override
     protected boolean onUpdateServer() {
         boolean sendUpdate = super.onUpdateServer();
@@ -345,10 +444,6 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
 
         ticksRequired = MekanismUtils.getTicks(this, BASE_TICKS_REQUIRED);
         long energyUsage = MekanismUtils.getEnergyPerTick(this, BASE_ENERGY_USAGE);
-
-        boolean canOperate = false;
-        int activeSlotIndex = -1;
-        MatterCompound recipeCompound = null;
 
         com.buuz135.replication.network.MatterNetwork network = getNetwork();
 
@@ -382,10 +477,42 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             }
         }
 
+        boolean[] canOperate = new boolean[inputSlots.size()];
+        MatterCompound[] slotCompounds = new MatterCompound[inputSlots.size()];
+
         if (canFunction()) {
-            if (activeTask == null) {
-                // Manual Replication Mode: iterate slots to find first operable slot
-                for (int i = 0; i < inputSlots.size(); i++) {
+            for (int i = 0; i < inputSlots.size(); i++) {
+                if (activeTask != null) {
+                    if (i != 0) {
+                        continue;
+                    }
+                    if (!activeCraftingStack.isEmpty()) {
+                        MatterCompound recipeCompound = ReplicationCalculation.getMatterCompound(activeCraftingStack);
+                        if (recipeCompound != null && !recipeCompound.getValues().isEmpty()) {
+                            boolean allFluidsAvailable = true;
+                            for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
+                                IMatterType neededMatterType = entry.getKey();
+                                int neededAmount = (int) Math.ceil(entry.getValue().getAmount());
+                                BasicFluidTank matchingTank = getMatchingTank(neededMatterType);
+                                if (matchingTank == null || matchingTank.getFluid().getAmount() < neededAmount) {
+                                    allFluidsAvailable = false;
+                                    break;
+                                }
+                            }
+
+                            if (allFluidsAvailable) {
+                                OutputInventorySlot outputSlot = outputSlots.get(0);
+                                ItemStack outputStack = outputSlot.getStack();
+                                ItemStack copyStack = activeCraftingStack.copyWithCount(1);
+                                boolean outputCompatible = outputStack.isEmpty() || (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize());
+                                if (outputCompatible) {
+                                    canOperate[0] = true;
+                                    slotCompounds[0] = recipeCompound;
+                                }
+                            }
+                        }
+                    }
+                } else {
                     ItemStack inputStack = inputSlots.get(i).getStack();
                     if (!inputStack.isEmpty()) {
                         MatterCompound compound = ReplicationCalculation.getMatterCompound(inputStack);
@@ -394,19 +521,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                             for (Map.Entry<IMatterType, MatterValue> entry : compound.getValues().entrySet()) {
                                 IMatterType neededMatterType = entry.getKey();
                                 int neededAmount = (int) Math.ceil(entry.getValue().getAmount());
-
-                                BasicFluidTank matchingTank = null;
-                                for (BasicFluidTank tank : getMatterTanks()) {
-                                    FluidStack storedFluid = tank.getFluid();
-                                    if (!storedFluid.isEmpty() && storedFluid.getFluid().getFluidType() instanceof MatterFluidType matterFluidType) {
-                                        IMatterType storedMatterType = matterFluidType.getMatterType();
-                                        if (storedMatterType != null && storedMatterType.getName().equals(neededMatterType.getName())) {
-                                            matchingTank = tank;
-                                            break;
-                                        }
-                                    }
-                                }
-
+                                BasicFluidTank matchingTank = getMatchingTank(neededMatterType);
                                 if (matchingTank == null || matchingTank.getFluid().getAmount() < neededAmount) {
                                     allFluidsAvailable = false;
                                     break;
@@ -418,60 +533,10 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                                 ItemStack outputStack = outputSlot.getStack();
                                 ItemStack copyStack = inputStack.copyWithCount(1);
                                 boolean outputCompatible = outputStack.isEmpty() || (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize());
-                                if (outputCompatible && energyContainer.getEnergy() >= energyUsage) {
-                                    canOperate = true;
-                                    activeSlotIndex = i;
-                                    recipeCompound = compound;
-                                    break;
+                                if (outputCompatible) {
+                                    canOperate[i] = true;
+                                    slotCompounds[i] = compound;
                                 }
-                            }
-                        }
-                    }
-                }
-            } else {
-                // Automatic Replication Network Mode - task management on slot 0
-                if (network != null && this.ticker % 4 == 0) {
-                    // Check if task was cancelled externally
-                    if (!network.getTaskManager().getPendingTasks().containsKey(activeTaskUuid)) {
-                        cancelActiveTask();
-                        sendUpdate = true;
-                    }
-                }
-
-                if (activeTask != null && !activeCraftingStack.isEmpty()) {
-                    recipeCompound = ReplicationCalculation.getMatterCompound(activeCraftingStack);
-                    if (recipeCompound != null && !recipeCompound.getValues().isEmpty()) {
-                        boolean allFluidsAvailable = true;
-                        for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
-                            IMatterType neededMatterType = entry.getKey();
-                            int neededAmount = (int) Math.ceil(entry.getValue().getAmount());
-
-                            BasicFluidTank matchingTank = null;
-                            for (BasicFluidTank tank : getMatterTanks()) {
-                                FluidStack storedFluid = tank.getFluid();
-                                if (!storedFluid.isEmpty() && storedFluid.getFluid().getFluidType() instanceof MatterFluidType matterFluidType) {
-                                    IMatterType storedMatterType = matterFluidType.getMatterType();
-                                    if (storedMatterType != null && storedMatterType.getName().equals(neededMatterType.getName())) {
-                                        matchingTank = tank;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (matchingTank == null || matchingTank.getFluid().getAmount() < neededAmount) {
-                                allFluidsAvailable = false;
-                                break;
-                            }
-                        }
-
-                        if (allFluidsAvailable) {
-                            OutputInventorySlot outputSlot = outputSlots.get(0);
-                            ItemStack outputStack = outputSlot.getStack();
-                            ItemStack copyStack = activeCraftingStack.copyWithCount(1);
-                            boolean outputCompatible = outputStack.isEmpty() || (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize());
-                            if (outputCompatible && energyContainer.getEnergy() >= energyUsage) {
-                                canOperate = true;
-                                activeSlotIndex = 0;
                             }
                         }
                     }
@@ -506,108 +571,34 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             }
         }
 
+        boolean anyOperating = false;
         boolean wasActive = getActive();
-        if (canOperate) {
-            setActive(true);
-            energyContainer.extract(energyUsage, Action.EXECUTE, AutomationType.INTERNAL);
-            operatingTicks++;
-            if (operatingTicks >= ticksRequired) {
-                operatingTicks = 0;
-
-                if (recipeCompound != null && !recipeCompound.getValues().isEmpty()) {
-                    for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
-                        IMatterType neededMatterType = entry.getKey();
-                        int neededAmount = (int) Math.ceil(entry.getValue().getAmount());
-
-                        for (BasicFluidTank tank : getMatterTanks()) {
-                            FluidStack storedFluid = tank.getFluid();
-                            if (!storedFluid.isEmpty() && storedFluid.getFluid().getFluidType() instanceof MatterFluidType matterFluidType) {
-                                IMatterType storedMatterType = matterFluidType.getMatterType();
-                                if (storedMatterType != null && storedMatterType.getName().equals(neededMatterType.getName())) {
-                                    tank.extract(neededAmount, Action.EXECUTE, AutomationType.INTERNAL);
-                                    break;
-                                }
-                            }
-                        }
+        for (int i = 0; i < inputSlots.size(); i++) {
+            if (canOperate[i]) {
+                if (energyContainer.getEnergy() >= energyUsage) {
+                    energyContainer.extract(energyUsage, Action.EXECUTE, AutomationType.INTERNAL);
+                    operatingTicks[i]++;
+                    anyOperating = true;
+                    if (operatingTicks[i] >= ticksRequired) {
+                        operatingTicks[i] = 0;
+                        performReplication(i, slotCompounds[i], network);
+                        sendUpdate = true;
                     }
-
-                    if (activeTask != null) {
-                        activeTask.finalizeReplication(level, getBlockPos(), network);
-                        network.onTaskValueChanged(activeTask, (net.minecraft.server.level.ServerLevel) level);
-
-                        BlockPos source = activeTask.getSource();
-                        ItemStack copyStack = activeCraftingStack.copyWithCount(1);
-
-                        if (!getBlockPos().equals(source)) {
-                            net.neoforged.neoforge.items.IItemHandler itemHandler = level.getCapability(
-                                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                                source,
-                                Direction.UP
-                            );
-                            if (itemHandler != null) {
-                                ItemStack remaining = net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(itemHandler, copyStack, false);
-                                if (!remaining.isEmpty()) {
-                                    OutputInventorySlot outputSlot0 = outputSlots.get(0);
-                                    ItemStack outputStack = outputSlot0.getStack();
-                                    if (outputStack.isEmpty()) {
-                                        outputSlot0.setStack(remaining);
-                                    } else if (ItemStack.isSameItemSameComponents(outputStack, remaining) && outputStack.getCount() + remaining.getCount() <= outputStack.getMaxStackSize()) {
-                                        outputSlot0.growStack(remaining.getCount(), Action.EXECUTE);
-                                    } else {
-                                        net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), remaining);
-                                    }
-                                }
-                            } else {
-                                OutputInventorySlot outputSlot0 = outputSlots.get(0);
-                                ItemStack outputStack = outputSlot0.getStack();
-                                if (outputStack.isEmpty()) {
-                                    outputSlot0.setStack(copyStack);
-                                } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
-                                    outputSlot0.growStack(1, Action.EXECUTE);
-                                } else {
-                                    net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
-                                }
-                            }
-                        } else {
-                            OutputInventorySlot outputSlot0 = outputSlots.get(0);
-                            ItemStack outputStack = outputSlot0.getStack();
-                            if (outputStack.isEmpty()) {
-                                outputSlot0.setStack(copyStack);
-                            } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
-                                outputSlot0.growStack(1, Action.EXECUTE);
-                            } else {
-                                net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
-                            }
-                        }
-
-                        cancelActiveTask();
-                    } else {
-                        int outputCount = 1;
-                        if (getComponent() != null && getComponent().isUpgradeInstalled(ReplicateMekanism.REPLICA_UPGRADE_TYPE)) {
-                            outputCount = 2;
-                        }
-
-                        OutputInventorySlot outputSlot = outputSlots.get(activeSlotIndex);
-                        ItemStack sourceStack = inputSlots.get(activeSlotIndex).getStack();
-                        ItemStack outputStack = outputSlot.getStack();
-                        if (outputStack.isEmpty()) {
-                            ItemStack newOutput = sourceStack.copy();
-                            newOutput.setCount(outputCount);
-                            outputSlot.setStack(newOutput);
-                        } else {
-                            outputSlot.growStack(outputCount, Action.EXECUTE);
-                        }
+                } else {
+                    if (operatingTicks[i] > 0) {
+                        operatingTicks[i] = Math.max(0, operatingTicks[i] - 2);
+                        sendUpdate = true;
                     }
                 }
-                sendUpdate = true;
-            }
-        } else {
-            setActive(false);
-            if (operatingTicks > 0) {
-                operatingTicks = Math.max(0, operatingTicks - 2);
-                sendUpdate = true;
+            } else {
+                if (operatingTicks[i] > 0) {
+                    operatingTicks[i] = Math.max(0, operatingTicks[i] - 2);
+                    sendUpdate = true;
+                }
             }
         }
+
+        setActive(anyOperating);
 
         if (wasActive != getActive()) {
             sendUpdate = true;
@@ -616,8 +607,15 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         return sendUpdate;
     }
 
+    public double getScaledProgress(int slotIndex) {
+        if (this.operatingTicks == null || slotIndex < 0 || slotIndex >= this.operatingTicks.length) {
+            return 0;
+        }
+        return (double) this.operatingTicks[slotIndex] / (double) ticksRequired;
+    }
+
     public double getScaledProgress() {
-        return (double) operatingTicks / (double) ticksRequired;
+        return getScaledProgress(0);
     }
 
     public MachineEnergyContainer<ImaginatorBlockEntity> getEnergyContainer() {
@@ -638,14 +636,29 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
     @Override
     public void addContainerTrackers(MekanismContainer container) {
         super.addContainerTrackers(container);
-        container.track(SyncableInt.create(() -> operatingTicks, value -> operatingTicks = value));
+        if (this.operatingTicks != null) {
+            for (int i = 0; i < this.operatingTicks.length; i++) {
+                final int idx = i;
+                container.track(SyncableInt.create(() -> this.operatingTicks[idx], value -> this.operatingTicks[idx] = value));
+            }
+        }
         container.track(SyncableInt.create(() -> ticksRequired, value -> ticksRequired = value));
     }
 
     @Override
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.operatingTicks = tag.getInt("operatingTicks");
+        if (this.operatingTicks != null) {
+            if (tag.contains("operatingTicksArray", Tag.TAG_INT_ARRAY)) {
+                int[] saved = tag.getIntArray("operatingTicksArray");
+                System.arraycopy(saved, 0, this.operatingTicks, 0, Math.min(this.operatingTicks.length, saved.length));
+            } else if (tag.contains("operatingTicks", Tag.TAG_INT)) {
+                int legacy = tag.getInt("operatingTicks");
+                if (this.operatingTicks.length > 0) {
+                    this.operatingTicks[0] = legacy;
+                }
+            }
+        }
         if (tag.contains("activeTaskUuid")) {
             this.activeTaskUuid = tag.getString("activeTaskUuid");
         } else {
@@ -661,7 +674,12 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
     @Override
     public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putInt("operatingTicks", this.operatingTicks);
+        if (this.operatingTicks != null) {
+            tag.putIntArray("operatingTicksArray", this.operatingTicks);
+            if (this.operatingTicks.length > 0) {
+                tag.putInt("operatingTicks", this.operatingTicks[0]);
+            }
+        }
         if (this.activeTaskUuid != null) {
             tag.putString("activeTaskUuid", this.activeTaskUuid);
         }
@@ -694,7 +712,9 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                 component.read(data.componentNbt, provider);
             }
             
-            this.operatingTicks = data.operatingTicks;
+            if (data.operatingTicks != null && this.operatingTicks != null) {
+                System.arraycopy(data.operatingTicks, 0, this.operatingTicks, 0, Math.min(this.operatingTicks.length, data.operatingTicks.length));
+            }
         }
     }
 
@@ -727,7 +747,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             energyStack,
             fluids,
             componentsTag,
-            this.operatingTicks
+            this.operatingTicks != null ? this.operatingTicks.clone() : new int[0]
         );
     }
 
@@ -738,9 +758,9 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         public final ItemStack energySlotStack;
         public final List<FluidStack> fluidStacks;
         public final CompoundTag componentNbt;
-        public final int operatingTicks;
+        public final int[] operatingTicks;
         
-        public ImaginatorUpgradeData(long energy, List<ItemStack> inputStacks, List<ItemStack> outputStacks, ItemStack energySlotStack, List<FluidStack> fluidStacks, CompoundTag componentNbt, int operatingTicks) {
+        public ImaginatorUpgradeData(long energy, List<ItemStack> inputStacks, List<ItemStack> outputStacks, ItemStack energySlotStack, List<FluidStack> fluidStacks, CompoundTag componentNbt, int[] operatingTicks) {
             this.energy = energy;
             this.inputStacks = inputStacks;
             this.outputStacks = outputStacks;
