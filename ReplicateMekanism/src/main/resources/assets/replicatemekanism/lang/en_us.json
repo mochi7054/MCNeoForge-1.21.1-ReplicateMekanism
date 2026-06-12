@@ -66,5 +66,6 @@
   "description.replicatemekanism.collapser_elite": "Use energy to cause items to collapse from reality.",
   "block.replicatemekanism.collapser_ultimate": "Ultimate Reality Collapser",
   "container.replicatemekanism.collapser_ultimate": "Ultimate Reality Collapser",
-  "description.replicatemekanism.collapser_ultimate": "Use energy to cause items to collapse from reality."
+  "description.replicatemekanism.collapser_ultimate": "Use energy to cause items to collapse from reality.",
+  "gui.replicatemekanism.task_sharing": "Task Sharing Mode"
 }

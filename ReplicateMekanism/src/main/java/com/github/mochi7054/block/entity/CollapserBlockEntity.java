@@ -20,6 +20,7 @@ import mekanism.common.capabilities.holder.fluid.IFluidTankHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
 import mekanism.common.inventory.container.MekanismContainer;
+import mekanism.common.inventory.container.sync.SyncableBoolean;
 import mekanism.common.inventory.container.sync.SyncableInt;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.InputInventorySlot;
@@ -54,6 +55,9 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
 
     public int[] operatingTicks;
     public int ticksRequired = BASE_TICKS_REQUIRED;
+
+    /** 自動分配（ソート）が有効かどうか。BASIC以上のティアのみ機能する。 */
+    public boolean sorting = false;
 
     private MachineEnergyContainer<CollapserBlockEntity> energyContainer;
 
@@ -191,14 +195,27 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             energyX = 141;
             energyY = 40;
         } else {
-            int center = tier == ReplicaTier.ULTIMATE ? 105 : 88;
-            int startX = center - (18 * slotCount) / 2 + 1;
-            for (int i = 0; i < slotCount; i++) {
-                inputCoords[i][0] = startX + i * 18;
-                inputCoords[i][1] = 26;
+            int startX;
+            int gap;
+            if (tier == ReplicaTier.BASIC) {
+                startX = 55;
+                gap = 38;
+            } else if (tier == ReplicaTier.ADVANCED) {
+                startX = 35;
+                gap = 26;
+            } else if (tier == ReplicaTier.ELITE) {
+                startX = 32;
+                gap = 19;
+            } else { // ULTIMATE
+                startX = 30;
+                gap = 19;
             }
-            energyX = tier == ReplicaTier.ULTIMATE ? 187 : 153;
-            energyY = 26;
+            for (int i = 0; i < slotCount; i++) {
+                inputCoords[i][0] = startX + i * gap;
+                inputCoords[i][1] = 17;
+            }
+            energyX = 10;
+            energyY = 17;
         }
 
         if (inputSlots == null) {
@@ -344,6 +361,11 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             sendUpdate = true;
         }
 
+        // 自動分配: BASIC以上のティアで sorting が有効なら毎 tick 実行
+        if (sorting && inputSlots.size() > 1) {
+            sortInventory();
+        }
+
         return sendUpdate;
     }
 
@@ -361,6 +383,124 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             case "quantum"  -> quantumTank;
             default         -> null;
         };
+    }
+
+    // ---- 自動分配 ----
+
+    public void setSorting(boolean value) {
+        this.sorting = value;
+        setChanged();
+    }
+
+    /**
+     * 全入力スロットのアイテムを均等に分配する（Mekanism Factory の sortInventory に相当）。
+     * 同じアイテムをできるだけ均等に各スロットへ振り分け、余りは先頭スロットから順に入れる。
+     */
+    private void sortInventory() {
+        if (inputSlots == null || inputSlots.size() <= 1) return;
+
+        // 全スロットのアイテムを集める
+        java.util.List<ItemStack> collected = new java.util.ArrayList<>();
+        for (mekanism.common.inventory.slot.InputInventorySlot slot : inputSlots) {
+            ItemStack stack = slot.getStack();
+            if (!stack.isEmpty()) {
+                collected.add(stack.copy());
+                slot.setStack(ItemStack.EMPTY);
+            }
+        }
+        if (collected.isEmpty()) return;
+
+        // アイテム種別ごとに合計数を集計
+        java.util.Map<net.minecraft.core.component.DataComponentPatch, java.util.AbstractMap.SimpleEntry<ItemStack, Integer>> countMap =
+                new java.util.LinkedHashMap<>();
+        for (ItemStack stack : collected) {
+            var key = stack.getComponentsPatch();
+            var entry = countMap.get(key);
+            if (entry == null) {
+                countMap.put(key, new java.util.AbstractMap.SimpleEntry<>(stack.copyWithCount(1), stack.getCount()));
+            } else {
+                entry.setValue(entry.getValue() + stack.getCount());
+            }
+        }
+
+        int slotCount = inputSlots.size();
+
+        // 各アイテム種別の情報を格納する一時クラス
+        class SortingGroup {
+            final ItemStack template;
+            final int total;
+            final int maxPerStack;
+            int allocatedSlots;
+
+            SortingGroup(ItemStack template, int total) {
+                this.template = template;
+                this.total = total;
+                this.maxPerStack = template.getMaxStackSize();
+                this.allocatedSlots = (total + maxPerStack - 1) / maxPerStack;
+            }
+
+            int getAverage() {
+                return (total + allocatedSlots - 1) / allocatedSlots;
+            }
+        }
+
+        java.util.List<SortingGroup> groups = new java.util.ArrayList<>();
+        int totalAllocated = 0;
+        for (var entry : countMap.values()) {
+            SortingGroup group = new SortingGroup(entry.getKey(), entry.getValue());
+            groups.add(group);
+            totalAllocated += group.allocatedSlots;
+        }
+
+        // 防御的コード：もし必要なスロット数の合計が総スロット数を超えている場合
+        if (totalAllocated > slotCount) {
+            totalAllocated = 0;
+            for (SortingGroup group : groups) {
+                group.allocatedSlots = 1;
+                totalAllocated += 1;
+            }
+            if (totalAllocated > slotCount) {
+                while (groups.size() > slotCount) {
+                    groups.remove(groups.size() - 1);
+                }
+                totalAllocated = groups.size();
+            }
+        }
+
+        // 残りのスロットを、一番スロットあたりの個数が多いアイテムに優先して均等に分配する
+        while (totalAllocated < slotCount) {
+            SortingGroup bestGroup = null;
+            int maxAverage = -1;
+            for (SortingGroup group : groups) {
+                int avg = group.getAverage();
+                if (avg > maxAverage) {
+                    maxAverage = avg;
+                    bestGroup = group;
+                }
+            }
+            if (bestGroup != null) {
+                bestGroup.allocatedSlots++;
+                totalAllocated++;
+            } else {
+                break;
+            }
+        }
+
+        // 分配したスロット数に従って、アイテムをスロットにセットする
+        int slotIdx = 0;
+        for (SortingGroup group : groups) {
+            int total = group.total;
+            int slotsToUse = group.allocatedSlots;
+            int perSlot = total / slotsToUse;
+            int remainder = total % slotsToUse;
+
+            for (int i = 0; i < slotsToUse && slotIdx < slotCount; i++, slotIdx++) {
+                int count = perSlot + (i < remainder ? 1 : 0);
+                if (count <= 0) continue;
+                ItemStack toSet = group.template.copyWithCount(Math.min(count, group.maxPerStack));
+                inputSlots.get(slotIdx).setStack(toSet);
+            }
+        }
     }
 
     public double getScaledProgress(int slotIndex) {
@@ -399,6 +539,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             }
         }
         container.track(SyncableInt.create(() -> ticksRequired, value -> ticksRequired = value));
+        container.track(SyncableBoolean.create(() -> this.sorting, value -> this.sorting = value));
     }
 
     @Override
@@ -415,6 +556,9 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                 }
             }
         }
+        if (tag.contains("sorting")) {
+            this.sorting = tag.getBoolean("sorting");
+        }
     }
 
     @Override
@@ -426,6 +570,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                 tag.putInt("operatingTicks", this.operatingTicks[0]);
             }
         }
+        tag.putBoolean("sorting", this.sorting);
     }
 
     // ITierUpgradable Implementation

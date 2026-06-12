@@ -19,7 +19,8 @@
     "TileEntityFormulaicAssemblicatorMixin",
     "MekanismRendererMixin",
     "ImaginatorBlockEntityMixin",
-    "CollapserBlockEntityMixin"
+    "CollapserBlockEntityMixin",
+    "GuiWindowMixin"
   ],
   "injectors": {
     "defaultRequire": 1

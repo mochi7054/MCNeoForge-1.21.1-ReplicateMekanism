@@ -57,5 +57,6 @@
   "description.replicatemekanism.collapser_elite": "電力を使用して、アイテムを現実から崩落させます。",
   "block.replicatemekanism.collapser_ultimate": "究極型現実崩落機",
   "container.replicatemekanism.collapser_ultimate": "究極型現実崩落機",
-  "description.replicatemekanism.collapser_ultimate": "電力を使用して、アイテムを現実から崩落させます。"
+  "description.replicatemekanism.collapser_ultimate": "電力を使用して、アイテムを現実から崩落させます。",
+  "gui.replicatemekanism.task_sharing": "タスク共有モード"
 }

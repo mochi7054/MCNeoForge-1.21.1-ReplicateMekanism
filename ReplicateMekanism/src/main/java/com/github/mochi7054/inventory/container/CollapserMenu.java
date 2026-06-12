@@ -44,8 +44,13 @@ public class CollapserMenu extends MekanismTileContainer<CollapserBlockEntity> {
 
     @Override
     protected void addInventorySlots(Inventory playerInventory) {
-        int yOffset = 94;
-        int xOffset = getTileEntity() != null && getTileEntity().getTier() == com.github.mochi7054.block.ReplicaTier.ULTIMATE ? 25 : 8;
+        com.github.mochi7054.block.ReplicaTier tier = getTileEntity() != null ? getTileEntity().getTier() : com.github.mochi7054.block.ReplicaTier.STANDARD;
+        int yOffset = tier == com.github.mochi7054.block.ReplicaTier.STANDARD ? 94 : 104;
+        int xOffset = switch (tier) {
+            case STANDARD, BASIC, ADVANCED -> 8;
+            case ELITE -> 10;
+            case ULTIMATE -> 29;
+        };
         
         // Main Inventory (3 rows of 9 slots)
         for (int row = 0; row < 3; row++) {
@@ -58,7 +63,7 @@ public class CollapserMenu extends MekanismTileContainer<CollapserBlockEntity> {
         }
         
         // Hotbar (9 slots)
-        int hotbarY = 152;
+        int hotbarY = tier == com.github.mochi7054.block.ReplicaTier.STANDARD ? 152 : 162;
         for (int col = 0; col < 9; col++) {
             int x = xOffset + col * 18;
             this.addSlot(this.createHotBarSlot(playerInventory, col, x, hotbarY));

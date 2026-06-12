@@ -283,6 +283,7 @@ public class ReplicateMekanism {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(net.neoforged.bus.api.EventPriority.HIGHEST, this::registerCapabilities);
+        modEventBus.addListener(this::registerPayloadHandlers);
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         BLOCKS.register(modEventBus);
@@ -304,6 +305,19 @@ public class ReplicateMekanism {
         RMChemical.CHEMICALS.register(modEventBus);
     }
 
+    private void registerPayloadHandlers(final net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent event) {
+        final var registrar = event.registrar(MODID);
+        registrar.playToServer(
+            com.github.mochi7054.network.PacketSetCollapserSorting.TYPE,
+            com.github.mochi7054.network.PacketSetCollapserSorting.CODEC,
+            com.github.mochi7054.network.PacketSetCollapserSorting::handle
+        );
+        registrar.playToServer(
+            com.github.mochi7054.network.PacketSetImaginatorSorting.TYPE,
+            com.github.mochi7054.network.PacketSetImaginatorSorting.CODEC,
+            com.github.mochi7054.network.PacketSetImaginatorSorting::handle
+        );
+    }
 
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("ReplicateMekanism common setup completed.");

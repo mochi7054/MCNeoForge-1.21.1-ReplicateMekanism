@@ -44,4 +44,40 @@ public class MekanismRendererMixin {
             ci.cancel();
         }
     }
+
+    @Inject(method = "color(Lnet/minecraft/client/gui/GuiGraphics;Lmekanism/client/render/lib/ColorAtlas$ColorRegistryObject;)V", at = @At("HEAD"), cancellable = true, remap = false)
+    private static void onColorRegistryObject(net.minecraft.client.gui.GuiGraphics guiGraphics, mekanism.client.render.lib.ColorAtlas.ColorRegistryObject colorRegistryObject, CallbackInfo ci) {
+        if (colorRegistryObject != null) {
+            if (colorRegistryObject == mekanism.client.SpecialColors.TAB_SECURITY ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_REDSTONE_CONTROL) {
+                return;
+            }
+            if (colorRegistryObject == mekanism.client.SpecialColors.TAB_UPGRADE ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_CONFIGURATION ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_TRANSPORTER ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_ENERGY_CONFIG ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_FLUID_CONFIG ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_CHEMICAL_CONFIG ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_ITEM_CONFIG ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_HEAT_CONFIG ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_CONTAINER_EDIT_MODE ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_VISUALS ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_ROBIT_MENU ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_FACTORY_SORT ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_QIO_FREQUENCY ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_RESIZE_CONTROLS ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_LASER_AMPLIFIER ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_CHEMICAL_WASHER ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_MULTIBLOCK_MAIN ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_MULTIBLOCK_STATS ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_CRAFTING_WINDOW ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_ARMOR_SLOTS ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_TARGET_DIRECTION ||
+                colorRegistryObject == mekanism.client.SpecialColors.TAB_JEI_REJECTS_TARGET) {
+
+                MekanismRenderer.color(guiGraphics, 0xFFc8c9de);
+                ci.cancel();
+            }
+        }
+    }
 }
