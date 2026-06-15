@@ -1,0 +1,37 @@
+{
+  "parent": "replicatemekanism:replica_control_circuit",
+  "display": {
+    "icon": {
+      "id": "mekanism:ingot_refined_glowstone"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.refined_glowstone.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.refined_glowstone.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "has_refined_glowstone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mekanism:ingot_refined_glowstone"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_refined_glowstone"
+    ]
+  ]
+}

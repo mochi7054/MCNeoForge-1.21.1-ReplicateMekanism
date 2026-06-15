@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LCL",
+    "RPR",
+    "LCL"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:gold_ingot"
+    },
+    "C": {
+      "item": "mekanism:elite_control_circuit"
+    },
+    "L": {
+      "item": "mekanism:alloy_reinforced"
+    },
+    "P": {
+      "item": "replicatemekanism:collapser_advanced"
+    }
+  },
+  "result": {
+    "id": "replicatemekanism:collapser_elite",
+    "count": 1
+  }
+}

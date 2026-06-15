@@ -2,7 +2,7 @@ package com.github.mochi7054.mixin;
 
 import com.buuz135.replication.api.network.IMatterTanksSupplier;
 import com.buuz135.replication.api.matter_fluid.IMatterTank;
-import com.github.mochi7054.block.entity.CollapserBlockEntity;
+import com.github.mochi7054.collapser.CollapserBlockEntity;
 import com.github.mochi7054.fluid.MekanismMatterTank;
 import com.github.mochi7054.ReplicateMekanism;
 import mekanism.common.capabilities.fluid.BasicFluidTank;

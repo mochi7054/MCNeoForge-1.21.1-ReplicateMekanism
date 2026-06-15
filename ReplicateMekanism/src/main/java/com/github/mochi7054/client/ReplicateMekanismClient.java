@@ -33,26 +33,26 @@ public class ReplicateMekanismClient {
 
     @SubscribeEvent
     static void registerScreens(RegisterMenuScreensEvent event) {
-        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_CONTAINER_TYPE, com.github.mochi7054.client.gui.ImaginatorScreen::new);
-        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_BASIC_CONTAINER_TYPE, com.github.mochi7054.client.gui.ImaginatorScreen::new);
-        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_ADVANCED_CONTAINER_TYPE, com.github.mochi7054.client.gui.ImaginatorScreen::new);
-        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_ELITE_CONTAINER_TYPE, com.github.mochi7054.client.gui.ImaginatorScreen::new);
-        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_ULTIMATE_CONTAINER_TYPE, com.github.mochi7054.client.gui.ImaginatorScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_CONTAINER_TYPE, com.github.mochi7054.imaginator.ImaginatorScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_BASIC_CONTAINER_TYPE, com.github.mochi7054.imaginator.ImaginatorScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_ADVANCED_CONTAINER_TYPE, com.github.mochi7054.imaginator.ImaginatorScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_ELITE_CONTAINER_TYPE, com.github.mochi7054.imaginator.ImaginatorScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.IMAGINATOR_ULTIMATE_CONTAINER_TYPE, com.github.mochi7054.imaginator.ImaginatorScreen::new);
 
-        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_CONTAINER_TYPE, com.github.mochi7054.client.gui.CollapserScreen::new);
-        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_BASIC_CONTAINER_TYPE, com.github.mochi7054.client.gui.CollapserScreen::new);
-        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_ADVANCED_CONTAINER_TYPE, com.github.mochi7054.client.gui.CollapserScreen::new);
-        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_ELITE_CONTAINER_TYPE, com.github.mochi7054.client.gui.CollapserScreen::new);
-        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_ULTIMATE_CONTAINER_TYPE, com.github.mochi7054.client.gui.CollapserScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_CONTAINER_TYPE, com.github.mochi7054.collapser.CollapserScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_BASIC_CONTAINER_TYPE, com.github.mochi7054.collapser.CollapserScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_ADVANCED_CONTAINER_TYPE, com.github.mochi7054.collapser.CollapserScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_ELITE_CONTAINER_TYPE, com.github.mochi7054.collapser.CollapserScreen::new);
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_ULTIMATE_CONTAINER_TYPE, com.github.mochi7054.collapser.CollapserScreen::new);
     }
 
     @SubscribeEvent
     static void registerRenderers(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(ReplicateMekanism.COLLAPSER_TILE.get(), com.github.mochi7054.client.render.RenderCollapser::new);
-        event.registerBlockEntityRenderer(ReplicateMekanism.COLLAPSER_BASIC_TILE.get(), com.github.mochi7054.client.render.RenderCollapser::new);
-        event.registerBlockEntityRenderer(ReplicateMekanism.COLLAPSER_ADVANCED_TILE.get(), com.github.mochi7054.client.render.RenderCollapser::new);
-        event.registerBlockEntityRenderer(ReplicateMekanism.COLLAPSER_ELITE_TILE.get(), com.github.mochi7054.client.render.RenderCollapser::new);
-        event.registerBlockEntityRenderer(ReplicateMekanism.COLLAPSER_ULTIMATE_TILE.get(), com.github.mochi7054.client.render.RenderCollapser::new);
+        event.registerBlockEntityRenderer(ReplicateMekanism.COLLAPSER_TILE.get(), com.github.mochi7054.collapser.RenderCollapser::new);
+        event.registerBlockEntityRenderer(ReplicateMekanism.COLLAPSER_BASIC_TILE.get(), com.github.mochi7054.collapser.RenderCollapser::new);
+        event.registerBlockEntityRenderer(ReplicateMekanism.COLLAPSER_ADVANCED_TILE.get(), com.github.mochi7054.collapser.RenderCollapser::new);
+        event.registerBlockEntityRenderer(ReplicateMekanism.COLLAPSER_ELITE_TILE.get(), com.github.mochi7054.collapser.RenderCollapser::new);
+        event.registerBlockEntityRenderer(ReplicateMekanism.COLLAPSER_ULTIMATE_TILE.get(), com.github.mochi7054.collapser.RenderCollapser::new);
     }
 }
 

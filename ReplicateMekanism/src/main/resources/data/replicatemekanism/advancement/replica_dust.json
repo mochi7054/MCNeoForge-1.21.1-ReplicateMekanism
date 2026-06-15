@@ -1,0 +1,37 @@
+{
+  "parent": "replicatemekanism:root",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:replica_dust"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.replica_dust.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.replica_dust.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_replica_dust": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:replica_dust"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_replica_dust"
+    ]
+  ]
+}

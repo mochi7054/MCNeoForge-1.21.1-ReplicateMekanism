@@ -3,6 +3,8 @@ package com.github.mochi7054.item;
 import com.github.mochi7054.ReplicateMekanism;
 import com.buuz135.replication.block.ReplicatorBlock;
 import com.buuz135.replication.block.DisintegratorBlock;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -12,7 +14,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -23,15 +24,22 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.minecraft.world.Containers;
-import net.minecraft.ChatFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReplicaTierInstallerItem extends Item {
 
-    public ReplicaTierInstallerItem(Properties properties) {
+    private final TextColor nameColor;
+
+    public ReplicaTierInstallerItem(Properties properties, TextColor nameColor) {
         super(properties);
+        this.nameColor = nameColor;
+    }
+
+    @Override
+    public MutableComponent getName(ItemStack stack) {
+        return super.getName(stack).copy().withStyle(style -> style.withColor(nameColor));
     }
 
     @Override
@@ -160,10 +168,5 @@ public class ReplicaTierInstallerItem extends Item {
         }
 
         return InteractionResult.sidedSuccess(level.isClientSide);
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag flag) {
-        tooltipComponents.add(Component.translatable("item.replicatemekanism.replica_tier_installer.desc").withStyle(ChatFormatting.GRAY));
     }
 }

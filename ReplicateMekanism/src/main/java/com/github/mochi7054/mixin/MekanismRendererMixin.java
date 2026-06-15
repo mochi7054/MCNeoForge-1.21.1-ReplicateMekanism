@@ -10,6 +10,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.github.mochi7054.chemical.RMChemical;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import com.github.mochi7054.imaginator.ImaginatorScreen;
+import com.github.mochi7054.collapser.CollapserScreen;
 
 @Mixin(MekanismRenderer.class)
 public class MekanismRendererMixin {
@@ -48,6 +52,10 @@ public class MekanismRendererMixin {
     @Inject(method = "color(Lnet/minecraft/client/gui/GuiGraphics;Lmekanism/client/render/lib/ColorAtlas$ColorRegistryObject;)V", at = @At("HEAD"), cancellable = true, remap = false)
     private static void onColorRegistryObject(net.minecraft.client.gui.GuiGraphics guiGraphics, mekanism.client.render.lib.ColorAtlas.ColorRegistryObject colorRegistryObject, CallbackInfo ci) {
         if (colorRegistryObject != null) {
+            Screen screen = Minecraft.getInstance().screen;
+            if (!(screen instanceof ImaginatorScreen) && !(screen instanceof CollapserScreen)) {
+                return;
+            }
             if (colorRegistryObject == mekanism.client.SpecialColors.TAB_SECURITY ||
                 colorRegistryObject == mekanism.client.SpecialColors.TAB_REDSTONE_CONTROL) {
                 return;

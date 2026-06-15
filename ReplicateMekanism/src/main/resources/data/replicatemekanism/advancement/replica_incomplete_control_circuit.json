@@ -1,0 +1,37 @@
+{
+  "parent": "replicatemekanism:replica_alloy",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:replica_incomplete_control_circuit"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.replica_incomplete_control_circuit.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.replica_incomplete_control_circuit.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_incomplete_circuit": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:replica_incomplete_control_circuit"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_incomplete_circuit"
+    ]
+  ]
+}

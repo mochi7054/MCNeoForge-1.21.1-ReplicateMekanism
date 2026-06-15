@@ -1,0 +1,36 @@
+{
+  "parent": "replicatemekanism:replica_dust",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:replica_alloy"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.replica_alloy.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.replica_alloy.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_replica_alloy": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:replica_alloy"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_replica_alloy"
+    ]
+  ]
+}

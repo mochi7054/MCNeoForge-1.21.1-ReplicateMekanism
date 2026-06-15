@@ -1,0 +1,37 @@
+{
+  "parent": "replicatemekanism:replica_dust",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:enriched_replica"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.enriched_replica.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.enriched_replica.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_enriched_replica": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:enriched_replica"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_enriched_replica"
+    ]
+  ]
+}

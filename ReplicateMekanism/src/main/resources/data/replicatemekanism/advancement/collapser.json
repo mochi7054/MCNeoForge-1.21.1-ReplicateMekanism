@@ -1,0 +1,37 @@
+{
+  "parent": "replicatemekanism:replica_control_circuit",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:collapser"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.collapser.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.collapser.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_collapser": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:collapser"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_collapser"
+    ]
+  ]
+}

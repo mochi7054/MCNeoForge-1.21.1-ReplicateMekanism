@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LCL",
+    "RPR",
+    "LCL"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "mekanism:basic_control_circuit"
+    },
+    "L": {
+      "item": "minecraft:redstone"
+    },
+    "P": {
+      "item": "replicatemekanism:collapser"
+    }
+  },
+  "result": {
+    "id": "replicatemekanism:collapser_basic",
+    "count": 1
+  }
+}

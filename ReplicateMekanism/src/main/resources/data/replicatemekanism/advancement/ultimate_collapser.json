@@ -1,0 +1,37 @@
+{
+  "parent": "replicatemekanism:collapser",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:collapser_ultimate"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.ultimate_collapser.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.ultimate_collapser.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_ultimate_collapser": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:collapser_ultimate"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ultimate_collapser"
+    ]
+  ]
+}

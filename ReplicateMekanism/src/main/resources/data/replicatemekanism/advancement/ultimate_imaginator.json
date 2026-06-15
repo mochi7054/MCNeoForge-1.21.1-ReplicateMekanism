@@ -1,0 +1,37 @@
+{
+  "parent": "replicatemekanism:imaginator",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:imaginator_ultimate"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.ultimate_imaginator.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.ultimate_imaginator.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_ultimate_imaginator": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:imaginator_ultimate"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ultimate_imaginator"
+    ]
+  ]
+}

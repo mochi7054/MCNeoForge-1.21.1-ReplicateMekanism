@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "id": "replication:replica_ingot"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.root.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.root.description"
+    },
+    "background": "replication:textures/block/deepslate_replica_ore.png",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "always": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "requirements": [
+    [
+      "always"
+    ]
+  ]
+}

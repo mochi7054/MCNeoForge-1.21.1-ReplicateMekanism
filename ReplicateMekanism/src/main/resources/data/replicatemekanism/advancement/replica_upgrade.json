@@ -1,0 +1,37 @@
+{
+  "parent": "replicatemekanism:upgrade_machine",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:replica_upgrade"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.replica_upgrade.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.replica_upgrade.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_replica_upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:replica_upgrade"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_replica_upgrade"
+    ]
+  ]
+}

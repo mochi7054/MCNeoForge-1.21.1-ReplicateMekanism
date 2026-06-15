@@ -1,0 +1,15 @@
+{
+  "parent": "block/block",
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "replicatemekanism:block/collapser/standard_base"
+  },
+  "children": {
+    "base": {
+      "parent": "replicatemekanism:block/collapser/standard_base"
+    },
+    "blade": {
+      "parent": "replicatemekanism:block/collapser/standard_blade"
+    }
+  }
+}

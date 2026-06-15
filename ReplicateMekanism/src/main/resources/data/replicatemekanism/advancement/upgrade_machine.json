@@ -1,0 +1,59 @@
+{
+  "parent": "replicatemekanism:replica_tier_installer",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:imaginator_basic"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.upgrade_machine.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.upgrade_machine.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "upgraded_imaginator": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": {
+          "block": {
+            "blocks": [
+              "replication:replicator"
+            ]
+          }
+        },
+        "item": {
+          "items": [
+            "replicatemekanism:replica_tier_installer"
+          ]
+        }
+      }
+    },
+    "upgraded_collapser": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": {
+          "block": {
+            "blocks": [
+              "replication:disintegrator"
+            ]
+          }
+        },
+        "item": {
+          "items": [
+            "replicatemekanism:replica_tier_installer"
+          ]
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "upgraded_imaginator",
+      "upgraded_collapser"
+    ]
+  ]
+}

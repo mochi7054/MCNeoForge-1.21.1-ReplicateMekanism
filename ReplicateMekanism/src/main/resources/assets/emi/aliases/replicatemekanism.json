@@ -1,0 +1,82 @@
+{
+  "aliases": [
+    {
+      "stacks": [
+        "item:replicatemekanism:imaginator",
+        "item:replicatemekanism:imaginator_basic",
+        "item:replicatemekanism:imaginator_advanced",
+        "item:replicatemekanism:imaginator_elite",
+        "item:replicatemekanism:imaginator_ultimate"
+      ],
+      "text": [
+        "alias.replicatemekanism.imaginator.replicator",
+        "alias.replicatemekanism.imaginator.solidifier",
+        "alias.replicatemekanism.imaginator.materializer",
+        "replicator",
+        "solidifier",
+        "materializer",
+        "レプリケーター",
+        "具現化機",
+        "マテリアライザー"
+      ]
+    },
+    {
+      "stacks": [
+        "item:replicatemekanism:collapser",
+        "item:replicatemekanism:collapser_basic",
+        "item:replicatemekanism:collapser_advanced",
+        "item:replicatemekanism:collapser_elite",
+        "item:replicatemekanism:collapser_ultimate"
+      ],
+      "text": [
+        "alias.replicatemekanism.collapser.disintegrator",
+        "alias.replicatemekanism.collapser.crusher",
+        "alias.replicatemekanism.collapser.destroyer",
+        "disintegrator",
+        "crusher",
+        "destroyer",
+        "ディスインテグレーター",
+        "クラッシャー",
+        "デストロイヤー"
+      ]
+    },
+    {
+      "stacks": "item:replicatemekanism:replica_tier_installer",
+      "text": [
+        "alias.replicatemekanism.installer.factory",
+        "alias.replicatemekanism.installer.upgrade",
+        "factory installer",
+        "machine upgrade",
+        "ファクトリーインストーラー",
+        "機械アップグレード"
+      ]
+    },
+    {
+      "stacks": "item:replicatemekanism:replica_upgrade",
+      "text": [
+        "alias.replicatemekanism.upgrade.augment",
+        "alias.replicatemekanism.upgrade.replica",
+        "augment",
+        "オーグメント",
+        "Replica",
+        "レプリカ"
+      ]
+    },
+    {
+      "stacks": [
+        "item:replicatemekanism:replica_alloy",
+        "item:replicatemekanism:replica_dust",
+        "item:replicatemekanism:enriched_replica",
+        "item:replicatemekanism:replica_control_circuit",
+        "item:replicatemekanism:replica_incomplete_control_circuit"
+      ],
+      "text": [
+        "alias.replicatemekanism.material.replica",
+        "replica material",
+        "replica",
+        "レプリカ素材",
+        "レプリカ"
+      ]
+    }
+  ]
+}

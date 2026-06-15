@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import com.github.mochi7054.client.gui.ImaginatorScreen;
-import com.github.mochi7054.client.gui.CollapserScreen;
+import com.github.mochi7054.imaginator.ImaginatorScreen;
+import com.github.mochi7054.collapser.CollapserScreen;
 
 @Mixin(GuiWindow.class)
 public class GuiWindowMixin {

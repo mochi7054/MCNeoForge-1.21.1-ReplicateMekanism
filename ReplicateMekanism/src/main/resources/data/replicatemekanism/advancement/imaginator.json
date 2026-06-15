@@ -1,0 +1,37 @@
+{
+  "parent": "replicatemekanism:replica_control_circuit",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:imaginator"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.imaginator.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.imaginator.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_imaginator": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:imaginator"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_imaginator"
+    ]
+  ]
+}

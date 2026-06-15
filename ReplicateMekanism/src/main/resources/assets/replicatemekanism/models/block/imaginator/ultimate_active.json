@@ -1,0 +1,156 @@
+{
+  "parent": "block/block",
+  "loader": "neoforge:composite",
+  "textures": {
+    "particle": "replicatemekanism:block/imaginator/factory_side_active"
+  },
+  "children": {
+    "solid": {
+      "render_type": "minecraft:solid",
+      "textures": {
+        "particle": "replicatemekanism:block/imaginator/factory_side_active",
+        "down": "replicatemekanism:block/imaginator/factory_bottom",
+        "up": "replicatemekanism:block/imaginator/factory_top",
+        "north": "replicatemekanism:block/imaginator/factory_front_active",
+        "south": "replicatemekanism:block/imaginator/factory_side_active",
+        "west": "replicatemekanism:block/imaginator/factory_side_active",
+        "east": "replicatemekanism:block/imaginator/factory_side_active",
+        "led": "mekanism:block/factory/led"
+      },
+      "elements": [
+        {
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            16,
+            16
+          ],
+          "faces": {
+            "down": {
+              "uv": [
+                0,
+                0,
+                16,
+                16
+              ],
+              "texture": "#down",
+              "cullface": "down"
+            },
+            "up": {
+              "uv": [
+                0,
+                0,
+                16,
+                16
+              ],
+              "texture": "#up",
+              "cullface": "up"
+            },
+            "north": {
+              "uv": [
+                0,
+                0,
+                16,
+                16
+              ],
+              "texture": "#north",
+              "cullface": "north"
+            },
+            "south": {
+              "uv": [
+                0,
+                0,
+                16,
+                16
+              ],
+              "texture": "#south",
+              "cullface": "south"
+            },
+            "west": {
+              "uv": [
+                0,
+                0,
+                16,
+                16
+              ],
+              "texture": "#west",
+              "cullface": "west"
+            },
+            "east": {
+              "uv": [
+                0,
+                0,
+                16,
+                16
+              ],
+              "texture": "#east",
+              "cullface": "east"
+            }
+          }
+        },
+        {
+          "name": "front_panel_led",
+          "from": [
+            5,
+            15.01,
+            -0.01
+          ],
+          "to": [
+            11,
+            16.01,
+            0.01
+          ],
+          "faces": {
+            "north": {
+              "uv": [
+                0,
+                3,
+                6,
+                4
+              ],
+              "texture": "#led",
+              "cullface": "north"
+            }
+          },
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          }
+        },
+        {
+          "name": "top_panel_led",
+          "from": [
+            5,
+            16.01,
+            0.01
+          ],
+          "to": [
+            11,
+            16.01,
+            1.01
+          ],
+          "faces": {
+            "up": {
+              "uv": [
+                0,
+                3,
+                6,
+                4
+              ],
+              "rotation": 180,
+              "texture": "#led"
+            }
+          },
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          }
+        }
+      ]
+    }
+  }
+}

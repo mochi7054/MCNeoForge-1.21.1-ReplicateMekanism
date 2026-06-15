@@ -1,0 +1,36 @@
+{
+  "parent": "replicatemekanism:replica_control_circuit",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:replica_tier_installer"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.replica_tier_installer.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.replica_tier_installer.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_tier_installer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:replica_tier_installer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_tier_installer"
+    ]
+  ]
+}
