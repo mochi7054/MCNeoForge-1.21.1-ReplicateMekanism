@@ -128,6 +128,19 @@ public class ReplicaTierInstallerItem extends Item {
         // Replace block in the world
         level.setBlockAndUpdate(pos, newState);
 
+        if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            var advId = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(ReplicateMekanism.MODID, "upgrade_machine");
+            var advHolder = serverPlayer.getServer().getAdvancements().get(advId);
+            if (advHolder != null) {
+                var progress = serverPlayer.getAdvancements().getOrStartProgress(advHolder);
+                if (!progress.isDone()) {
+                    for (String criterion : progress.getRemainingCriteria()) {
+                        serverPlayer.getAdvancements().award(advHolder, criterion);
+                    }
+                }
+            }
+        }
+
         // 4. Inject capabilities to the new BlockEntity
         BlockEntity newBe = level.getBlockEntity(pos);
         if (newBe != null) {

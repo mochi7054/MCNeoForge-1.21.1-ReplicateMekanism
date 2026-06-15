@@ -15,45 +15,13 @@
     "hidden": false
   },
   "criteria": {
-    "upgraded_imaginator": {
-      "trigger": "minecraft:item_used_on_block",
-      "conditions": {
-        "location": {
-          "block": {
-            "blocks": [
-              "replicatemekanism:imaginator"
-            ]
-          }
-        },
-        "item": {
-          "items": [
-            "replicatemekanism:replica_tier_installer"
-          ]
-        }
-      }
-    },
-    "upgraded_collapser": {
-      "trigger": "minecraft:item_used_on_block",
-      "conditions": {
-        "location": {
-          "block": {
-            "blocks": [
-              "replicatemekanism:collapser"
-            ]
-          }
-        },
-        "item": {
-          "items": [
-            "replicatemekanism:replica_tier_installer"
-          ]
-        }
-      }
+    "upgraded": {
+      "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
     [
-      "upgraded_imaginator",
-      "upgraded_collapser"
+      "upgraded"
     ]
   ]
 }
