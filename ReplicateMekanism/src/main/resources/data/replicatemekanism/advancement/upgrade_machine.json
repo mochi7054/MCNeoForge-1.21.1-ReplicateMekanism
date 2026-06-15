@@ -21,7 +21,7 @@
         "location": {
           "block": {
             "blocks": [
-              "replication:replicator"
+              "replicatemekanism:imaginator"
             ]
           }
         },
@@ -38,7 +38,7 @@
         "location": {
           "block": {
             "blocks": [
-              "replication:disintegrator"
+              "replicatemekanism:collapser"
             ]
           }
         },
