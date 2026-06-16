@@ -43,6 +43,7 @@ public record PacketSetImaginatorSorting(BlockPos pos, boolean sorting) implemen
             var be = level.getBlockEntity(pkt.pos());
             if (be instanceof ImaginatorBlockEntity imaginator) {
                 imaginator.setSorting(pkt.sorting());
+                ReplicateMekanism.LOGGER.info("Server received PacketSetImaginatorSorting: pos={}, sorting={}", pkt.pos(), pkt.sorting());
             }
         });
     }

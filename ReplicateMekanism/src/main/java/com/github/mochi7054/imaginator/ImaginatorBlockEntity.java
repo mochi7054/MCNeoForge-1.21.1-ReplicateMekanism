@@ -621,6 +621,36 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             }
         }
 
+        if (!sortingActive && this.activeTasks[0] == null) {
+            ItemStack slot0Stack = inputSlots.get(0).getStack();
+            if (this.ticker % 100 == 0) {
+                ReplicateMekanism.LOGGER.info("DEBUG RM: Standalone/Manual sharing mode active. Slot 0: {}, slotCount: {}", slot0Stack, slotCount);
+            }
+            for (int i = 1; i < slotCount; i++) {
+                InputInventorySlot inputSlot = inputSlots.get(i);
+                ItemStack currentStack = inputSlot.getStack();
+                if (slot0Stack.isEmpty()) {
+                    if (!currentStack.isEmpty()) {
+                        if (this.ticker % 100 == 0) {
+                            ReplicateMekanism.LOGGER.info("DEBUG RM: Clearing slot {}", i);
+                        }
+                        inputSlot.setStackUnchecked(ItemStack.EMPTY);
+                        sendUpdate = true;
+                    }
+                } else {
+                    if (currentStack.isEmpty() || !ItemStack.isSameItemSameComponents(currentStack, slot0Stack)) {
+                        if (this.ticker % 100 == 0) {
+                            ReplicateMekanism.LOGGER.info("DEBUG RM: Syncing slot {} to {}", i, slot0Stack);
+                        }
+                        inputSlot.setStackUnchecked(slot0Stack.copyWithCount(1));
+                        sendUpdate = true;
+                    }
+                }
+            }
+        } else if (sortingActive && this.ticker % 100 == 0) {
+            ReplicateMekanism.LOGGER.info("DEBUG RM: Task sharing mode inactive. sorting={}", this.sorting);
+        }
+
         boolean[] canOperate = new boolean[inputSlots.size()];
         MatterCompound[] slotCompounds = new MatterCompound[inputSlots.size()];
 

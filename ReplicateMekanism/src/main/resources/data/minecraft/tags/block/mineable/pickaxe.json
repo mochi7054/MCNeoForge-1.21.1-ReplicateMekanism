@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "replicatemekanism:imaginator",
+    "replicatemekanism:imaginator_basic",
+    "replicatemekanism:imaginator_advanced",
+    "replicatemekanism:imaginator_elite",
+    "replicatemekanism:imaginator_ultimate",
+    "replicatemekanism:collapser",
+    "replicatemekanism:collapser_basic",
+    "replicatemekanism:collapser_advanced",
+    "replicatemekanism:collapser_elite",
+    "replicatemekanism:collapser_ultimate"
+  ]
+}

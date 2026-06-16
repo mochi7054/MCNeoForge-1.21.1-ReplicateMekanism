@@ -16,8 +16,20 @@ import com.github.mochi7054.ReplicateMekanism;
 public class UpgradeUtilsMixin {
     @Inject(method = "getItem", at = @At("HEAD"), cancellable = true)
     private static void onGetItem(Upgrade upgrade, CallbackInfoReturnable<Holder<?>> cir) {
-        if (upgrade != null && upgrade.name().equals("REPLICA")) {
-            cir.setReturnValue(ReplicateMekanism.REPLICA_UPGRADE);
+        if (cir.isCancelled()) {
+            return;
+        }
+        if (upgrade != null) {
+            if (upgrade.name().equals("REPLICA")) {
+                cir.setReturnValue(ReplicateMekanism.REPLICA_UPGRADE);
+            } else {
+                String name = upgrade.name();
+                if (!name.equals("SPEED") && !name.equals("ENERGY") && !name.equals("FILTER") && 
+                    !name.equals("MUFFLING") && !name.equals("CHEMICAL") && !name.equals("ANCHOR") && 
+                    !name.equals("STONE_GENERATOR")) {
+                    cir.setReturnValue(mekanism.common.registries.MekanismItems.SPEED_UPGRADE);
+                }
+            }
         }
     }
 

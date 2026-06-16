@@ -80,11 +80,27 @@ public class ImaginatorMenu extends MekanismTileContainer<ImaginatorBlockEntity>
         return false;
     }
 
+    private int getInputSlotIndex(Slot slot) {
+        if (slot instanceof mekanism.common.inventory.container.slot.InventoryContainerSlot containerSlot) {
+            ImaginatorBlockEntity tile = getTileEntity();
+            if (tile != null) {
+                return tile.inputSlots.indexOf(containerSlot.getInventorySlot());
+            }
+        }
+        return -1;
+    }
+
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
         if (slotId >= 0 && slotId < this.slots.size()) {
             Slot slot = this.slots.get(slotId);
             if (isInputSlot(slot)) {
+                ImaginatorBlockEntity tile = getTileEntity();
+                if (tile != null && tile.sorting) {
+                    if (getInputSlotIndex(slot) > 0) {
+                        return;
+                    }
+                }
                 ItemStack carried = this.getCarried();
 
                 if (clickType == ClickType.QUICK_MOVE) {
@@ -148,6 +164,9 @@ public class ImaginatorMenu extends MekanismTileContainer<ImaginatorBlockEntity>
                             Slot targetSlot = null;
                             for (Slot s : this.slots) {
                                 if (isInputSlot(s)) {
+                                    if (tile.sorting && getInputSlotIndex(s) > 0) {
+                                        continue;
+                                    }
                                     ItemStack inputItem = s.getItem();
                                     if (!inputItem.isEmpty() && ItemStack.isSameItemSameComponents(stack, inputItem)) {
                                         targetSlot = s;
@@ -158,6 +177,9 @@ public class ImaginatorMenu extends MekanismTileContainer<ImaginatorBlockEntity>
                             if (targetSlot == null) {
                                 for (Slot s : this.slots) {
                                     if (isInputSlot(s)) {
+                                        if (tile.sorting && getInputSlotIndex(s) > 0) {
+                                            continue;
+                                        }
                                         if (s.getItem().isEmpty()) {
                                             targetSlot = s;
                                             break;

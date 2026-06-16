@@ -45,19 +45,20 @@ public class ReplicaTierInstallerItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
-        if (level.isClientSide) {
-            return InteractionResult.SUCCESS;
-        }
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
-        Player player = context.getPlayer();
 
         boolean isReplicator = state.getBlock() instanceof ReplicatorBlock;
         boolean isDisintegrator = state.getBlock() instanceof DisintegratorBlock;
 
         if (!isReplicator && !isDisintegrator) {
-            return InteractionResult.PASS;
+            return InteractionResult.FAIL;
         }
+
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+        Player player = context.getPlayer();
 
         // Security check using Mekanism security utils
         if (player != null) {
@@ -109,8 +110,11 @@ public class ReplicaTierInstallerItem extends Item {
 
         // 2. Keep facing direction
         Direction facing = Direction.NORTH;
-        if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-            facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+        for (net.minecraft.world.level.block.state.properties.Property<?> property : state.getProperties()) {
+            if (property instanceof net.minecraft.world.level.block.state.properties.DirectionProperty dirProp) {
+                facing = state.getValue(dirProp);
+                break;
+            }
         }
 
         // 3. Determine and place new BlockState
@@ -121,7 +125,9 @@ public class ReplicaTierInstallerItem extends Item {
             newState = ReplicateMekanism.COLLAPSER.get().defaultBlockState();
         }
 
-        if (newState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+        if (newState.hasProperty(BlockStateProperties.FACING)) {
+            newState = newState.setValue(BlockStateProperties.FACING, facing);
+        } else if (newState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
             newState = newState.setValue(BlockStateProperties.HORIZONTAL_FACING, facing);
         }
 
