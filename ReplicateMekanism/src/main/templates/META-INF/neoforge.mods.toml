@@ -9,7 +9,7 @@ displayName = "${mod_name}"
 logoFile = "logo.png"
 authors = "mochisora7054"
 credits = "Thanks to Mekanism and Replication developers."
-displayURL = "https://github.com/mochisora7054/ReplicateMekanism"
+displayURL = "https://github.com/mochi7054/MCNeoForge-1.21.1-ReplicateMekanism"
 license = "${mod_license}"
 description = '''
 An addon integrating a custom Upgrade (REPLICA) for Mekanism and Replication.
