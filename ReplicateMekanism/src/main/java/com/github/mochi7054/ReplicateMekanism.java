@@ -93,7 +93,7 @@ public class ReplicateMekanism {
 
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.imaginator.ImaginatorBlock, com.github.mochi7054.imaginator.ImaginatorBlockItem> IMAGINATOR =
             BLOCKS.register("imaginator",
-                    () -> new com.github.mochi7054.imaginator.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion(), com.github.mochi7054.block.ReplicaTier.STANDARD, () -> ReplicateMekanism.IMAGINATOR_TILE, () -> ReplicateMekanism.IMAGINATOR_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_BASIC),
+                    () -> new com.github.mochi7054.imaginator.ImaginatorBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), com.github.mochi7054.block.ReplicaTier.STANDARD, () -> ReplicateMekanism.IMAGINATOR_TILE, () -> ReplicateMekanism.IMAGINATOR_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_BASIC),
                     com.github.mochi7054.imaginator.ImaginatorBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.imaginator.ImaginatorBlockEntity> IMAGINATOR_TILE = BLOCK_ENTITIES.mekBuilder(IMAGINATOR, com.github.mochi7054.imaginator.ImaginatorBlockEntity::new)
@@ -109,7 +109,7 @@ public class ReplicateMekanism {
     // IMAGINATOR BASIC
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.imaginator.ImaginatorBlock, com.github.mochi7054.imaginator.ImaginatorBlockItem> IMAGINATOR_BASIC =
             BLOCKS.register("imaginator_basic",
-                    () -> new com.github.mochi7054.imaginator.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion(), com.github.mochi7054.block.ReplicaTier.BASIC, () -> ReplicateMekanism.IMAGINATOR_BASIC_TILE, () -> ReplicateMekanism.IMAGINATOR_BASIC_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_ADVANCED),
+                    () -> new com.github.mochi7054.imaginator.ImaginatorBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), com.github.mochi7054.block.ReplicaTier.BASIC, () -> ReplicateMekanism.IMAGINATOR_BASIC_TILE, () -> ReplicateMekanism.IMAGINATOR_BASIC_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_ADVANCED),
                     com.github.mochi7054.imaginator.ImaginatorBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.imaginator.ImaginatorBlockEntity> IMAGINATOR_BASIC_TILE = BLOCK_ENTITIES.mekBuilder(IMAGINATOR_BASIC, com.github.mochi7054.imaginator.ImaginatorBlockEntity::new)
@@ -125,7 +125,7 @@ public class ReplicateMekanism {
     // IMAGINATOR ADVANCED
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.imaginator.ImaginatorBlock, com.github.mochi7054.imaginator.ImaginatorBlockItem> IMAGINATOR_ADVANCED =
             BLOCKS.register("imaginator_advanced",
-                    () -> new com.github.mochi7054.imaginator.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion(), com.github.mochi7054.block.ReplicaTier.ADVANCED, () -> ReplicateMekanism.IMAGINATOR_ADVANCED_TILE, () -> ReplicateMekanism.IMAGINATOR_ADVANCED_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_ELITE),
+                    () -> new com.github.mochi7054.imaginator.ImaginatorBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), com.github.mochi7054.block.ReplicaTier.ADVANCED, () -> ReplicateMekanism.IMAGINATOR_ADVANCED_TILE, () -> ReplicateMekanism.IMAGINATOR_ADVANCED_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_ELITE),
                     com.github.mochi7054.imaginator.ImaginatorBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.imaginator.ImaginatorBlockEntity> IMAGINATOR_ADVANCED_TILE = BLOCK_ENTITIES.mekBuilder(IMAGINATOR_ADVANCED, com.github.mochi7054.imaginator.ImaginatorBlockEntity::new)
@@ -141,7 +141,7 @@ public class ReplicateMekanism {
     // IMAGINATOR ELITE
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.imaginator.ImaginatorBlock, com.github.mochi7054.imaginator.ImaginatorBlockItem> IMAGINATOR_ELITE =
             BLOCKS.register("imaginator_elite",
-                    () -> new com.github.mochi7054.imaginator.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion(), com.github.mochi7054.block.ReplicaTier.ELITE, () -> ReplicateMekanism.IMAGINATOR_ELITE_TILE, () -> ReplicateMekanism.IMAGINATOR_ELITE_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_ULTIMATE),
+                    () -> new com.github.mochi7054.imaginator.ImaginatorBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), com.github.mochi7054.block.ReplicaTier.ELITE, () -> ReplicateMekanism.IMAGINATOR_ELITE_TILE, () -> ReplicateMekanism.IMAGINATOR_ELITE_CONTAINER_TYPE, () -> ReplicateMekanism.IMAGINATOR_ULTIMATE),
                     com.github.mochi7054.imaginator.ImaginatorBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.imaginator.ImaginatorBlockEntity> IMAGINATOR_ELITE_TILE = BLOCK_ENTITIES.mekBuilder(IMAGINATOR_ELITE, com.github.mochi7054.imaginator.ImaginatorBlockEntity::new)
@@ -157,7 +157,7 @@ public class ReplicateMekanism {
     // IMAGINATOR ULTIMATE
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.imaginator.ImaginatorBlock, com.github.mochi7054.imaginator.ImaginatorBlockItem> IMAGINATOR_ULTIMATE =
             BLOCKS.register("imaginator_ultimate",
-                    () -> new com.github.mochi7054.imaginator.ImaginatorBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion(), com.github.mochi7054.block.ReplicaTier.ULTIMATE, () -> ReplicateMekanism.IMAGINATOR_ULTIMATE_TILE, () -> ReplicateMekanism.IMAGINATOR_ULTIMATE_CONTAINER_TYPE, null),
+                    () -> new com.github.mochi7054.imaginator.ImaginatorBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), com.github.mochi7054.block.ReplicaTier.ULTIMATE, () -> ReplicateMekanism.IMAGINATOR_ULTIMATE_TILE, () -> ReplicateMekanism.IMAGINATOR_ULTIMATE_CONTAINER_TYPE, null),
                     com.github.mochi7054.imaginator.ImaginatorBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.imaginator.ImaginatorBlockEntity> IMAGINATOR_ULTIMATE_TILE = BLOCK_ENTITIES.mekBuilder(IMAGINATOR_ULTIMATE, com.github.mochi7054.imaginator.ImaginatorBlockEntity::new)
@@ -172,7 +172,7 @@ public class ReplicateMekanism {
 
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.collapser.CollapserBlock, com.github.mochi7054.collapser.CollapserBlockItem> COLLAPSER =
             BLOCKS.register("collapser",
-                    () -> new com.github.mochi7054.collapser.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion(), com.github.mochi7054.block.ReplicaTier.STANDARD, () -> ReplicateMekanism.COLLAPSER_TILE, () -> ReplicateMekanism.COLLAPSER_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_BASIC),
+                    () -> new com.github.mochi7054.collapser.CollapserBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), com.github.mochi7054.block.ReplicaTier.STANDARD, () -> ReplicateMekanism.COLLAPSER_TILE, () -> ReplicateMekanism.COLLAPSER_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_BASIC),
                     com.github.mochi7054.collapser.CollapserBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.collapser.CollapserBlockEntity> COLLAPSER_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER, com.github.mochi7054.collapser.CollapserBlockEntity::new)
@@ -188,7 +188,7 @@ public class ReplicateMekanism {
     // COLLAPSER BASIC
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.collapser.CollapserBlock, com.github.mochi7054.collapser.CollapserBlockItem> COLLAPSER_BASIC =
             BLOCKS.register("collapser_basic",
-                    () -> new com.github.mochi7054.collapser.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion(), com.github.mochi7054.block.ReplicaTier.BASIC, () -> ReplicateMekanism.COLLAPSER_BASIC_TILE, () -> ReplicateMekanism.COLLAPSER_BASIC_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_ADVANCED),
+                    () -> new com.github.mochi7054.collapser.CollapserBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), com.github.mochi7054.block.ReplicaTier.BASIC, () -> ReplicateMekanism.COLLAPSER_BASIC_TILE, () -> ReplicateMekanism.COLLAPSER_BASIC_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_ADVANCED),
                     com.github.mochi7054.collapser.CollapserBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.collapser.CollapserBlockEntity> COLLAPSER_BASIC_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER_BASIC, com.github.mochi7054.collapser.CollapserBlockEntity::new)
@@ -204,7 +204,7 @@ public class ReplicateMekanism {
     // COLLAPSER ADVANCED
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.collapser.CollapserBlock, com.github.mochi7054.collapser.CollapserBlockItem> COLLAPSER_ADVANCED =
             BLOCKS.register("collapser_advanced",
-                    () -> new com.github.mochi7054.collapser.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion(), com.github.mochi7054.block.ReplicaTier.ADVANCED, () -> ReplicateMekanism.COLLAPSER_ADVANCED_TILE, () -> ReplicateMekanism.COLLAPSER_ADVANCED_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_ELITE),
+                    () -> new com.github.mochi7054.collapser.CollapserBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), com.github.mochi7054.block.ReplicaTier.ADVANCED, () -> ReplicateMekanism.COLLAPSER_ADVANCED_TILE, () -> ReplicateMekanism.COLLAPSER_ADVANCED_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_ELITE),
                     com.github.mochi7054.collapser.CollapserBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.collapser.CollapserBlockEntity> COLLAPSER_ADVANCED_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER_ADVANCED, com.github.mochi7054.collapser.CollapserBlockEntity::new)
@@ -220,7 +220,7 @@ public class ReplicateMekanism {
     // COLLAPSER ELITE
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.collapser.CollapserBlock, com.github.mochi7054.collapser.CollapserBlockItem> COLLAPSER_ELITE =
             BLOCKS.register("collapser_elite",
-                    () -> new com.github.mochi7054.collapser.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion(), com.github.mochi7054.block.ReplicaTier.ELITE, () -> ReplicateMekanism.COLLAPSER_ELITE_TILE, () -> ReplicateMekanism.COLLAPSER_ELITE_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_ULTIMATE),
+                    () -> new com.github.mochi7054.collapser.CollapserBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), com.github.mochi7054.block.ReplicaTier.ELITE, () -> ReplicateMekanism.COLLAPSER_ELITE_TILE, () -> ReplicateMekanism.COLLAPSER_ELITE_CONTAINER_TYPE, () -> ReplicateMekanism.COLLAPSER_ULTIMATE),
                     com.github.mochi7054.collapser.CollapserBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.collapser.CollapserBlockEntity> COLLAPSER_ELITE_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER_ELITE, com.github.mochi7054.collapser.CollapserBlockEntity::new)
@@ -236,7 +236,7 @@ public class ReplicateMekanism {
     // COLLAPSER ULTIMATE
     public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.collapser.CollapserBlock, com.github.mochi7054.collapser.CollapserBlockItem> COLLAPSER_ULTIMATE =
             BLOCKS.register("collapser_ultimate",
-                    () -> new com.github.mochi7054.collapser.CollapserBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion(), com.github.mochi7054.block.ReplicaTier.ULTIMATE, () -> ReplicateMekanism.COLLAPSER_ULTIMATE_TILE, () -> ReplicateMekanism.COLLAPSER_ULTIMATE_CONTAINER_TYPE, null),
+                    () -> new com.github.mochi7054.collapser.CollapserBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), com.github.mochi7054.block.ReplicaTier.ULTIMATE, () -> ReplicateMekanism.COLLAPSER_ULTIMATE_TILE, () -> ReplicateMekanism.COLLAPSER_ULTIMATE_CONTAINER_TYPE, null),
                     com.github.mochi7054.collapser.CollapserBlockItem::new);
 
     public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.collapser.CollapserBlockEntity> COLLAPSER_ULTIMATE_TILE = BLOCK_ENTITIES.mekBuilder(COLLAPSER_ULTIMATE, com.github.mochi7054.collapser.CollapserBlockEntity::new)
