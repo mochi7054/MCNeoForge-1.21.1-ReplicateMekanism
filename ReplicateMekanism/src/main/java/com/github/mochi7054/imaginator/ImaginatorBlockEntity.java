@@ -119,7 +119,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         super(state.getBlockHolder(), pos, state);
         
         // ITEM config: input slot 0 (master template) for external automation, item output
-        List<InputInventorySlot> inputConfigSlots = new ArrayList<>();
+        List<mekanism.api.inventory.IInventorySlot> inputConfigSlots = new ArrayList<>();
         if (inputSlots != null && !inputSlots.isEmpty()) {
             inputConfigSlots.add(inputSlots.get(0));
         }
