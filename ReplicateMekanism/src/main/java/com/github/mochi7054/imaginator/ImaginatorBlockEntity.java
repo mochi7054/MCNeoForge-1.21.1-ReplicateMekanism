@@ -118,9 +118,13 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
     public ImaginatorBlockEntity(BlockPos pos, BlockState state) {
         super(state.getBlockHolder(), pos, state);
         
-        // ITEM config: no item input, item output
+        // ITEM config: input slot 0 (master template) for external automation, item output
+        List<InputInventorySlot> inputConfigSlots = new ArrayList<>();
+        if (inputSlots != null && !inputSlots.isEmpty()) {
+            inputConfigSlots.add(inputSlots.get(0));
+        }
         configComponent.setupItemIOConfig(
-            Collections.emptyList(),
+            inputConfigSlots,
             new ArrayList<>(outputSlots),
             energySlot,
             false
