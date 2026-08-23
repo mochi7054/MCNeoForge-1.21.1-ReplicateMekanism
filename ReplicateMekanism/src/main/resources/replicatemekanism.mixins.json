@@ -20,7 +20,8 @@
     "MekanismRendererMixin",
     "ImaginatorBlockEntityMixin",
     "CollapserBlockEntityMixin",
-    "ClientLanguageMixin"
+    "GuiWindowMixin",
+    "GuiConfigTypeTabMixin"
   ],
   "injectors": {
     "defaultRequire": 1
