@@ -771,6 +771,10 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         }
         container.track(SyncableInt.create(() -> ticksRequired, value -> ticksRequired = value));
         container.track(mekanism.common.inventory.container.sync.SyncableBoolean.create(() -> this.sorting, value -> this.sorting = value));
+
+        for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
+            container.track(mekanism.common.inventory.container.sync.SyncableDouble.create(tank::getMatterAmount, tank::setAmount));
+        }
     }
 
     @Override

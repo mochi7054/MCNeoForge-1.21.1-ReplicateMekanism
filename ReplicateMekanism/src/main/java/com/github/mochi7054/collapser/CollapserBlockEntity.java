@@ -119,6 +119,9 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                 energyConfig.setDataType(mekanism.common.tile.component.config.DataType.INPUT, side);
             }
         }
+
+        ejectorComponent = new mekanism.common.tile.component.TileComponentEjector(this);
+        ejectorComponent.setOutputData(configComponent, mekanism.common.lib.transmitter.TransmissionType.ITEM);
     }
 
     @NotNull
@@ -506,6 +509,10 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         }
         container.track(SyncableInt.create(() -> ticksRequired, value -> ticksRequired = value));
         container.track(SyncableBoolean.create(() -> this.sorting, value -> this.sorting = value));
+
+        for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
+            container.track(mekanism.common.inventory.container.sync.SyncableDouble.create(tank::getMatterAmount, tank::setAmount));
+        }
     }
 
     @Override
