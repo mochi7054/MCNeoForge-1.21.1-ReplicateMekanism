@@ -54,30 +54,7 @@ public class ReplicateMekanism {
     public static final mekanism.common.registration.impl.ContainerTypeDeferredRegister MENU_TYPES = new mekanism.common.registration.impl.ContainerTypeDeferredRegister(MODID);
 
 
-    public static final DeferredRegister<net.neoforged.neoforge.fluids.FluidType> FLUID_TYPES = DeferredRegister.create(net.neoforged.neoforge.registries.NeoForgeRegistries.Keys.FLUID_TYPES, MODID);
-    public static final DeferredRegister<net.minecraft.world.level.material.Fluid> FLUIDS = DeferredRegister.create(BuiltInRegistries.FLUID, MODID);
 
-    public static class MatterFluidRegistry {
-        public final DeferredHolder<net.neoforged.neoforge.fluids.FluidType, net.neoforged.neoforge.fluids.FluidType> type;
-        public final DeferredHolder<net.minecraft.world.level.material.Fluid, net.minecraft.world.level.material.Fluid> source;
-
-        public MatterFluidRegistry(String name, java.util.function.Supplier<com.buuz135.replication.api.IMatterType> matterTypeSupplier) {
-            this.type = FLUID_TYPES.register(name, () -> new com.github.mochi7054.fluid.MatterFluidType(
-                net.neoforged.neoforge.fluids.FluidType.Properties.create().descriptionId("fluid.replicatemekanism." + name),
-                matterTypeSupplier
-            ));
-            this.source = FLUIDS.register(name, () -> new com.github.mochi7054.fluid.SimpleDummyFluid(type));
-        }
-    }
-
-    public static final MatterFluidRegistry EARTH_MATTER = new MatterFluidRegistry("earth_matter", () -> com.buuz135.replication.ReplicationRegistry.Matter.EARTH.get());
-    public static final MatterFluidRegistry NETHER_MATTER = new MatterFluidRegistry("nether_matter", () -> com.buuz135.replication.ReplicationRegistry.Matter.NETHER.get());
-    public static final MatterFluidRegistry ORGANIC_MATTER = new MatterFluidRegistry("organic_matter", () -> com.buuz135.replication.ReplicationRegistry.Matter.ORGANIC.get());
-    public static final MatterFluidRegistry ENDER_MATTER = new MatterFluidRegistry("ender_matter", () -> com.buuz135.replication.ReplicationRegistry.Matter.ENDER.get());
-    public static final MatterFluidRegistry METALLIC_MATTER = new MatterFluidRegistry("metallic_matter", () -> com.buuz135.replication.ReplicationRegistry.Matter.METALLIC.get());
-    public static final MatterFluidRegistry PRECIOUS_MATTER = new MatterFluidRegistry("precious_matter", () -> com.buuz135.replication.ReplicationRegistry.Matter.PRECIOUS.get());
-    public static final MatterFluidRegistry LIVING_MATTER = new MatterFluidRegistry("living_matter", () -> com.buuz135.replication.ReplicationRegistry.Matter.LIVING.get());
-    public static final MatterFluidRegistry QUANTUM_MATTER = new MatterFluidRegistry("quantum_matter", () -> com.buuz135.replication.ReplicationRegistry.Matter.QUANTUM.get());
 
     public static Upgrade REPLICA_UPGRADE_TYPE;
 
@@ -291,8 +268,7 @@ public class ReplicateMekanism {
         BLOCK_ENTITIES.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         ITEMS.register(modEventBus);
-        FLUID_TYPES.register(modEventBus);
-        FLUIDS.register(modEventBus);
+
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
         MENU_TYPES.register(modEventBus);
@@ -325,94 +301,7 @@ public class ReplicateMekanism {
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
-
-        net.neoforged.neoforge.capabilities.IBlockCapabilityProvider<net.neoforged.neoforge.fluids.capability.IFluidHandler, net.minecraft.core.Direction> blockFluidProvider = (level, pos, state, be, side) -> {
-            if (be == null) return null;
-            var matterHandler = level.getCapability(
-                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
-                    pos,
-                    state,
-                    be,
-                    side
-            );
-            if (matterHandler == null) {
-                matterHandler = level.getCapability(
-                        com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
-                        pos,
-                        state,
-                        be,
-                        null
-                );
-            }
-            if (matterHandler == null) {
-                if (be instanceof com.buuz135.replication.api.network.IMatterTanksSupplier supplier) {
-                    var tanks = supplier.getTanks();
-                    if (tanks != null && !tanks.isEmpty()) {
-                        @SuppressWarnings("unchecked")
-                        java.util.List<com.buuz135.replication.api.matter_fluid.IMatterTank> typedTanks = (java.util.List<com.buuz135.replication.api.matter_fluid.IMatterTank>) (Object) tanks;
-                        matterHandler = new com.github.mochi7054.fluid.MatterTanksWrapper(typedTanks);
-                    }
-                }
-            }
-            if (matterHandler == null) {
-                return null;
-            }
-            return new com.github.mochi7054.fluid.MatterFluidWrapper(matterHandler);
-        };
-
         try {
-
-
-            event.registerBlock(
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                    blockFluidProvider,
-                    com.buuz135.replication.ReplicationRegistry.Blocks.MATTER_TANK.getBlock(),
-                    com.buuz135.replication.ReplicationRegistry.Blocks.CREATIVE_MATTER_TANK.getBlock(),
-                    com.buuz135.replication.ReplicationRegistry.Blocks.REPLICATOR.getBlock(),
-                    com.buuz135.replication.ReplicationRegistry.Blocks.DISINTEGRATOR.getBlock()
-            );
-
-            var matterTankType = getReplicationBEType("matter_tank");
-            if (matterTankType != null) {
-                event.registerBlockEntity(
-                        net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                        matterTankType,
-                        (be, side) -> {
-                            return blockFluidProvider.getCapability(be.getLevel(), be.getBlockPos(), be.getBlockState(), be, side);
-                        }
-                );
-            }
-            var creativeMatterTankType = getReplicationBEType("creative_matter_tank");
-            if (creativeMatterTankType != null) {
-                event.registerBlockEntity(
-                        net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                        creativeMatterTankType,
-                        (be, side) -> {
-                            return blockFluidProvider.getCapability(be.getLevel(), be.getBlockPos(), be.getBlockState(), be, side);
-                        }
-                );
-            }
-            var disintegratorType = getReplicationBEType("disintegrator");
-            if (disintegratorType != null) {
-                event.registerBlockEntity(
-                        net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                        disintegratorType,
-                        (be, side) -> {
-                            return blockFluidProvider.getCapability(be.getLevel(), be.getBlockPos(), be.getBlockState(), be, side);
-                        }
-                );
-            }
-            var replicatorType = getReplicationBEType("replicator");
-            if (replicatorType != null) {
-                event.registerBlockEntity(
-                        net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                        replicatorType,
-                        (be, side) -> {
-                            return blockFluidProvider.getCapability(be.getLevel(), be.getBlockPos(), be.getBlockState(), be, side);
-                        }
-                );
-            }
-
             event.registerBlockEntity(
                     com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                     ReplicateMekanism.IMAGINATOR_TILE.get(),
@@ -439,7 +328,7 @@ public class ReplicateMekanism {
                     (be, side) -> new com.github.mochi7054.imaginator.ImaginatorMatterHandler(be)
             );
         } catch (Exception e) {
-            LOGGER.error("Failed to register FluidHandler wrapper capabilities for Replication Blocks/BlockEntities", e);
+            LOGGER.error("Failed to register capabilities for Replication BlockEntities", e);
         }
     }
 

@@ -3,9 +3,6 @@ package com.github.mochi7054.mixin;
 import com.buuz135.replication.api.network.IMatterTanksSupplier;
 import com.buuz135.replication.api.matter_fluid.IMatterTank;
 import com.github.mochi7054.collapser.CollapserBlockEntity;
-import com.github.mochi7054.fluid.MekanismMatterTank;
-import com.github.mochi7054.ReplicateMekanism;
-import mekanism.common.capabilities.fluid.BasicFluidTank;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Implements;
@@ -19,26 +16,17 @@ import java.util.List;
 })
 public abstract class CollapserBlockEntityMixin {
 
-    @Shadow public BasicFluidTank earthTank;
-    @Shadow public BasicFluidTank netherTank;
-    @Shadow public BasicFluidTank organicTank;
-    @Shadow public BasicFluidTank enderTank;
-    @Shadow public BasicFluidTank metallicTank;
-    @Shadow public BasicFluidTank preciousTank;
-    @Shadow public BasicFluidTank livingTank;
-    @Shadow public BasicFluidTank quantumTank;
+    @Shadow public com.github.mochi7054.fluid.SimpleMatterTank earthTank;
+    @Shadow public com.github.mochi7054.fluid.SimpleMatterTank netherTank;
+    @Shadow public com.github.mochi7054.fluid.SimpleMatterTank organicTank;
+    @Shadow public com.github.mochi7054.fluid.SimpleMatterTank enderTank;
+    @Shadow public com.github.mochi7054.fluid.SimpleMatterTank metallicTank;
+    @Shadow public com.github.mochi7054.fluid.SimpleMatterTank preciousTank;
+    @Shadow public com.github.mochi7054.fluid.SimpleMatterTank livingTank;
+    @Shadow public com.github.mochi7054.fluid.SimpleMatterTank quantumTank;
 
     public List<? extends IMatterTank> matter$getTanks() {
-        return List.of(
-            new MekanismMatterTank(earthTank, ReplicateMekanism.EARTH_MATTER.source.get()),
-            new MekanismMatterTank(netherTank, ReplicateMekanism.NETHER_MATTER.source.get()),
-            new MekanismMatterTank(organicTank, ReplicateMekanism.ORGANIC_MATTER.source.get()),
-            new MekanismMatterTank(enderTank, ReplicateMekanism.ENDER_MATTER.source.get()),
-            new MekanismMatterTank(metallicTank, ReplicateMekanism.METALLIC_MATTER.source.get()),
-            new MekanismMatterTank(preciousTank, ReplicateMekanism.PRECIOUS_MATTER.source.get()),
-            new MekanismMatterTank(livingTank, ReplicateMekanism.LIVING_MATTER.source.get()),
-            new MekanismMatterTank(quantumTank, ReplicateMekanism.QUANTUM_MATTER.source.get())
-        );
+        return List.of(earthTank, netherTank, organicTank, enderTank, metallicTank, preciousTank, livingTank, quantumTank);
     }
 
     public int matter$getPriority() {

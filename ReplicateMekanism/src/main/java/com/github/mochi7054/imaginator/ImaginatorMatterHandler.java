@@ -1,23 +1,16 @@
 package com.github.mochi7054.imaginator;
 
-import com.github.mochi7054.fluid.MatterFluidWrapper;
-
 import com.buuz135.replication.api.IMatterType;
 import com.buuz135.replication.api.matter_fluid.IMatterHandler;
 import com.buuz135.replication.api.matter_fluid.MatterStack;
-import com.github.mochi7054.ReplicateMekanism;
-import com.github.mochi7054.imaginator.ImaginatorBlockEntity;
-import mekanism.common.capabilities.fluid.BasicFluidTank;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.fluids.FluidStack;
+import com.github.mochi7054.fluid.SimpleMatterTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
 import java.util.List;
 
 public class ImaginatorMatterHandler implements IMatterHandler {
     private final ImaginatorBlockEntity tile;
-    private final List<BasicFluidTank> tanks;
+    private final List<SimpleMatterTank> tanks;
 
     public ImaginatorMatterHandler(ImaginatorBlockEntity tile) {
         this.tile = tile;
@@ -33,7 +26,7 @@ public class ImaginatorMatterHandler implements IMatterHandler {
         );
     }
 
-    private BasicFluidTank getTankForMatter(IMatterType matterType) {
+    private SimpleMatterTank getTankForMatter(IMatterType matterType) {
         if (matterType == null) return null;
         String name = matterType.getName();
         if (name == null) return null;
@@ -46,21 +39,6 @@ public class ImaginatorMatterHandler implements IMatterHandler {
         if (name.equalsIgnoreCase("living")) return tile.livingTank;
         if (name.equalsIgnoreCase("quantum")) return tile.quantumTank;
         return null;
-    }
-
-    private Fluid getFluidForMatter(IMatterType matterType) {
-        if (matterType == null) return Fluids.EMPTY;
-        String name = matterType.getName();
-        if (name == null) return Fluids.EMPTY;
-        if (name.equalsIgnoreCase("earth")) return ReplicateMekanism.EARTH_MATTER.source.get();
-        if (name.equalsIgnoreCase("nether")) return ReplicateMekanism.NETHER_MATTER.source.get();
-        if (name.equalsIgnoreCase("organic")) return ReplicateMekanism.ORGANIC_MATTER.source.get();
-        if (name.equalsIgnoreCase("ender")) return ReplicateMekanism.ENDER_MATTER.source.get();
-        if (name.equalsIgnoreCase("metallic")) return ReplicateMekanism.METALLIC_MATTER.source.get();
-        if (name.equalsIgnoreCase("precious")) return ReplicateMekanism.PRECIOUS_MATTER.source.get();
-        if (name.equalsIgnoreCase("living")) return ReplicateMekanism.LIVING_MATTER.source.get();
-        if (name.equalsIgnoreCase("quantum")) return ReplicateMekanism.QUANTUM_MATTER.source.get();
-        return Fluids.EMPTY;
     }
 
     @Override
@@ -77,49 +55,30 @@ public class ImaginatorMatterHandler implements IMatterHandler {
     @Override
     public MatterStack getMatterInTank(int tankIndex) {
         if (tankIndex < 0 || tankIndex >= tanks.size()) return MatterStack.EMPTY;
-        BasicFluidTank tank = tanks.get(tankIndex);
-        FluidStack fs = tank.getFluid();
-        if (fs.isEmpty()) return MatterStack.EMPTY;
-        IMatterType matterType = MatterFluidWrapper.getMatterTypeFromFluid(fs.getFluid());
-        if (matterType == com.buuz135.replication.ReplicationRegistry.Matter.EMPTY.get()) {
-            return MatterStack.EMPTY;
-        }
-        return new MatterStack(matterType, fs.getAmount());
+        return tanks.get(tankIndex).getMatter();
     }
 
     @Override
     public boolean isMatterValid(int tankIndex, MatterStack stack) {
         if (tankIndex < 0 || tankIndex >= tanks.size()) return false;
         if (stack == null || stack.isEmpty()) return false;
-        BasicFluidTank tank = tanks.get(tankIndex);
-        Fluid fluid = getFluidForMatter(stack.getMatterType());
-        if (fluid == Fluids.EMPTY) return false;
-        return tank.isFluidValid(new FluidStack(fluid, (int) Math.round(stack.getAmount())));
+        return tanks.get(tankIndex).isMatterValid(stack);
     }
 
     @Override
     public double fill(MatterStack stack, FluidAction action) {
         if (stack == null || stack.isEmpty()) return 0;
-        BasicFluidTank tank = getTankForMatter(stack.getMatterType());
+        SimpleMatterTank tank = getTankForMatter(stack.getMatterType());
         if (tank == null) return 0;
-        Fluid fluid = getFluidForMatter(stack.getMatterType());
-        if (fluid == Fluids.EMPTY) return 0;
-        
-        int filled = tank.fill(new FluidStack(fluid, (int) Math.round(stack.getAmount())), action);
-        return filled;
+        return tank.fill(stack, action);
     }
 
     @Override
     public MatterStack drain(MatterStack stack, FluidAction action) {
         if (stack == null || stack.isEmpty()) return MatterStack.EMPTY;
-        BasicFluidTank tank = getTankForMatter(stack.getMatterType());
+        SimpleMatterTank tank = getTankForMatter(stack.getMatterType());
         if (tank == null) return MatterStack.EMPTY;
-        Fluid fluid = getFluidForMatter(stack.getMatterType());
-        if (fluid == Fluids.EMPTY) return MatterStack.EMPTY;
-        
-        FluidStack drained = tank.drain(new FluidStack(fluid, (int) Math.round(stack.getAmount())), action);
-        if (drained.isEmpty()) return MatterStack.EMPTY;
-        return new MatterStack(stack.getMatterType(), drained.getAmount());
+        return tank.drain(stack, action);
     }
 
     @Override
@@ -127,15 +86,12 @@ public class ImaginatorMatterHandler implements IMatterHandler {
         if (amount <= 0) return MatterStack.EMPTY;
         
         for (int i = 0; i < tanks.size(); i++) {
-            BasicFluidTank tank = tanks.get(i);
-            FluidStack fs = tank.getFluid();
-            if (!fs.isEmpty()) {
-                IMatterType matterType = MatterFluidWrapper.getMatterTypeFromFluid(fs.getFluid());
-                if (matterType != com.buuz135.replication.ReplicationRegistry.Matter.EMPTY.get()) {
-                    FluidStack drained = tank.drain((int) Math.round(amount), action);
-                    if (!drained.isEmpty()) {
-                        return new MatterStack(matterType, drained.getAmount());
-                    }
+            SimpleMatterTank tank = tanks.get(i);
+            MatterStack stored = tank.getMatter();
+            if (stored != null && !stored.isEmpty() && stored.getAmount() > 0) {
+                MatterStack drained = tank.drain(amount, action);
+                if (drained != null && !drained.isEmpty()) {
+                    return drained;
                 }
             }
         }

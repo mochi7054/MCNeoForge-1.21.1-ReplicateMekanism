@@ -5,7 +5,6 @@ import com.github.mochi7054.collapser.CollapserMenu;
 import mekanism.client.gui.GuiConfigurableTile;
 import com.github.mochi7054.client.gui.ReplicationGuiFluidBar;
 import com.github.mochi7054.client.gui.ReplicationGuiVerticalPowerBar;
-import mekanism.client.gui.element.bar.GuiFluidBar;
 import mekanism.client.gui.element.tab.GuiEnergyTab;
 import mekanism.client.gui.element.slot.GuiSlot;
 import mekanism.client.gui.element.slot.SlotType;
@@ -46,14 +45,14 @@ public class CollapserScreen extends GuiConfigurableTile<CollapserBlockEntity, C
 
         if (tier == com.github.mochi7054.block.ReplicaTier.STANDARD) {
             // Fluid Tank Bars on the right for each of the 8 matter types
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.earthTank, tile.getFluidTanks(null)), 70, 25, 5, 42, false));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.netherTank, tile.getFluidTanks(null)), 78, 25, 5, 42, false));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.organicTank, tile.getFluidTanks(null)), 86, 25, 5, 42, false));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.enderTank, tile.getFluidTanks(null)), 94, 25, 5, 42, false));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.metallicTank, tile.getFluidTanks(null)), 102, 25, 5, 42, false));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.preciousTank, tile.getFluidTanks(null)), 110, 25, 5, 42, false));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.livingTank, tile.getFluidTanks(null)), 118, 25, 5, 42, false));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.quantumTank, tile.getFluidTanks(null)), 126, 25, 5, 42, false));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.earthTank, 70, 25, 5, 42, false));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.netherTank, 78, 25, 5, 42, false));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.organicTank, 86, 25, 5, 42, false));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.enderTank, 94, 25, 5, 42, false));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.metallicTank, 102, 25, 5, 42, false));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.preciousTank, 110, 25, 5, 42, false));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.livingTank, 118, 25, 5, 42, false));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.quantumTank, 126, 25, 5, 42, false));
 
             // Energy Bar on the right
             this.addElement(new ReplicationGuiVerticalPowerBar(this, tile.getEnergyContainer(), 162, 25, 42));
@@ -63,14 +62,14 @@ public class CollapserScreen extends GuiConfigurableTile<CollapserBlockEntity, C
         } else {
             // 8 fluid tanks, centered horizontally, no slot background borders
             int fluidStartX = (this.imageWidth - 142) / 2;
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.earthTank, tile.getFluidTanks(null)), fluidStartX, 84, 16, 5, true));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.netherTank, tile.getFluidTanks(null)), fluidStartX + 18, 84, 16, 5, true));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.organicTank, tile.getFluidTanks(null)), fluidStartX + 36, 84, 16, 5, true));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.enderTank, tile.getFluidTanks(null)), fluidStartX + 54, 84, 16, 5, true));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.metallicTank, tile.getFluidTanks(null)), fluidStartX + 72, 84, 16, 5, true));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.preciousTank, tile.getFluidTanks(null)), fluidStartX + 90, 84, 16, 5, true));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.livingTank, tile.getFluidTanks(null)), fluidStartX + 108, 84, 16, 5, true));
-            this.addElement(new ReplicationGuiFluidBar(this, GuiFluidBar.getProvider(tile.quantumTank, tile.getFluidTanks(null)), fluidStartX + 126, 84, 16, 5, true));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.earthTank, fluidStartX, 84, 16, 5, true));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.netherTank, fluidStartX + 18, 84, 16, 5, true));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.organicTank, fluidStartX + 36, 84, 16, 5, true));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.enderTank, fluidStartX + 54, 84, 16, 5, true));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.metallicTank, fluidStartX + 72, 84, 16, 5, true));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.preciousTank, fluidStartX + 90, 84, 16, 5, true));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.livingTank, fluidStartX + 108, 84, 16, 5, true));
+            this.addElement(new ReplicationGuiFluidBar(this, tile.quantumTank, fluidStartX + 126, 84, 16, 5, true));
 
             // Energy Bar on the right (always 12px from the right edge)
             this.addElement(new ReplicationGuiVerticalPowerBar(this, tile.getEnergyContainer(), this.imageWidth - 12, 25, 42));

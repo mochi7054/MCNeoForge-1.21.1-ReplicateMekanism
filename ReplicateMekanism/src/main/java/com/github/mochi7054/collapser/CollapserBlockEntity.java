@@ -7,7 +7,6 @@ import com.buuz135.replication.api.IMatterType;
 import com.buuz135.replication.calculation.MatterCompound;
 import com.buuz135.replication.calculation.MatterValue;
 import com.buuz135.replication.calculation.ReplicationCalculation;
-import com.github.mochi7054.fluid.MatterFluidWrapper;
 import mekanism.api.Action;
 import mekanism.api.AutomationType;
 import mekanism.api.IContentsListener;
@@ -66,16 +65,16 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
     private com.buuz135.replication.network.MatterNetwork currentNetwork = null;
 
     // 8種類のマタータンク (出力)
-    public BasicFluidTank earthTank;
-    public BasicFluidTank netherTank;
-    public BasicFluidTank organicTank;
-    public BasicFluidTank enderTank;
-    public BasicFluidTank metallicTank;
-    public BasicFluidTank preciousTank;
-    public BasicFluidTank livingTank;
-    public BasicFluidTank quantumTank;
+    public com.github.mochi7054.fluid.SimpleMatterTank earthTank;
+    public com.github.mochi7054.fluid.SimpleMatterTank netherTank;
+    public com.github.mochi7054.fluid.SimpleMatterTank organicTank;
+    public com.github.mochi7054.fluid.SimpleMatterTank enderTank;
+    public com.github.mochi7054.fluid.SimpleMatterTank metallicTank;
+    public com.github.mochi7054.fluid.SimpleMatterTank preciousTank;
+    public com.github.mochi7054.fluid.SimpleMatterTank livingTank;
+    public com.github.mochi7054.fluid.SimpleMatterTank quantumTank;
 
-    private List<BasicFluidTank> getMatterTanks() {
+    public List<com.github.mochi7054.fluid.SimpleMatterTank> getMatterTanks() {
         return List.of(earthTank, netherTank, organicTank, enderTank,
                 metallicTank, preciousTank, livingTank, quantumTank);
     }
@@ -112,24 +111,6 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             energySlot,
             false
         );
-
-        // 流体設定: タンクは出力のみ
-        mekanism.common.tile.component.config.ConfigInfo fluidConfig =
-                configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID);
-        if (fluidConfig != null) {
-            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.OUTPUT,
-                    mekanism.common.tile.component.TileComponentConfig.createInfo(
-                            mekanism.common.lib.transmitter.TransmissionType.FLUID, false, true,
-                            earthTank, netherTank, organicTank, enderTank,
-                            metallicTank, preciousTank, livingTank, quantumTank
-                    )
-            );
-            fluidConfig.setCanEject(true);
-            for (mekanism.api.RelativeSide side : mekanism.api.RelativeSide.values()) {
-                fluidConfig.setDataType(mekanism.common.tile.component.config.DataType.OUTPUT, side);
-            }
-        }
-
         configComponent.setupInputConfig(mekanism.common.lib.transmitter.TransmissionType.ENERGY, energyContainer);
         mekanism.common.tile.component.config.ConfigInfo energyConfig =
                 configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.ENERGY);
@@ -138,9 +119,6 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                 energyConfig.setDataType(mekanism.common.tile.component.config.DataType.INPUT, side);
             }
         }
-
-        ejectorComponent = new mekanism.common.tile.component.TileComponentEjector(this);
-        ejectorComponent.setOutputData(configComponent, mekanism.common.lib.transmitter.TransmissionType.FLUID);
     }
 
     @NotNull
@@ -155,26 +133,17 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
     @NotNull
     @Override
     protected IFluidTankHolder getInitialFluidTanks(IContentsListener listener) {
-        FluidTankHelper builder = FluidTankHelper.forSideWithConfig(this);
         int capacity = getTierSafe().getTankCapacity();
-        earthTank    = BasicFluidTank.create(capacity, (stack, automation) -> true, (stack, automation) -> automation == AutomationType.INTERNAL, stack -> stack.getFluid() == ReplicateMekanism.EARTH_MATTER.source.get(), listener);
-        netherTank   = BasicFluidTank.create(capacity, (stack, automation) -> true, (stack, automation) -> automation == AutomationType.INTERNAL, stack -> stack.getFluid() == ReplicateMekanism.NETHER_MATTER.source.get(), listener);
-        organicTank  = BasicFluidTank.create(capacity, (stack, automation) -> true, (stack, automation) -> automation == AutomationType.INTERNAL, stack -> stack.getFluid() == ReplicateMekanism.ORGANIC_MATTER.source.get(), listener);
-        enderTank    = BasicFluidTank.create(capacity, (stack, automation) -> true, (stack, automation) -> automation == AutomationType.INTERNAL, stack -> stack.getFluid() == ReplicateMekanism.ENDER_MATTER.source.get(), listener);
-        metallicTank = BasicFluidTank.create(capacity, (stack, automation) -> true, (stack, automation) -> automation == AutomationType.INTERNAL, stack -> stack.getFluid() == ReplicateMekanism.METALLIC_MATTER.source.get(), listener);
-        preciousTank = BasicFluidTank.create(capacity, (stack, automation) -> true, (stack, automation) -> automation == AutomationType.INTERNAL, stack -> stack.getFluid() == ReplicateMekanism.PRECIOUS_MATTER.source.get(), listener);
-        livingTank   = BasicFluidTank.create(capacity, (stack, automation) -> true, (stack, automation) -> automation == AutomationType.INTERNAL, stack -> stack.getFluid() == ReplicateMekanism.LIVING_MATTER.source.get(), listener);
-        quantumTank  = BasicFluidTank.create(capacity, (stack, automation) -> true, (stack, automation) -> automation == AutomationType.INTERNAL, stack -> stack.getFluid() == ReplicateMekanism.QUANTUM_MATTER.source.get(), listener);
+        earthTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.EARTH.get(), capacity, this::setChanged);
+        netherTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.NETHER.get(), capacity, this::setChanged);
+        organicTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.ORGANIC.get(), capacity, this::setChanged);
+        enderTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.ENDER.get(), capacity, this::setChanged);
+        metallicTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.METALLIC.get(), capacity, this::setChanged);
+        preciousTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.PRECIOUS.get(), capacity, this::setChanged);
+        livingTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.LIVING.get(), capacity, this::setChanged);
+        quantumTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.QUANTUM.get(), capacity, this::setChanged);
 
-        builder.addTank(earthTank);
-        builder.addTank(netherTank);
-        builder.addTank(organicTank);
-        builder.addTank(enderTank);
-        builder.addTank(metallicTank);
-        builder.addTank(preciousTank);
-        builder.addTank(livingTank);
-        builder.addTank(quantumTank);
-
+        FluidTankHelper builder = FluidTankHelper.forSideWithConfig(this);
         return builder.build();
     }
 
@@ -296,9 +265,9 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                         boolean allTanksHaveSpace = true;
                         for (Map.Entry<IMatterType, MatterValue> entry : compound.getValues().entrySet()) {
                             IMatterType matterType = entry.getKey();
-                            int amount = (int) Math.ceil(entry.getValue().getAmount());
-                            BasicFluidTank targetTank = getTankForMatterType(matterType);
-                            if (targetTank == null || targetTank.getCapacity() - targetTank.getFluidAmount() < amount) {
+                            double amount = entry.getValue().getAmount();
+                            com.github.mochi7054.fluid.SimpleMatterTank targetTank = getTankForMatterType(matterType);
+                            if (targetTank == null || targetTank.getCapacity() - targetTank.getMatterAmount() < amount) {
                                 allTanksHaveSpace = false;
                                 break;
                             }
@@ -328,13 +297,10 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                         if (compound != null) {
                             for (Map.Entry<IMatterType, MatterValue> entry : compound.getValues().entrySet()) {
                                 IMatterType matterType = entry.getKey();
-                                int amount = (int) Math.ceil(entry.getValue().getAmount());
-                                BasicFluidTank targetTank = getTankForMatterType(matterType);
+                                double amount = entry.getValue().getAmount();
+                                com.github.mochi7054.fluid.SimpleMatterTank targetTank = getTankForMatterType(matterType);
                                 if (targetTank != null) {
-                                    Fluid fluid = MatterFluidWrapper.getFluidFromMatterType(matterType);
-                                    if (fluid != net.minecraft.world.level.material.Fluids.EMPTY) {
-                                        targetTank.insert(new FluidStack(fluid, amount), Action.EXECUTE, AutomationType.INTERNAL);
-                                    }
+                                    targetTank.fill(new com.buuz135.replication.api.matter_fluid.MatterStack(matterType, amount), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
                                 }
                             }
                             inputSlots.get(i).extractItem(1, Action.EXECUTE, AutomationType.INTERNAL);
@@ -370,7 +336,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
     }
 
     @Nullable
-    private BasicFluidTank getTankForMatterType(IMatterType matterType) {
+    private com.github.mochi7054.fluid.SimpleMatterTank getTankForMatterType(IMatterType matterType) {
         String name = matterType.getName().toLowerCase();
         return switch (name) {
             case "earth"    -> earthTank;
@@ -559,6 +525,17 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         if (tag.contains("sorting")) {
             this.sorting = tag.getBoolean("sorting");
         }
+        if (tag.contains("matterTanks", Tag.TAG_COMPOUND)) {
+            CompoundTag tanksTag = tag.getCompound("matterTanks");
+            earthTank.setAmount(tanksTag.getDouble("earth"));
+            netherTank.setAmount(tanksTag.getDouble("nether"));
+            organicTank.setAmount(tanksTag.getDouble("organic"));
+            enderTank.setAmount(tanksTag.getDouble("ender"));
+            metallicTank.setAmount(tanksTag.getDouble("metallic"));
+            preciousTank.setAmount(tanksTag.getDouble("precious"));
+            livingTank.setAmount(tanksTag.getDouble("living"));
+            quantumTank.setAmount(tanksTag.getDouble("quantum"));
+        }
     }
 
     @Override
@@ -571,6 +548,17 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             }
         }
         tag.putBoolean("sorting", this.sorting);
+
+        CompoundTag tanksTag = new CompoundTag();
+        tanksTag.putDouble("earth", earthTank.getMatterAmount());
+        tanksTag.putDouble("nether", netherTank.getMatterAmount());
+        tanksTag.putDouble("organic", organicTank.getMatterAmount());
+        tanksTag.putDouble("ender", enderTank.getMatterAmount());
+        tanksTag.putDouble("metallic", metallicTank.getMatterAmount());
+        tanksTag.putDouble("precious", preciousTank.getMatterAmount());
+        tanksTag.putDouble("living", livingTank.getMatterAmount());
+        tanksTag.putDouble("quantum", quantumTank.getMatterAmount());
+        tag.put("matterTanks", tanksTag);
     }
 
     // ITierUpgradable Implementation
@@ -583,9 +571,9 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             }
             this.energySlot.setStack(data.energySlotStack);
             
-            var tanks = this.getFluidTanks(null);
-            for (int i = 0; i < Math.min(tanks.size(), data.fluidStacks.size()); i++) {
-                tanks.get(i).setStack(data.fluidStacks.get(i));
+            var tanks = this.getMatterTanks();
+            for (int i = 0; i < Math.min(tanks.size(), data.matterAmounts.size()); i++) {
+                tanks.get(i).setAmount(data.matterAmounts.get(i));
             }
             
             for (mekanism.common.tile.component.ITileComponent component : this.getComponents()) {
@@ -606,9 +594,9 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         }
         ItemStack energyStack = this.energySlot.getStack().copy();
         
-        List<FluidStack> fluids = new java.util.ArrayList<>();
-        for (mekanism.api.fluid.IExtendedFluidTank tank : this.getFluidTanks(null)) {
-            fluids.add(tank.getFluid().copy());
+        List<Double> matterAmounts = new java.util.ArrayList<>();
+        for (com.github.mochi7054.fluid.SimpleMatterTank tank : this.getMatterTanks()) {
+            matterAmounts.add(tank.getMatterAmount());
         }
         
         CompoundTag componentsTag = new CompoundTag();
@@ -620,7 +608,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             this.energyContainer.getEnergy(),
             inputs,
             energyStack,
-            fluids,
+            matterAmounts,
             componentsTag,
             this.operatingTicks != null ? this.operatingTicks.clone() : new int[0]
         );
@@ -630,15 +618,15 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         public final long energy;
         public final List<ItemStack> inputStacks;
         public final ItemStack energySlotStack;
-        public final List<FluidStack> fluidStacks;
+        public final List<Double> matterAmounts;
         public final CompoundTag componentNbt;
         public final int[] operatingTicks;
         
-        public CollapserUpgradeData(long energy, List<ItemStack> inputStacks, ItemStack energySlotStack, List<FluidStack> fluidStacks, CompoundTag componentNbt, int[] operatingTicks) {
+        public CollapserUpgradeData(long energy, List<ItemStack> inputStacks, ItemStack energySlotStack, List<Double> matterAmounts, CompoundTag componentNbt, int[] operatingTicks) {
             this.energy = energy;
             this.inputStacks = inputStacks;
             this.energySlotStack = energySlotStack;
-            this.fluidStacks = fluidStacks;
+            this.matterAmounts = matterAmounts;
             this.componentNbt = componentNbt;
             this.operatingTicks = operatingTicks;
         }
