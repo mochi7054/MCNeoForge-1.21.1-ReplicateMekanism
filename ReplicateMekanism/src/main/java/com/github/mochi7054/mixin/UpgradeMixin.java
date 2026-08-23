@@ -33,7 +33,13 @@ public abstract class UpgradeMixin {
         Upgrade[] oldValues = $VALUES;
         int newOrdinal = oldValues.length;
 
-        Upgrade replicaUpgrade = UpgradeInvoker.createUpgrade("REPLICA", newOrdinal, "replica", langKey, descLangKey, 1, EnumColor.DARK_BLUE);
+        int maxStack = 8;
+        try {
+            maxStack = com.github.mochi7054.config.Config.REPLICA_UPGRADE_MAX_STACK.get();
+        } catch (Exception e) {
+            // Fallback to default
+        }
+        Upgrade replicaUpgrade = UpgradeInvoker.createUpgrade("REPLICA", newOrdinal, "replica", langKey, descLangKey, maxStack, EnumColor.DARK_BLUE);
         com.github.mochi7054.ReplicateMekanism.REPLICA_UPGRADE_TYPE = replicaUpgrade;
 
         // Append to $VALUES

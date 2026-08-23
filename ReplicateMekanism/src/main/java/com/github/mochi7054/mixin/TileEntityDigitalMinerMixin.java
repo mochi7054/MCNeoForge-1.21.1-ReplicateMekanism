@@ -21,17 +21,23 @@ public abstract class TileEntityDigitalMinerMixin {
         List<ItemStack> drops = cir.getReturnValue();
         if (drops != null && !drops.isEmpty()) {
             TileEntityDigitalMiner miner = (TileEntityDigitalMiner) (Object) this;
-            if (miner.getComponent() != null && miner.getComponent().isUpgradeInstalled(ReplicateMekanism.REPLICA_UPGRADE_TYPE)) {
-                List<ItemStack> doubled = new ArrayList<>();
+            int upgradeCount = 0;
+            if (miner.getComponent() != null) {
+                upgradeCount = miner.getComponent().getUpgrades(ReplicateMekanism.REPLICA_UPGRADE_TYPE);
+            }
+            if (upgradeCount > 0) {
+                int multiplier = 1 << upgradeCount;
+                List<ItemStack> multiplied = new ArrayList<>();
                 for (ItemStack drop : drops) {
                     if (drop != null && !drop.isEmpty()) {
-                        doubled.add(drop);
-                        doubled.add(drop.copy());
+                        for (int j = 0; j < multiplier; j++) {
+                            multiplied.add(j == 0 ? drop : drop.copy());
+                        }
                     } else {
-                        doubled.add(drop);
+                        multiplied.add(drop);
                     }
                 }
-                cir.setReturnValue(doubled);
+                cir.setReturnValue(multiplied);
             }
         }
     }

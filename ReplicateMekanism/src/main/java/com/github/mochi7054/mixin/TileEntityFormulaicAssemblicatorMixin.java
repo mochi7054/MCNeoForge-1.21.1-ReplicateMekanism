@@ -19,11 +19,16 @@ public class TileEntityFormulaicAssemblicatorMixin {
     )
     private ItemStack modifyCraftedOutput(ItemStack stack, ItemStack originalStack, Action action) {
         TileEntityFormulaicAssemblicator assemblicator = (TileEntityFormulaicAssemblicator) (Object) this;
-        if (assemblicator.getComponent() != null && assemblicator.getComponent().isUpgradeInstalled(ReplicateMekanism.REPLICA_UPGRADE_TYPE)) {
+        int upgradeCount = 0;
+        if (assemblicator.getComponent() != null) {
+            upgradeCount = assemblicator.getComponent().getUpgrades(ReplicateMekanism.REPLICA_UPGRADE_TYPE);
+        }
+        if (upgradeCount > 0) {
             if (stack != null && !stack.isEmpty()) {
-                ItemStack doubled = stack.copy();
-                doubled.setCount(doubled.getCount() * 2);
-                return doubled;
+                ItemStack multiplied = stack.copy();
+                int multiplier = 1 << upgradeCount;
+                multiplied.setCount(multiplied.getCount() * multiplier);
+                return multiplied;
             }
         }
         return stack;

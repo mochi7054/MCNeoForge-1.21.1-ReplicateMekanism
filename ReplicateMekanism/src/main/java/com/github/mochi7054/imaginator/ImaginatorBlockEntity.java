@@ -442,8 +442,9 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                 cancelActiveTask(activeSlotIndex);
             } else {
                 int outputCount = 1;
-                if (getComponent() != null && getComponent().isUpgradeInstalled(ReplicateMekanism.REPLICA_UPGRADE_TYPE)) {
-                    outputCount = 2;
+                if (getComponent() != null) {
+                    int upgradeCount = getComponent().getUpgrades(ReplicateMekanism.REPLICA_UPGRADE_TYPE);
+                    outputCount = 1 << upgradeCount;
                 }
 
                 OutputInventorySlot outputSlot = outputSlots.get(activeSlotIndex);
