@@ -121,7 +121,21 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         }
 
         // Add FLUID configuration (reused for Matter)
-        configComponent.setupOutputConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID, java.util.Collections.emptyList());
+        mekanism.common.tile.component.config.ConfigInfo fluidConfig = configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID);
+        if (fluidConfig != null) {
+            mekanism.common.tile.component.config.slot.BaseSlotInfo slotInfo = mekanism.common.tile.component.TileComponentConfig.createInfo(
+                mekanism.common.lib.transmitter.TransmissionType.FLUID,
+                false,
+                true,
+                java.util.Collections.emptyList()
+            );
+            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.INPUT, slotInfo);
+            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.OUTPUT, slotInfo);
+            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.NONE, slotInfo);
+            for (mekanism.api.RelativeSide side : mekanism.api.RelativeSide.values()) {
+                fluidConfig.setDataType(mekanism.common.tile.component.config.DataType.OUTPUT, side);
+            }
+        }
 
         ejectorComponent = new mekanism.common.tile.component.TileComponentEjector(this);
         ejectorComponent.setOutputData(configComponent, mekanism.common.lib.transmitter.TransmissionType.ITEM);
