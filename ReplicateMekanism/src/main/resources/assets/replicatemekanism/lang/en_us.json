@@ -12,6 +12,7 @@
 
   "upgrade.replicatemekanism.replica": "Replica",
   "upgrade.replicatemekanism.replica.desc": "Doubles output of machinery.",
+  "upgrade.replicatemekanism.replica.effect": "Multiplier: x%s (x%s max)",
   "upgrade.replicatemekanism.replica.supported_machines": "All upgradeable machinery",
 
   "replicatemekanism.configuration.title": "ReplicateMekanism Configs",

@@ -73,6 +73,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
     public com.github.mochi7054.fluid.SimpleMatterTank preciousTank;
     public com.github.mochi7054.fluid.SimpleMatterTank livingTank;
     public com.github.mochi7054.fluid.SimpleMatterTank quantumTank;
+    public mekanism.common.capabilities.fluid.BasicFluidTank dummyFluidTank;
 
     public List<com.github.mochi7054.fluid.SimpleMatterTank> getMatterTanks() {
         return List.of(earthTank, netherTank, organicTank, enderTank,
@@ -121,21 +122,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         }
 
         // Add FLUID configuration (reused for Matter)
-        mekanism.common.tile.component.config.ConfigInfo fluidConfig = configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID);
-        if (fluidConfig != null) {
-            mekanism.common.tile.component.config.slot.BaseSlotInfo slotInfo = mekanism.common.tile.component.TileComponentConfig.createInfo(
-                mekanism.common.lib.transmitter.TransmissionType.FLUID,
-                false,
-                true,
-                java.util.Collections.emptyList()
-            );
-            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.INPUT, slotInfo);
-            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.OUTPUT, slotInfo);
-            fluidConfig.addSlotInfo(mekanism.common.tile.component.config.DataType.NONE, slotInfo);
-            for (mekanism.api.RelativeSide side : mekanism.api.RelativeSide.values()) {
-                fluidConfig.setDataType(mekanism.common.tile.component.config.DataType.OUTPUT, side);
-            }
-        }
+        configComponent.setupOutputConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID, dummyFluidTank);
 
         ejectorComponent = new mekanism.common.tile.component.TileComponentEjector(this);
         ejectorComponent.setOutputData(configComponent, mekanism.common.lib.transmitter.TransmissionType.ITEM);
@@ -163,7 +150,9 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         livingTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.LIVING.get(), capacity, this::setChanged);
         quantumTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.QUANTUM.get(), capacity, this::setChanged);
 
+        dummyFluidTank = mekanism.common.capabilities.fluid.BasicFluidTank.create(0, (fluid) -> false, (fluid) -> false, listener);
         FluidTankHelper builder = FluidTankHelper.forSideWithConfig(this);
+        builder.addTank(dummyFluidTank);
         return builder.build();
     }
 
