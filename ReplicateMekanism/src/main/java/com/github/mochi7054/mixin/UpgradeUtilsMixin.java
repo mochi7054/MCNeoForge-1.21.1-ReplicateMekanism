@@ -17,6 +17,13 @@ import java.util.List;
 @Mixin(value = UpgradeUtils.class, remap = false)
 public class UpgradeUtilsMixin {
 
+    @Inject(method = "getItem", at = @At("HEAD"), cancellable = true)
+    private static void onGetItem(Upgrade upgrade, CallbackInfoReturnable<net.minecraft.core.Holder<net.minecraft.world.item.Item>> cir) {
+        if (upgrade == ReplicateMekanism.REPLICA_UPGRADE_TYPE) {
+            cir.setReturnValue(net.minecraft.core.Holder.direct(ReplicateMekanism.REPLICA_UPGRADE.get()));
+        }
+    }
+
     @Inject(method = "getInfo", at = @At("HEAD"), cancellable = true)
     private static void onGetInfo(BlockEntity tile, Upgrade upgrade, CallbackInfoReturnable<List<Component>> cir) {
         if (upgrade == ReplicateMekanism.REPLICA_UPGRADE_TYPE) {
