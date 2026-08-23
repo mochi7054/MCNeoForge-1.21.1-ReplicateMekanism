@@ -1,43 +1,52 @@
-package com.github.mochi7054.imaginator;
+package com.github.mochi7054.fluid;
 
 import com.buuz135.replication.api.IMatterType;
 import com.buuz135.replication.api.matter_fluid.IMatterHandler;
 import com.buuz135.replication.api.matter_fluid.MatterStack;
-import com.github.mochi7054.fluid.SimpleMatterTank;
+import mekanism.common.tile.prefab.TileEntityConfigurableMachine;
+import net.minecraft.core.Direction;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
 import java.util.List;
 
-public class ImaginatorMatterHandler implements IMatterHandler {
-    private final ImaginatorBlockEntity tile;
+public class ReplicationMatterHandler implements IMatterHandler {
+    private final TileEntityConfigurableMachine tile;
     private final List<SimpleMatterTank> tanks;
+    private final Direction side;
 
-    public ImaginatorMatterHandler(ImaginatorBlockEntity tile) {
+    public ReplicationMatterHandler(TileEntityConfigurableMachine tile, List<SimpleMatterTank> tanks, Direction side) {
         this.tile = tile;
-        this.tanks = List.of(
-            tile.earthTank,
-            tile.netherTank,
-            tile.organicTank,
-            tile.enderTank,
-            tile.metallicTank,
-            tile.preciousTank,
-            tile.livingTank,
-            tile.quantumTank
-        );
+        this.tanks = tanks;
+        this.side = side;
+    }
+
+    private boolean canInput() {
+        if (side == null) return true;
+        if (tile.getConfig() == null) return true;
+        var config = tile.getConfig().getConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID);
+        if (config == null) return true;
+        var dataType = config.getDataType(mekanism.api.RelativeSide.fromDirections(tile.getDirection(), side));
+        return dataType == mekanism.common.tile.component.config.DataType.INPUT || dataType == mekanism.common.tile.component.config.DataType.INPUT_OUTPUT;
+    }
+
+    private boolean canOutput() {
+        if (side == null) return true;
+        if (tile.getConfig() == null) return true;
+        var config = tile.getConfig().getConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID);
+        if (config == null) return true;
+        var dataType = config.getDataType(mekanism.api.RelativeSide.fromDirections(tile.getDirection(), side));
+        return dataType == mekanism.common.tile.component.config.DataType.OUTPUT || dataType == mekanism.common.tile.component.config.DataType.INPUT_OUTPUT;
     }
 
     private SimpleMatterTank getTankForMatter(IMatterType matterType) {
         if (matterType == null) return null;
         String name = matterType.getName();
         if (name == null) return null;
-        if (name.equalsIgnoreCase("earth")) return tile.earthTank;
-        if (name.equalsIgnoreCase("nether")) return tile.netherTank;
-        if (name.equalsIgnoreCase("organic")) return tile.organicTank;
-        if (name.equalsIgnoreCase("ender")) return tile.enderTank;
-        if (name.equalsIgnoreCase("metallic")) return tile.metallicTank;
-        if (name.equalsIgnoreCase("precious")) return tile.preciousTank;
-        if (name.equalsIgnoreCase("living")) return tile.livingTank;
-        if (name.equalsIgnoreCase("quantum")) return tile.quantumTank;
+        for (SimpleMatterTank tank : tanks) {
+            if (tank.getMatter().getMatterType().getName().equalsIgnoreCase(name)) {
+                return tank;
+            }
+        }
         return null;
     }
 
@@ -67,6 +76,7 @@ public class ImaginatorMatterHandler implements IMatterHandler {
 
     @Override
     public double fill(MatterStack stack, FluidAction action) {
+        if (!canInput()) return 0;
         if (stack == null || stack.isEmpty()) return 0;
         SimpleMatterTank tank = getTankForMatter(stack.getMatterType());
         if (tank == null) return 0;
@@ -75,6 +85,7 @@ public class ImaginatorMatterHandler implements IMatterHandler {
 
     @Override
     public MatterStack drain(MatterStack stack, FluidAction action) {
+        if (!canOutput()) return MatterStack.EMPTY;
         if (stack == null || stack.isEmpty()) return MatterStack.EMPTY;
         SimpleMatterTank tank = getTankForMatter(stack.getMatterType());
         if (tank == null) return MatterStack.EMPTY;
@@ -83,6 +94,7 @@ public class ImaginatorMatterHandler implements IMatterHandler {
 
     @Override
     public MatterStack drain(double amount, FluidAction action) {
+        if (!canOutput()) return MatterStack.EMPTY;
         if (amount <= 0) return MatterStack.EMPTY;
         
         for (int i = 0; i < tanks.size(); i++) {

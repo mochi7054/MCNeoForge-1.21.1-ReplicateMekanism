@@ -302,30 +302,58 @@ public class ReplicateMekanism {
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
         try {
+            // Imaginator Registrations
             event.registerBlockEntity(
                     com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                     ReplicateMekanism.IMAGINATOR_TILE.get(),
-                    (be, side) -> new com.github.mochi7054.imaginator.ImaginatorMatterHandler(be)
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
             );
             event.registerBlockEntity(
                     com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                     ReplicateMekanism.IMAGINATOR_BASIC_TILE.get(),
-                    (be, side) -> new com.github.mochi7054.imaginator.ImaginatorMatterHandler(be)
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
             );
             event.registerBlockEntity(
                     com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                     ReplicateMekanism.IMAGINATOR_ADVANCED_TILE.get(),
-                    (be, side) -> new com.github.mochi7054.imaginator.ImaginatorMatterHandler(be)
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
             );
             event.registerBlockEntity(
                     com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                     ReplicateMekanism.IMAGINATOR_ELITE_TILE.get(),
-                    (be, side) -> new com.github.mochi7054.imaginator.ImaginatorMatterHandler(be)
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
             );
             event.registerBlockEntity(
                     com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                     ReplicateMekanism.IMAGINATOR_ULTIMATE_TILE.get(),
-                    (be, side) -> new com.github.mochi7054.imaginator.ImaginatorMatterHandler(be)
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
+            );
+
+            // Collapser Registrations
+            event.registerBlockEntity(
+                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
+                    ReplicateMekanism.COLLAPSER_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
+                    ReplicateMekanism.COLLAPSER_BASIC_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
+                    ReplicateMekanism.COLLAPSER_ADVANCED_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
+                    ReplicateMekanism.COLLAPSER_ELITE_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
+                    ReplicateMekanism.COLLAPSER_ULTIMATE_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
             );
         } catch (Exception e) {
             LOGGER.error("Failed to register capabilities for Replication BlockEntities", e);

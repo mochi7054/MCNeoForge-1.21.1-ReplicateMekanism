@@ -138,6 +138,9 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             }
         }
 
+        // Add FLUID configuration (reused for Matter)
+        configComponent.setupInputConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID, java.util.Collections.emptyList());
+
         ejectorComponent = new mekanism.common.tile.component.TileComponentEjector(this);
         ejectorComponent.setOutputData(configComponent, mekanism.common.lib.transmitter.TransmissionType.ITEM);
     }
