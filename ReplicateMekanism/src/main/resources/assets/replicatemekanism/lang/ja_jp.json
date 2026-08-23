@@ -12,6 +12,7 @@
   "upgrade.replicatemekanism.replica": "レプリカ",
   "upgrade.replicatemekanism.replica.desc": "機械の出力を倍化します。",
   "upgrade.replicatemekanism.replica.supported_machines": "すべてのアップグレード対応機械",
+  "replicatemekanism.configuration.replicaUpgradeMaxStack": "レプリカアップグレードの最大スタック数",
 
   "fluid.replicatemekanism.earth_matter": "アース・マター",
   "fluid.replicatemekanism.nether_matter": "ネザー・マター",

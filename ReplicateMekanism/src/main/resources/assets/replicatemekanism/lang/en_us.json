@@ -17,10 +17,7 @@
   "replicatemekanism.configuration.title": "ReplicateMekanism Configs",
   "replicatemekanism.configuration.section.replicatemekanism.common.toml": "ReplicateMekanism Configs",
   "replicatemekanism.configuration.section.replicatemekanism.common.toml.title": "ReplicateMekanism Configs",
-  "replicatemekanism.configuration.items": "Item List",
-  "replicatemekanism.configuration.logDirtBlock": "Log Dirt Block",
-  "replicatemekanism.configuration.magicNumberIntroduction": "Magic Number Text",
-  "replicatemekanism.configuration.magicNumber": "Magic Number",
+  "replicatemekanism.configuration.replicaUpgradeMaxStack": "Replica Upgrade Max Stack Limit",
 
   "fluid.replicatemekanism.earth_matter": "Earth Matter",
   "fluid.replicatemekanism.nether_matter": "Nether Matter",
