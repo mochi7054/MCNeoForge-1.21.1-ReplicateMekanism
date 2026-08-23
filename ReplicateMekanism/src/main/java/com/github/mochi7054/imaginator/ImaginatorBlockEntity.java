@@ -121,7 +121,6 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         // ITEM config: all input slots for parallel external automation, and output slots
         List<mekanism.api.inventory.IInventorySlot> inputConfigSlots = new ArrayList<>(inputSlots);
         List<mekanism.api.inventory.IInventorySlot> outputConfigSlots = new ArrayList<>(outputSlots);
-        outputConfigSlots.addAll(inputSlots); // AE2のロックを防ぐため、すべての入力スロットからの回収も許可する
 
         configComponent.setupItemIOConfig(
             inputConfigSlots,
