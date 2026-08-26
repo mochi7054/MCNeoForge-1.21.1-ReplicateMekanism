@@ -98,19 +98,33 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
         // Execute 100% pattern identification
         ModifierAction action = (ModifierAction) modifier.addPattern(level, chipCopy, inputStack, 1.0f);
         if (action != null && action.getType() == ModifierType.FULL) {
+            int replicaUpgrades = supportsUpgrades() ? getComponent().getUpgrades(ReplicateMekanism.REPLICA_UPGRADE_TYPE) : 0;
+            int maxProcess = Math.min(1 << replicaUpgrades, chipStack.getCount());
+
             ItemStack outputStack = chipOutputSlot.getStack();
+            int toProduce;
             if (outputStack.isEmpty()) {
+                toProduce = Math.min(maxProcess, chipCopy.getMaxStackSize());
+                chipCopy.setCount(toProduce);
                 chipOutputSlot.setStack(chipCopy);
-            } else if (ItemStack.isSameItemSameComponents(outputStack, chipCopy) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
-                outputStack.grow(1);
+            } else if (ItemStack.isSameItemSameComponents(outputStack, chipCopy)) {
+                int room = outputStack.getMaxStackSize() - outputStack.getCount();
+                if (room <= 0) return;
+                toProduce = Math.min(maxProcess, room);
+                outputStack.grow(toProduce);
             } else {
-                // Output slot is full or mismatch
+                // Output slot mismatch
                 return;
             }
 
-            // Consume 1 chip, 1 target item, and energy
-            chipInputSlot.shrinkStack(1, Action.EXECUTE);
-            inputSlot.shrinkStack(1, Action.EXECUTE);
+            // Consume chips
+            chipInputSlot.shrinkStack(toProduce, Action.EXECUTE);
+
+            // Only consume target item if NO replica upgrade is installed
+            if (replicaUpgrades == 0) {
+                inputSlot.shrinkStack(1, Action.EXECUTE);
+            }
+
             energyContainer.extract(SCAN_ENERGY_COST, Action.EXECUTE, AutomationType.INTERNAL);
 
             // Play success sound
