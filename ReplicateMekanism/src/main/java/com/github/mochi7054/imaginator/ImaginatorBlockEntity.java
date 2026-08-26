@@ -139,6 +139,14 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             }
         }
 
+        mekanism.common.tile.component.config.ConfigInfo itemConfig =
+                configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.ITEM);
+        if (itemConfig != null) {
+            for (mekanism.api.RelativeSide side : mekanism.api.RelativeSide.values()) {
+                itemConfig.setDataType(mekanism.common.tile.component.config.DataType.INPUT_OUTPUT, side);
+            }
+        }
+
         // Add FLUID configuration (reused for Matter)
         configComponent.setupInputConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID, dummyFluidTank);
 

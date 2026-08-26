@@ -121,6 +121,14 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             }
         }
 
+        mekanism.common.tile.component.config.ConfigInfo itemConfig =
+                configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.ITEM);
+        if (itemConfig != null) {
+            for (mekanism.api.RelativeSide side : mekanism.api.RelativeSide.values()) {
+                itemConfig.setDataType(mekanism.common.tile.component.config.DataType.INPUT, side);
+            }
+        }
+
         // Add FLUID configuration (reused for Matter)
         configComponent.setupOutputConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID, dummyFluidTank);
 
