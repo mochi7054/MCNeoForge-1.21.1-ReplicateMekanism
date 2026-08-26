@@ -118,32 +118,29 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
     public ImaginatorBlockEntity(BlockPos pos, BlockState state) {
         super(state.getBlockHolder(), pos, state);
         
-        // ITEM config: all input slots for parallel external automation, and output slots
-        List<mekanism.api.inventory.IInventorySlot> inputConfigSlots = new ArrayList<>(inputSlots);
-        List<mekanism.api.inventory.IInventorySlot> outputConfigSlots = new ArrayList<>(outputSlots);
-
+        // ITEM config: all input slots and output slots
         configComponent.setupItemIOConfig(
-            inputConfigSlots,
-            outputConfigSlots,
+            new ArrayList<>(inputSlots),
+            new ArrayList<>(outputSlots),
             energySlot,
             false
         );
-        
 
+        mekanism.common.tile.component.config.ConfigInfo itemConfig =
+                configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.ITEM);
+        if (itemConfig != null) {
+            itemConfig.setCanEject(true);
+            itemConfig.setEjecting(true);
+            for (mekanism.api.RelativeSide side : mekanism.api.RelativeSide.values()) {
+                itemConfig.setDataType(mekanism.common.tile.component.config.DataType.INPUT_OUTPUT, side);
+            }
+        }
 
         configComponent.setupInputConfig(mekanism.common.lib.transmitter.TransmissionType.ENERGY, energyContainer);
         mekanism.common.tile.component.config.ConfigInfo energyConfig = configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.ENERGY);
         if (energyConfig != null) {
             for (mekanism.api.RelativeSide side : mekanism.api.RelativeSide.values()) {
                 energyConfig.setDataType(mekanism.common.tile.component.config.DataType.INPUT, side);
-            }
-        }
-
-        mekanism.common.tile.component.config.ConfigInfo itemConfig =
-                configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.ITEM);
-        if (itemConfig != null) {
-            for (mekanism.api.RelativeSide side : mekanism.api.RelativeSide.values()) {
-                itemConfig.setDataType(mekanism.common.tile.component.config.DataType.INPUT_OUTPUT, side);
             }
         }
 
