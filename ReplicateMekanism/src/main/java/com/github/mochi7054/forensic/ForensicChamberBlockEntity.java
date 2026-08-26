@@ -64,11 +64,6 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
         return holder.getPatterns(level, (T) target);
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T> int getPatternSlotsRaw(IMatterPatternHolder<T> holder, Object target) {
-        return holder.getPatternSlots((T) target);
-    }
-
     @NotNull
     @Override
     protected IInventorySlotHolder getInitialInventory(IContentsListener listener) {
@@ -111,34 +106,25 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
             return;
         }
 
-        if (!(chipStack.getItem() instanceof IMatterPatternModifier modifier) || !(chipStack.getItem() instanceof IMatterPatternHolder<?> holder)) {
+        if (!(chipStack.getItem() instanceof IMatterPatternModifier modifier)) {
             return;
         }
 
         ItemStack targetItem = inputStack.getItem().getDefaultInstance();
 
-        // Check if this pattern is ALREADY stored in the memory chip at 100%
-        List<?> patterns = getPatternsRaw(holder, level, chipStack);
-        boolean alreadyExists = false;
-        if (patterns != null) {
-            for (Object obj : patterns) {
-                if (obj instanceof MatterPattern pattern) {
-                    if (ItemStack.isSameItemSameComponents(pattern.getStack(), targetItem)) {
-                        if (pattern.getCompletion() >= 1.0f) {
-                            // Already 100% identified in this chip -> Do nothing!
-                            return;
+        // Check if this item is ALREADY 100% completed in the memory chip
+        if (chipStack.getItem() instanceof IMatterPatternHolder<?> holder) {
+            List<?> patterns = getPatternsRaw(holder, level, chipStack);
+            if (patterns != null) {
+                for (Object obj : patterns) {
+                    if (obj instanceof MatterPattern pattern && !pattern.getStack().isEmpty()) {
+                        if (ItemStack.isSameItemSameComponents(pattern.getStack(), targetItem)) {
+                            if (pattern.getCompletion() >= 1.0f) {
+                                // Already 100% identified in this chip -> Do nothing!
+                                return;
+                            }
                         }
-                        alreadyExists = true;
                     }
-                }
-            }
-
-            // If it's a new pattern, check if the chip has free pattern slots
-            if (!alreadyExists) {
-                int maxSlots = getPatternSlotsRaw(holder, chipStack);
-                if (patterns.size() >= maxSlots) {
-                    // Chip is full of other patterns -> Do nothing!
-                    return;
                 }
             }
         }
@@ -156,13 +142,16 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
             } else if (ItemStack.isSameItemSameComponents(outputStack, chipCopy) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
                 outputStack.grow(1);
             } else {
-                // Output slot is full or mismatch
+                // Output slot is full or has different item
                 return;
             }
 
             // Consume 1 chip, 1 target item, and energy (No sound)
             chipInputSlot.shrinkStack(1, Action.EXECUTE);
-            inputSlot.shrinkStack(1, Action.EXECUTE);
+            inputStack = inputSlot.getStack();
+            if (!inputStack.isEmpty()) {
+                inputSlot.shrinkStack(1, Action.EXECUTE);
+            }
             energyContainer.extract(SCAN_ENERGY_COST, Action.EXECUTE, AutomationType.INTERNAL);
 
             markForSave();
