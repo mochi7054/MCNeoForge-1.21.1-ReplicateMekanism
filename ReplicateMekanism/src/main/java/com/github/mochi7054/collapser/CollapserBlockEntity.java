@@ -360,47 +360,78 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                         
                         BlockPos adjacent = worldPosition.relative(dir);
                         if (level != null && level.isLoaded(adjacent)) {
-                            com.buuz135.replication.api.matter_fluid.IMatterHandler targetHandler = 
-                                level.getCapability(com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER, adjacent, dir.getOpposite());
-                            
-                            if (targetHandler != null) {
-                                for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
-                                    com.buuz135.replication.api.matter_fluid.MatterStack stored = tank.getMatter();
+                            net.minecraft.world.level.block.entity.BlockEntity adjacentBE = level.getBlockEntity(adjacent);
+                            boolean ejected = false;
+
+                            // 最優先: 隣接ブロックが NetworkBlockEntity (Replicationパイプ・タンク等) なら直接タンクへFill
+                            if (adjacentBE instanceof com.buuz135.replication.block.tile.NetworkBlockEntity<?> networkBE) {
+                                for (com.github.mochi7054.fluid.SimpleMatterTank myTank : getMatterTanks()) {
+                                    com.buuz135.replication.api.matter_fluid.MatterStack stored = myTank.getMatter();
                                     if (stored != null && !stored.isEmpty() && stored.getAmount() > 0) {
-                                        double filled = targetHandler.fill(stored, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
-                                        if (filled > 0) {
-                                            // シミュレートされた量を直接消費し、実行時の戻り値は無視する
-                                            tank.drain(filled, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
-                                            targetHandler.fill(
-                                                new com.buuz135.replication.api.matter_fluid.MatterStack(stored.getMatterType(), filled), 
-                                                net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE
-                                            );
-                                            sendUpdate = true;
+                                        for (var component : networkBE.getMatterTankComponents()) {
+                                            com.buuz135.replication.api.matter_fluid.MatterStack compStored = component.getMatter();
+                                            // タンクのマター種別が一致、またはタンクが空の場合に搬出を試みる
+                                            if (compStored == null || compStored.isEmpty() || 
+                                                (compStored.getMatterType() != null && stored.getMatterType() != null &&
+                                                 compStored.getMatterType().getName().equalsIgnoreCase(stored.getMatterType().getName()))) {
+                                                double filled = component.fill(stored, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
+                                                if (filled > 0) {
+                                                    myTank.drain(filled, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                                                    component.fill(new com.buuz135.replication.api.matter_fluid.MatterStack(stored.getMatterType(), filled), 
+                                                        net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                                                    sendUpdate = true;
+                                                    ejected = true;
+                                                    break;
+                                                }
+                                            }
                                         }
+                                        if (ejected) break;
                                     }
                                 }
-                            } else {
-                                // Fallback: IFluidHandler push (for AE2 Pattern Provider etc.)
-                                net.neoforged.neoforge.fluids.capability.IFluidHandler targetFluidHandler = 
-                                    level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, adjacent, dir.getOpposite());
-                                if (targetFluidHandler != null) {
+                            }
+
+                            if (!ejected) {
+                                // 次: IMatterHandler Capability (他のMod対応)
+                                com.buuz135.replication.api.matter_fluid.IMatterHandler targetHandler = 
+                                    level.getCapability(com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER, adjacent, dir.getOpposite());
+                                
+                                if (targetHandler != null) {
                                     for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
                                         com.buuz135.replication.api.matter_fluid.MatterStack stored = tank.getMatter();
                                         if (stored != null && !stored.isEmpty() && stored.getAmount() > 0) {
-                                            net.minecraft.world.level.material.Fluid fluid = com.github.mochi7054.fluid.ReplicationFluidHandler.getFluidFromMatter(stored.getMatterType());
-                                            if (fluid != null) {
-                                                int mBAmount = (int) Math.round(stored.getAmount() * 1000.0);
-                                                net.neoforged.neoforge.fluids.FluidStack fluidStack = new net.neoforged.neoforge.fluids.FluidStack(fluid, mBAmount);
-                                                int filled = targetFluidHandler.fill(fluidStack, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
-                                                if (filled > 0) {
-                                                    // シミュレートされた量を直接消費し、実行時の戻り値は無視する
-                                                    double drainedMatter = filled / 1000.0;
-                                                    tank.drain(drainedMatter, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
-                                                    targetFluidHandler.fill(
-                                                        new net.neoforged.neoforge.fluids.FluidStack(fluid, filled), 
-                                                        net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE
-                                                    );
-                                                    sendUpdate = true;
+                                            double filled = targetHandler.fill(stored, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
+                                            if (filled > 0) {
+                                                tank.drain(filled, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                                                targetHandler.fill(
+                                                    new com.buuz135.replication.api.matter_fluid.MatterStack(stored.getMatterType(), filled), 
+                                                    net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE
+                                                );
+                                                sendUpdate = true;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    // Fallback: IFluidHandler push (for AE2 Pattern Provider etc.)
+                                    net.neoforged.neoforge.fluids.capability.IFluidHandler targetFluidHandler = 
+                                        level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, adjacent, dir.getOpposite());
+                                    if (targetFluidHandler != null) {
+                                        for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
+                                            com.buuz135.replication.api.matter_fluid.MatterStack stored = tank.getMatter();
+                                            if (stored != null && !stored.isEmpty() && stored.getAmount() > 0) {
+                                                net.minecraft.world.level.material.Fluid fluid = com.github.mochi7054.fluid.ReplicationFluidHandler.getFluidFromMatter(stored.getMatterType());
+                                                if (fluid != null) {
+                                                    int mBAmount = (int) Math.round(stored.getAmount() * 1000.0);
+                                                    net.neoforged.neoforge.fluids.FluidStack fluidStack = new net.neoforged.neoforge.fluids.FluidStack(fluid, mBAmount);
+                                                    int filled = targetFluidHandler.fill(fluidStack, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
+                                                    if (filled > 0) {
+                                                        double drainedMatter = filled / 1000.0;
+                                                        tank.drain(drainedMatter, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                                                        targetFluidHandler.fill(
+                                                            new net.neoforged.neoforge.fluids.FluidStack(fluid, filled), 
+                                                            net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE
+                                                        );
+                                                        sendUpdate = true;
+                                                    }
                                                 }
                                             }
                                         }
@@ -412,6 +443,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                 }
             }
         }
+
 
         return sendUpdate;
     }
