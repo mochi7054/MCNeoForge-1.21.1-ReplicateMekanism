@@ -43,7 +43,7 @@ public class ReplicationMatterHandler implements IMatterHandler {
         String name = matterType.getName();
         if (name == null) return null;
         for (SimpleMatterTank tank : tanks) {
-            if (tank.getMatter().getMatterType().getName().equalsIgnoreCase(name)) {
+            if (tank.getMatterType() != null && tank.getMatterType().getName().equalsIgnoreCase(name)) {
                 return tank;
             }
         }

@@ -18,6 +18,10 @@ public class SimpleMatterTank implements IMatterTank {
         this.onChange = onChange;
     }
 
+    public IMatterType getMatterType() {
+        return matterType;
+    }
+
     public void setAmount(double amount) {
         this.amount = Math.max(0, Math.min(amount, capacity));
         if (onChange != null) onChange.run();
