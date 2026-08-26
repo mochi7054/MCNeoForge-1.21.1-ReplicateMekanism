@@ -24,6 +24,7 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
 
     private static final ResourceLocation REPLICATION_BACKGROUND = ResourceLocation.fromNamespaceAndPath("replication", "textures/gui/background.png");
     private static final ResourceLocation CUSTOM_SLOT_TEXTURE = ResourceLocation.fromNamespaceAndPath("replicatemekanism", "textures/gui/slot.png");
+    private static final ResourceLocation MEMORY_CHIP_GHOST_TEXTURE = ResourceLocation.fromNamespaceAndPath("replicatemekanism", "textures/gui/memory_chip_ghost.png");
 
     public ForensicChamberScreen(ForensicChamberMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -152,10 +153,12 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
                 }
             }
 
-            // Ghost icon for Memory Chip if chip input slot is empty
-            if (this.relativeX == 77 && this.relativeY == 25 && !slot.hasItem()) {
-                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 0.4F);
-                guiGraphics.renderItem(new ItemStack(ReplicationRegistry.Items.MEMORY_CHIP.get()), this.relativeX + 1, this.relativeY + 1);
+            // Ghost icon for Memory Chip if chip input slot or chip output slot is empty
+            boolean isChipInput = (this.relativeX == 77 && this.relativeY == 25);
+            boolean isChipOutput = (this.relativeX == 119 && this.relativeY == 41);
+            if ((isChipInput || isChipOutput) && !slot.hasItem()) {
+                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 0.35F);
+                guiGraphics.blit(MEMORY_CHIP_GHOST_TEXTURE, this.relativeX + 1, this.relativeY + 1, 0, 0, 16, 16, 16, 16);
                 guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             }
             

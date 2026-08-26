@@ -69,15 +69,12 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
             MatterCompound compound = ReplicationCalculation.getMatterCompound(stack);
             return compound != null && !compound.getValues().isEmpty();
         }, listener, 36, 42);
-        inputSlot.setSlotOverlay(SlotOverlay.INPUT);
 
         // Chip input slot accepts only IMatterPatternModifier items (Memory Chip)
         chipInputSlot = BasicInventorySlot.at(stack -> stack.getItem() instanceof IMatterPatternModifier, listener, 78, 26);
-        chipInputSlot.setSlotOverlay(SlotOverlay.FORMULA);
 
         // Chip output slot
         chipOutputSlot = OutputInventorySlot.at(listener, 120, 42);
-        chipOutputSlot.setSlotOverlay(SlotOverlay.OUTPUT);
 
         // Energy slot slightly higher
         energySlot = EnergyInventorySlot.fillOrConvert(energyContainer, this::getLevel, listener, 143, 42);
