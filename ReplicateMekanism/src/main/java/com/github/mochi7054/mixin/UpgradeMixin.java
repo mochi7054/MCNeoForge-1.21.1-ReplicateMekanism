@@ -33,12 +33,7 @@ public abstract class UpgradeMixin {
         Upgrade[] oldValues = $VALUES;
         int newOrdinal = oldValues.length;
 
-        int maxStack = 8;
-        try {
-            maxStack = com.github.mochi7054.config.Config.REPLICA_UPGRADE_MAX_STACK.get();
-        } catch (Exception e) {
-            // Fallback to default
-        }
+        int maxStack = com.github.mochi7054.config.Config.getReplicaUpgradeMaxStack();
         Upgrade replicaUpgrade = UpgradeInvoker.createUpgrade("REPLICA", newOrdinal, "replica", langKey, descLangKey, maxStack, EnumColor.DARK_BLUE);
         com.github.mochi7054.ReplicateMekanism.REPLICA_UPGRADE_TYPE = replicaUpgrade;
 
@@ -58,4 +53,10 @@ public abstract class UpgradeMixin {
         };
     }
 
+    @org.spongepowered.asm.mixin.injection.Inject(method = "getMax", at = @At("HEAD"), cancellable = true)
+    private void onGetMax(org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Integer> cir) {
+        if ((Object) this == com.github.mochi7054.ReplicateMekanism.REPLICA_UPGRADE_TYPE) {
+            cir.setReturnValue(com.github.mochi7054.config.Config.getReplicaUpgradeMaxStack());
+        }
+    }
 }
