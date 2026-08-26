@@ -228,6 +228,22 @@ public class ReplicateMekanism {
                     com.github.mochi7054.collapser.CollapserBlockEntity.class,
                     com.github.mochi7054.collapser.CollapserMenu::new);
 
+    // FORENSIC CHAMBER
+    public static final mekanism.common.registration.impl.BlockRegistryObject<com.github.mochi7054.forensic.ForensicChamberBlock, com.github.mochi7054.forensic.ForensicChamberBlockItem> FORENSIC_CHAMBER =
+            BLOCKS.register("forensic_chamber",
+                    () -> new com.github.mochi7054.forensic.ForensicChamberBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion(), () -> ReplicateMekanism.FORENSIC_CHAMBER_TILE, () -> ReplicateMekanism.FORENSIC_CHAMBER_CONTAINER_TYPE),
+                    com.github.mochi7054.forensic.ForensicChamberBlockItem::new);
+
+    public static final mekanism.common.registration.impl.TileEntityTypeRegistryObject<com.github.mochi7054.forensic.ForensicChamberBlockEntity> FORENSIC_CHAMBER_TILE = BLOCK_ENTITIES.mekBuilder(FORENSIC_CHAMBER, com.github.mochi7054.forensic.ForensicChamberBlockEntity::new)
+            .clientTicker(mekanism.common.tile.base.TileEntityMekanism::tickClient)
+            .serverTicker(mekanism.common.tile.base.TileEntityMekanism::tickServer)
+            .build();
+
+    public static final mekanism.common.registration.impl.ContainerTypeRegistryObject<com.github.mochi7054.forensic.ForensicChamberMenu> FORENSIC_CHAMBER_CONTAINER_TYPE =
+            MENU_TYPES.register("forensic_chamber",
+                    com.github.mochi7054.forensic.ForensicChamberBlockEntity.class,
+                    com.github.mochi7054.forensic.ForensicChamberMenu::new);
+
     // Creates a creative tab with the id "replicatemekanism:example_tab" for the example item, that is placed after the creative tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("replicatemekanism", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.replicatemekanism")) //The language key for the title of your CreativeModeTab
@@ -241,6 +257,7 @@ public class ReplicateMekanism {
                 output.accept(REPLICA_CONTROL_CIRCUIT.get());
                 output.accept(REPLICA_UPGRADE.get());// Add the example item to the tab. For your own tabs, this method is preferred over the event
                 output.accept(REPLICA_TIER_INSTALLER.get());
+                output.accept(FORENSIC_CHAMBER.asItem());
                 output.accept(IMAGINATOR.asItem());
                 output.accept(IMAGINATOR_BASIC.asItem());
                 output.accept(IMAGINATOR_ADVANCED.asItem());
@@ -317,6 +334,11 @@ public class ReplicateMekanism {
             com.github.mochi7054.imaginator.PacketSetImaginatorSorting.CODEC,
             com.github.mochi7054.imaginator.PacketSetImaginatorSorting::handle
         );
+        registrar.playToServer(
+            com.github.mochi7054.forensic.PacketScanForensicChamber.TYPE,
+            com.github.mochi7054.forensic.PacketScanForensicChamber.CODEC,
+            com.github.mochi7054.forensic.PacketScanForensicChamber::handle
+        );
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -325,6 +347,12 @@ public class ReplicateMekanism {
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
         try {
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                    ReplicateMekanism.FORENSIC_CHAMBER_TILE.get(),
+                    mekanism.common.tile.base.CapabilityTileEntity.ITEM_HANDLER_PROVIDER
+            );
+
             var imaginatorTiles = java.util.List.of(
                     ReplicateMekanism.IMAGINATOR_TILE.get(),
                     ReplicateMekanism.IMAGINATOR_BASIC_TILE.get(),

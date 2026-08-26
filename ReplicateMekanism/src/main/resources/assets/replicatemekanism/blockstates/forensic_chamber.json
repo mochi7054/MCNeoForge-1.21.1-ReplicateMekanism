@@ -1,0 +1,19 @@
+﻿{
+  "variants": {
+    "facing=north": {
+      "model": "replicatemekanism:block/forensic_chamber"
+    },
+    "facing=south": {
+      "model": "replicatemekanism:block/forensic_chamber",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "replicatemekanism:block/forensic_chamber",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "replicatemekanism:block/forensic_chamber",
+      "y": 90
+    }
+  }
+}

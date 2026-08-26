@@ -8,6 +8,11 @@
   "item.replicatemekanism.replica_control_circuit": "Replica Control Circuit",
   "item.replicatemekanism.replica_upgrade": "Replica Upgrade",
   "item.replicatemekanism.replica_tier_installer": "Replica Tier Installer",
+  "block.replicatemekanism.forensic_chamber": "Forensic Chamber",
+  "container.replicatemekanism.forensic_chamber": "Forensic Chamber",
+  "description.replicatemekanism.forensic_chamber": "Consumes the target item and instantly writes a 100% identified matter pattern onto a memory chip.",
+  "gui.replicatemekanism.forensic.scan": "Identify",
+  "gui.replicatemekanism.forensic.scan.tooltip": "Click to identify (consumes 1 target item to fully write pattern to memory chip)",
   "chemical.replicatemekanism.replica": "Replica",
 
   "upgrade.replicatemekanism.replica": "Replica",

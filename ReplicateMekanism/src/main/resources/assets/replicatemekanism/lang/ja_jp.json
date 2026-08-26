@@ -7,6 +7,11 @@
   "item.replicatemekanism.replica_control_circuit": "レプリカ制御回路",
   "item.replicatemekanism.replica_upgrade": "レプリカアップグレード",
   "item.replicatemekanism.replica_tier_installer": "レプリカティアインストーラー",
+  "block.replicatemekanism.forensic_chamber": "鑑識室",
+  "container.replicatemekanism.forensic_chamber": "鑑識室",
+  "description.replicatemekanism.forensic_chamber": "対象アイテムを消費し、メモリチップに100%識別済みのマターパターンを即座に書き込みます。",
+  "gui.replicatemekanism.forensic.scan": "鑑識",
+  "gui.replicatemekanism.forensic.scan.tooltip": "クリックで鑑識を実行（対象アイテムを1個消費してメモリチップに100%識別）",
   "chemical.replicatemekanism.replica": "レプリカ",
 
   "upgrade.replicatemekanism.replica": "レプリカ",

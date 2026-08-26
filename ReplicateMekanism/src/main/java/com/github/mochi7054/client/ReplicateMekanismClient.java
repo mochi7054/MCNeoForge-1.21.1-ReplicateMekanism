@@ -44,6 +44,8 @@ public class ReplicateMekanismClient {
         mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_ADVANCED_CONTAINER_TYPE, com.github.mochi7054.collapser.CollapserScreen::new);
         mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_ELITE_CONTAINER_TYPE, com.github.mochi7054.collapser.CollapserScreen::new);
         mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.COLLAPSER_ULTIMATE_CONTAINER_TYPE, com.github.mochi7054.collapser.CollapserScreen::new);
+
+        mekanism.client.ClientRegistrationUtil.registerScreen(event, ReplicateMekanism.FORENSIC_CHAMBER_CONTAINER_TYPE, com.github.mochi7054.forensic.ForensicChamberScreen::new);
     }
 
     @SubscribeEvent

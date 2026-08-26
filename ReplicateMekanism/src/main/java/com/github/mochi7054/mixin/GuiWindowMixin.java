@@ -15,7 +15,7 @@ public class GuiWindowMixin {
     private Component modifyTitleText(Component text) {
         if (text != null) {
             String str = text.getString();
-            boolean isFluidTitle = str.contains("Fluid") || str.contains("流体") || str.contains("マター構成") || str.contains("Matter Configuration");
+            boolean isFluidTitle = str.contains("Fluid") || str.contains("流体") || str.contains("コンフィグの設定: マター") || str.contains("Matter Configuration");
             
             if (text.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents translatable) {
                 if ("configuration.mekanism.config_type".equals(translatable.getKey()) || "gui.configuration.config".equals(translatable.getKey())) {
