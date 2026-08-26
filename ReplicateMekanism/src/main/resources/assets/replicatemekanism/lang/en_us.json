@@ -11,7 +11,7 @@
   "tooltip.replicatemekanism.replica_tier_installer": "Use on Replication machines (Replicator, Disintegrator, Identification Chamber) to upgrade them into ReplicateMekanism machines.",
   "block.replicatemekanism.forensic_chamber": "Forensic Chamber",
   "container.replicatemekanism.forensic_chamber": "Forensic Chamber",
-  "description.replicatemekanism.forensic_chamber": "Consumes the target item and instantly writes a 100% identified matter pattern onto a memory chip.",
+  "description.replicatemekanism.forensic_chamber": "Consumes the target item and instantly writes the matter pattern onto a memory chip.",
   "gui.replicatemekanism.forensic.scan": "Identify",
   "gui.replicatemekanism.forensic.scan.tooltip": "Click to identify (consumes 1 target item to fully write pattern to memory chip)",
   "chemical.replicatemekanism.replica": "Replica",
