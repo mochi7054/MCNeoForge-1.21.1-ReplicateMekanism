@@ -18,9 +18,9 @@ public class GuiWindowMixin {
             boolean isFluidTitle = str.contains("Fluid") || str.contains("流体") || str.contains("マター構成") || str.contains("Matter Configuration");
             
             if (text.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents translatable) {
-                if ("gui.configuration.config".equals(translatable.getKey())) {
+                if ("configuration.mekanism.config_type".equals(translatable.getKey()) || "gui.configuration.config".equals(translatable.getKey())) {
                     for (Object arg : translatable.getArgs()) {
-                        if (arg != null && arg.toString().contains("FLUID")) {
+                        if (arg != null && (arg.toString().contains("FLUID") || arg.toString().contains("Fluid") || arg.toString().contains("流体"))) {
                             isFluidTitle = true;
                             break;
                         }
@@ -34,7 +34,7 @@ public class GuiWindowMixin {
                     if (gui.getMenu() instanceof mekanism.common.inventory.container.tile.MekanismTileContainer<?> container) {
                         Object tile = container.getTileEntity();
                         if (tile instanceof ImaginatorBlockEntity || tile instanceof CollapserBlockEntity) {
-                            return Component.translatable("gui.configuration.config", Component.translatable("replicatemekanism.matter"));
+                            return mekanism.common.MekanismLang.CONFIG_TYPE.translate(Component.translatable("replicatemekanism.matter"));
                         }
                     }
                 }
