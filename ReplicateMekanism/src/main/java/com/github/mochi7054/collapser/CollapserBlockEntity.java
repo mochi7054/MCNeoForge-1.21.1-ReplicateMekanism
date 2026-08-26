@@ -370,6 +370,32 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                                         }
                                     }
                                 }
+                            } else {
+                                // Fallback: IFluidHandler push (for AE2 Pattern Provider etc.)
+                                net.neoforged.neoforge.fluids.capability.IFluidHandler targetFluidHandler = 
+                                    level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, adjacent, dir.getOpposite());
+                                if (targetFluidHandler != null) {
+                                    for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
+                                        com.buuz135.replication.api.matter_fluid.MatterStack stored = tank.getMatter();
+                                        if (stored != null && !stored.isEmpty() && stored.getAmount() > 0) {
+                                            net.minecraft.world.level.material.Fluid fluid = com.github.mochi7054.fluid.ReplicationFluidHandler.getFluidFromMatter(stored.getMatterType());
+                                            if (fluid != null) {
+                                                int mBAmount = (int) Math.round(stored.getAmount() * 1000.0);
+                                                net.neoforged.neoforge.fluids.FluidStack fluidStack = new net.neoforged.neoforge.fluids.FluidStack(fluid, mBAmount);
+                                                int filled = targetFluidHandler.fill(fluidStack, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
+                                                if (filled > 0) {
+                                                    int actualFilled = targetFluidHandler.fill(
+                                                        new net.neoforged.neoforge.fluids.FluidStack(fluid, filled), 
+                                                        net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE
+                                                    );
+                                                    double drainedMatter = actualFilled / 1000.0;
+                                                    tank.drain(drainedMatter, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                                                    sendUpdate = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

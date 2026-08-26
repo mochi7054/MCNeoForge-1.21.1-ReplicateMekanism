@@ -310,7 +310,34 @@ public class ReplicateMekanism {
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
         try {
-            // Imaginator Registrations
+            // Imaginator FluidHandler Registrations
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    ReplicateMekanism.IMAGINATOR_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    ReplicateMekanism.IMAGINATOR_BASIC_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    ReplicateMekanism.IMAGINATOR_ADVANCED_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    ReplicateMekanism.IMAGINATOR_ELITE_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    ReplicateMekanism.IMAGINATOR_ULTIMATE_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+            );
+
+            // Imaginator MatterHandler Registrations
             event.registerBlockEntity(
                     com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                     ReplicateMekanism.IMAGINATOR_TILE.get(),
@@ -337,7 +364,34 @@ public class ReplicateMekanism {
                     (be, side) -> new com.github.mochi7054.fluid.ReplicationMatterHandler(be, be.getMatterTanks(), side)
             );
 
-            // Collapser Registrations
+            // Collapser FluidHandler Registrations
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    ReplicateMekanism.COLLAPSER_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    ReplicateMekanism.COLLAPSER_BASIC_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    ReplicateMekanism.COLLAPSER_ADVANCED_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    ReplicateMekanism.COLLAPSER_ELITE_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+            );
+            event.registerBlockEntity(
+                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                    ReplicateMekanism.COLLAPSER_ULTIMATE_TILE.get(),
+                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+            );
+
+            // Collapser MatterHandler Registrations
             event.registerBlockEntity(
                     com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER,
                     ReplicateMekanism.COLLAPSER_TILE.get(),
