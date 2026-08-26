@@ -341,6 +341,42 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             sortInventory();
         }
 
+        // 自動搬出 (Auto-Eject): configComponentでFLUIDの自動排出が有効、またはOUTPUTに設定されている面にプッシュ
+        if (configComponent != null) {
+            for (Direction dir : Direction.values()) {
+                var config = configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.FLUID);
+                if (config != null) {
+                    var dataType = config.getDataType(mekanism.api.RelativeSide.fromDirections(getDirection(), dir));
+                    if (dataType == mekanism.common.tile.component.config.DataType.OUTPUT || 
+                        dataType == mekanism.common.tile.component.config.DataType.INPUT_OUTPUT) {
+                        
+                        BlockPos adjacent = worldPosition.relative(dir);
+                        if (level != null && level.isLoaded(adjacent)) {
+                            com.buuz135.replication.api.matter_fluid.IMatterHandler targetHandler = 
+                                level.getCapability(com.buuz135.replication.ReplicationRegistry.Capabilities.MATTER_HANDLER, adjacent, dir.getOpposite());
+                            
+                            if (targetHandler != null) {
+                                for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
+                                    com.buuz135.replication.api.matter_fluid.MatterStack stored = tank.getMatter();
+                                    if (stored != null && !stored.isEmpty() && stored.getAmount() > 0) {
+                                        double filled = targetHandler.fill(stored, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
+                                        if (filled > 0) {
+                                            double actualFilled = targetHandler.fill(
+                                                new com.buuz135.replication.api.matter_fluid.MatterStack(stored.getMatterType(), filled), 
+                                                net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE
+                                            );
+                                            tank.drain(actualFilled, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                                            sendUpdate = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return sendUpdate;
     }
 
