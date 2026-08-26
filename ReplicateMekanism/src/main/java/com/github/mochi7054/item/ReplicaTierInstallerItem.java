@@ -50,8 +50,9 @@ public class ReplicaTierInstallerItem extends Item {
 
         boolean isReplicator = state.getBlock() instanceof ReplicatorBlock;
         boolean isDisintegrator = state.getBlock() instanceof DisintegratorBlock;
+        boolean isIdentificationChamber = state.getBlock() instanceof com.buuz135.replication.block.IdentificationChamberBlock;
 
-        if (!isReplicator && !isDisintegrator) {
+        if (!isReplicator && !isDisintegrator && !isIdentificationChamber) {
             return InteractionResult.FAIL;
         }
 
@@ -121,8 +122,10 @@ public class ReplicaTierInstallerItem extends Item {
         BlockState newState;
         if (isReplicator) {
             newState = ReplicateMekanism.IMAGINATOR.get().defaultBlockState();
-        } else {
+        } else if (isDisintegrator) {
             newState = ReplicateMekanism.COLLAPSER.get().defaultBlockState();
+        } else {
+            newState = ReplicateMekanism.FORENSIC_CHAMBER.get().defaultBlockState();
         }
 
         if (newState.hasProperty(BlockStateProperties.FACING)) {
