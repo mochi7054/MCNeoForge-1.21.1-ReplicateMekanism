@@ -883,6 +883,38 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             }
         }
 
+        // アイテム自動搬出 (Active Item Push to adjacent inventories/pipes/AE2)
+        if (outputSlots != null && !outputSlots.isEmpty()) {
+            var itemConfigInfo = configComponent != null ? configComponent.getConfig(mekanism.common.lib.transmitter.TransmissionType.ITEM) : null;
+            for (Direction dir : Direction.values()) {
+                boolean canPushSide = true;
+                if (itemConfigInfo != null) {
+                    var dataType = itemConfigInfo.getDataType(mekanism.api.RelativeSide.fromDirections(getDirection(), dir));
+                    canPushSide = (dataType == mekanism.common.tile.component.config.DataType.OUTPUT || 
+                                   dataType == mekanism.common.tile.component.config.DataType.INPUT_OUTPUT);
+                }
+                if (canPushSide) {
+                    BlockPos adjacent = worldPosition.relative(dir);
+                    if (level != null && level.isLoaded(adjacent)) {
+                        net.neoforged.neoforge.items.IItemHandler targetItemHandler = 
+                            level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, adjacent, dir.getOpposite());
+                        if (targetItemHandler != null) {
+                            for (OutputInventorySlot outputSlot : outputSlots) {
+                                ItemStack stack = outputSlot.getStack();
+                                if (!stack.isEmpty()) {
+                                    ItemStack remaining = net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(targetItemHandler, stack, false);
+                                    if (remaining.getCount() != stack.getCount()) {
+                                        outputSlot.setStack(remaining);
+                                        sendUpdate = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return sendUpdate;
     }
 
