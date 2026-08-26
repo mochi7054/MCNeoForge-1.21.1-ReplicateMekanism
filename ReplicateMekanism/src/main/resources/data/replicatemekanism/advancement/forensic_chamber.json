@@ -1,0 +1,36 @@
+{
+  "parent": "replicatemekanism:replica_tier_installer",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:forensic_chamber"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.forensic_chamber.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.forensic_chamber.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_forensic_chamber": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "replicatemekanism:forensic_chamber"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_forensic_chamber"
+    ]
+  ]
+}

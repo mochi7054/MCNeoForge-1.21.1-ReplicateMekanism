@@ -105,6 +105,8 @@
   "advancements.replicatemekanism.imaginator.description": "幻想具現化機を入手する。",
   "advancements.replicatemekanism.collapser.title": "リデュース、リユース、リサイクル",
   "advancements.replicatemekanism.collapser.description": "現実崩落機を入手する。",
+  "advancements.replicatemekanism.forensic_chamber.title": "一瞬の鑑識",
+  "advancements.replicatemekanism.forensic_chamber.description": "鑑識室を入手する。",
   "advancements.replicatemekanism.upgrade_machine.title": "工場は複製するもの",
   "advancements.replicatemekanism.upgrade_machine.description": "レプリカティアインストーラーを使用して、幻想具現化機、現実崩落機、または鑑識室にアップグレードする。",
   "advancements.replicatemekanism.ultimate_imaginator.title": "想像のその先へ",
