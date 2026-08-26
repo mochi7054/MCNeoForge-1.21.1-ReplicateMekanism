@@ -22,9 +22,11 @@
   "upgrade.replicatemekanism.replica.supported_machines": "All upgradeable machinery",
 
   "replicatemekanism.configuration.title": "ReplicateMekanism Configs",
-  "replicatemekanism.configuration.section.replicatemekanism.common.toml": "ReplicateMekanism Configs",
-  "replicatemekanism.configuration.section.replicatemekanism.common.toml.title": "ReplicateMekanism Configs",
-  "replicatemekanism.configuration.replicaUpgradeMaxStack": "Replica Upgrade Max Stack Limit",
+  "replicatemekanism.configuration.section.replicatemekanism.common.toml": "Common Configs (common.toml)",
+  "replicatemekanism.configuration.section.replicatemekanism.common.toml.title": "Common Configs",
+  "replicatemekanism.configuration.replicaUpgradeMaxStack": "Replica Upgrade Max Install Limit",
+  "replicatemekanism.configuration.replicaUpgradeMaxStack.tooltip": "The maximum number of Replica Upgrades that can be installed in a machine (1-8).",
+  "replicatemekanism.configuration.replicaUpgradeMaxStack.description": "The maximum number of Replica Upgrades that can be installed in a machine (1-8).",
   "replicatemekanism.matter": "Matter",
 
   "fluid.replicatemekanism.earth_matter": "Earth Matter",
