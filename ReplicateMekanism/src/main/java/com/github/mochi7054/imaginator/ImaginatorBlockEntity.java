@@ -758,11 +758,12 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                                     if (stored != null && !stored.isEmpty() && stored.getAmount() > 0) {
                                         double filled = targetHandler.fill(stored, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
                                         if (filled > 0) {
-                                            double actualFilled = targetHandler.fill(
+                                            // シミュレートされた量を直接消費し、実行時の戻り値は無視する
+                                            tank.drain(filled, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                                            targetHandler.fill(
                                                 new com.buuz135.replication.api.matter_fluid.MatterStack(stored.getMatterType(), filled), 
                                                 net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE
                                             );
-                                            tank.drain(actualFilled, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
                                             sendUpdate = true;
                                         }
                                     }
@@ -781,12 +782,13 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                                                 net.neoforged.neoforge.fluids.FluidStack fluidStack = new net.neoforged.neoforge.fluids.FluidStack(fluid, mBAmount);
                                                 int filled = targetFluidHandler.fill(fluidStack, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
                                                 if (filled > 0) {
-                                                    int actualFilled = targetFluidHandler.fill(
+                                                    // シミュレートされた量を直接消費し、実行時の戻り値は無視する
+                                                    double drainedMatter = filled / 1000.0;
+                                                    tank.drain(drainedMatter, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                                                    targetFluidHandler.fill(
                                                         new net.neoforged.neoforge.fluids.FluidStack(fluid, filled), 
                                                         net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE
                                                     );
-                                                    double drainedMatter = actualFilled / 1000.0;
-                                                    tank.drain(drainedMatter, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
                                                     sendUpdate = true;
                                                 }
                                             }
