@@ -13,17 +13,16 @@ public abstract class CachedRecipeMixin {
     @Inject(method = "process", at = @At("HEAD"))
     private void onProcessHead(CallbackInfo ci) {
         Object tile = ReplicaRecipeTracker.getTile((CachedRecipe) (Object) this);
-        if (tile != null && ReplicaRecipeTracker.hasReplicaUpgrade(tile)) {
-            ReplicaRecipeTracker.isReplicaActive.set(true);
+        if (tile != null) {
+            int mult = ReplicaRecipeTracker.getReplicaMultiplier(tile);
+            ReplicaRecipeTracker.currentMultiplier.set(mult);
         } else {
-            ReplicaRecipeTracker.isReplicaActive.set(false);
+            ReplicaRecipeTracker.currentMultiplier.set(1);
         }
     }
 
-
-
     @Inject(method = "process", at = @At("RETURN"))
     private void onProcessReturn(CallbackInfo ci) {
-        ReplicaRecipeTracker.isReplicaActive.remove();
+        ReplicaRecipeTracker.currentMultiplier.remove();
     }
 }

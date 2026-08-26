@@ -18,11 +18,13 @@ public class BasicChemicalTankMixin {
         argsOnly = true,
         ordinal = 0
     )
-    private ChemicalStack modifyInsertChemicalStack(ChemicalStack stack) {
-        if (ReplicaRecipeTracker.isReplicaActive.get() == Boolean.TRUE && stack != null && !stack.isEmpty()) {
-            ChemicalStack doubled = stack.copy();
-            doubled.setAmount(doubled.getAmount() * 2);
-            return doubled;
+    private ChemicalStack modifyInsertChemicalStack(ChemicalStack stack, ChemicalStack originalStack, Action action, AutomationType automationType) {
+        int mult = ReplicaRecipeTracker.currentMultiplier.get();
+        if (action.execute() && mult > 1 && stack != null && !stack.isEmpty()) {
+            ChemicalStack multiplied = stack.copy();
+            long newAmount = multiplied.getAmount() * mult;
+            multiplied.setAmount(newAmount);
+            return multiplied;
         }
         return stack;
     }

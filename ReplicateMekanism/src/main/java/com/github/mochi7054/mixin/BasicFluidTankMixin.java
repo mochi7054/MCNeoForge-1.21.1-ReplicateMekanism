@@ -18,11 +18,13 @@ public class BasicFluidTankMixin {
         argsOnly = true,
         ordinal = 0
     )
-    private FluidStack modifyInsertFluidStack(FluidStack stack) {
-        if (ReplicaRecipeTracker.isReplicaActive.get() == Boolean.TRUE && stack != null && !stack.isEmpty()) {
-            FluidStack doubled = stack.copy();
-            doubled.setAmount(doubled.getAmount() * 2);
-            return doubled;
+    private FluidStack modifyInsertFluidStack(FluidStack stack, FluidStack originalStack, Action action, AutomationType automationType) {
+        int mult = ReplicaRecipeTracker.currentMultiplier.get();
+        if (action.execute() && mult > 1 && stack != null && !stack.isEmpty()) {
+            FluidStack multiplied = stack.copy();
+            long newAmount = (long) multiplied.getAmount() * mult;
+            multiplied.setAmount((int) Math.min(Integer.MAX_VALUE, newAmount));
+            return multiplied;
         }
         return stack;
     }

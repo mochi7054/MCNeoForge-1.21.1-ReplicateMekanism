@@ -18,11 +18,13 @@ public class BasicInventorySlotMixin {
         argsOnly = true,
         ordinal = 0
     )
-    private ItemStack modifyInsertItemStack(ItemStack stack) {
-        if (ReplicaRecipeTracker.isReplicaActive.get() == Boolean.TRUE && stack != null && !stack.isEmpty()) {
-            ItemStack doubled = stack.copy();
-            doubled.setCount(doubled.getCount() * 2);
-            return doubled;
+    private ItemStack modifyInsertItemStack(ItemStack stack, ItemStack originalStack, Action action, AutomationType automationType) {
+        int mult = ReplicaRecipeTracker.currentMultiplier.get();
+        if (action.execute() && mult > 1 && stack != null && !stack.isEmpty()) {
+            ItemStack multiplied = stack.copy();
+            long newCount = (long) multiplied.getCount() * mult;
+            multiplied.setCount((int) Math.min(Integer.MAX_VALUE, newCount));
+            return multiplied;
         }
         return stack;
     }
