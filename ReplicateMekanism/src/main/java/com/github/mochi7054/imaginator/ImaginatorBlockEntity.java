@@ -787,6 +787,46 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                                         if (ejected) break;
                                     }
                                 }
+
+                                // パイプ等の場合（自身にタンクがない場合）、パイプ網（MatterNetwork）の全タンクへ搬出
+                                if (!ejected) {
+                                    com.buuz135.replication.network.MatterNetwork matterNetwork = networkBE.getNetwork();
+                                    if (matterNetwork != null) {
+                                        java.util.List<com.hrznstudio.titanium.block_network.element.NetworkElement> targets = new java.util.ArrayList<>();
+                                        targets.addAll(matterNetwork.getMatterStacksHolders());
+                                        targets.addAll(matterNetwork.getMatterStacksConsumers());
+                                        for (com.github.mochi7054.fluid.SimpleMatterTank myTank : getMatterTanks()) {
+                                            com.buuz135.replication.api.matter_fluid.MatterStack stored = myTank.getMatter();
+                                            if (stored != null && !stored.isEmpty() && stored.getAmount() > 0) {
+                                                for (var elem : targets) {
+                                                    if (elem.getLevel() == level && level.isLoaded(elem.getPos())) {
+                                                        var targetBE = level.getBlockEntity(elem.getPos());
+                                                        if (targetBE instanceof com.buuz135.replication.block.tile.NetworkBlockEntity<?> targetNetBE) {
+                                                            for (var component : targetNetBE.getMatterTankComponents()) {
+                                                                com.buuz135.replication.api.matter_fluid.MatterStack compStored = component.getMatter();
+                                                                if (compStored == null || compStored.isEmpty() || 
+                                                                    (compStored.getMatterType() != null && stored.getMatterType() != null &&
+                                                                     compStored.getMatterType().getName().equalsIgnoreCase(stored.getMatterType().getName()))) {
+                                                                    double filled = component.fill(stored, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
+                                                                    if (filled > 0) {
+                                                                        myTank.drain(filled, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                                                                        component.fill(new com.buuz135.replication.api.matter_fluid.MatterStack(stored.getMatterType(), filled), 
+                                                                            net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                                                                        sendUpdate = true;
+                                                                        ejected = true;
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    if (ejected) break;
+                                                }
+                                                if (ejected) break;
+                                            }
+                                        }
+                                    }
+                                }
                             }
 
                             if (!ejected) {
