@@ -1,10 +1,7 @@
 package com.github.mochi7054.forensic;
 
-import com.buuz135.replication.ReplicationRegistry;
 import com.github.mochi7054.client.gui.ReplicationGuiVerticalPowerBar;
-import mekanism.api.text.ILangEntry;
 import mekanism.client.gui.GuiConfigurableTile;
-import mekanism.client.gui.element.button.TranslationButton;
 import mekanism.client.gui.element.slot.GuiSlot;
 import mekanism.client.gui.element.slot.SlotType;
 import mekanism.client.gui.element.tab.GuiEnergyTab;
@@ -12,13 +9,10 @@ import mekanism.common.inventory.container.slot.ContainerSlotType;
 import mekanism.common.inventory.container.slot.InventoryContainerSlot;
 import mekanism.common.tile.component.config.DataType;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBlockEntity, ForensicChamberMenu> {
 
@@ -44,25 +38,6 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
         // Energy Bar on the right
         this.addElement(new ReplicationGuiVerticalPowerBar(this, tile.energyContainer, 162, 22, 52));
         this.addElement(new GuiEnergyTab(this, tile.energyContainer, () -> true));
-
-        // Scan / Identify Button slightly down
-        ILangEntry scanLang = new ILangEntry() {
-            @Override
-            public String getTranslationKey() {
-                return "gui.replicatemekanism.forensic.scan";
-            }
-        };
-        TranslationButton scanButton = new TranslationButton(
-                this,
-                69, 54, 36, 18,
-                scanLang,
-                (element, mouseX, mouseY) -> {
-                    PacketDistributor.sendToServer(new PacketScanForensicChamber(tile.getBlockPos()));
-                    return true;
-                }
-        );
-        scanButton.setTooltip(Tooltip.create(Component.translatable("gui.replicatemekanism.forensic.scan.tooltip")));
-        this.addElement(scanButton);
     }
 
     @Override
@@ -154,8 +129,8 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
             }
 
             // Ghost icon for Memory Chip if chip input slot or chip output slot is empty
-            boolean isChipInput = (this.relativeX == 77 && this.relativeY == 25);
-            boolean isChipOutput = (this.relativeX == 119 && this.relativeY == 41);
+            boolean isChipInput = (this.relativeX == 77 && this.relativeY == 34);
+            boolean isChipOutput = (this.relativeX == 119 && this.relativeY == 34);
             if ((isChipInput || isChipOutput) && !slot.hasItem()) {
                 com.mojang.blaze3d.systems.RenderSystem.enableBlend();
                 com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();

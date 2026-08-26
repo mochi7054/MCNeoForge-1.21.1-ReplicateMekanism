@@ -1,7 +1,8 @@
 package com.github.mochi7054.forensic;
 
-import io.netty.buffer.ByteBuf;
+import com.github.mochi7054.ReplicateMekanism;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -9,25 +10,33 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record PacketScanForensicChamber(BlockPos pos) implements CustomPacketPayload {
-    public static final Type<PacketScanForensicChamber> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("replicatemekanism", "scan_forensic_chamber"));
-    
-    public static final StreamCodec<ByteBuf, PacketScanForensicChamber> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC,
-            PacketScanForensicChamber::pos,
+
+    public static final CustomPacketPayload.Type<PacketScanForensicChamber> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ReplicateMekanism.MODID, "scan_forensic_chamber"));
+
+    public static final StreamCodec<FriendlyByteBuf, PacketScanForensicChamber> CODEC = CustomPacketPayload.codec(
+            PacketScanForensicChamber::write,
             PacketScanForensicChamber::new
     );
+
+    public PacketScanForensicChamber(FriendlyByteBuf buffer) {
+        this(buffer.readBlockPos());
+    }
+
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeBlockPos(pos);
+    }
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
-    public static void handle(PacketScanForensicChamber payload, IPayloadContext context) {
+    public void handle(IPayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player) {
-                var level = player.level();
-                if (level.getBlockEntity(payload.pos()) instanceof ForensicChamberBlockEntity forensicChamber) {
-                    forensicChamber.tryScan(player);
+                if (player.level().getBlockEntity(pos) instanceof ForensicChamberBlockEntity forensicChamber) {
+                    forensicChamber.tryAutoScan();
                 }
             }
         });

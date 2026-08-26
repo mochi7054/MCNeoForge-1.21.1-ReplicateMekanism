@@ -1,5 +1,6 @@
 package com.github.mochi7054.forensic;
 
+import com.buuz135.replication.api.pattern.IMatterPatternHolder;
 import com.buuz135.replication.api.pattern.IMatterPatternModifier;
 import com.buuz135.replication.api.pattern.IMatterPatternModifier.ModifierAction;
 import com.buuz135.replication.calculation.MatterCompound;
@@ -13,7 +14,6 @@ import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
 import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
-import mekanism.common.inventory.container.slot.SlotOverlay;
 import mekanism.common.inventory.slot.BasicInventorySlot;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -21,12 +21,11 @@ import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.tile.prefab.TileEntityConfigurableMachine;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
 
@@ -59,6 +58,22 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
         return builder.build();
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T> List<?> getPatternsRaw(IMatterPatternHolder<T> holder, net.minecraft.world.level.Level level, Object target) {
+        return holder.getPatterns(level, (T) target);
+    }
+
+    private boolean isBlankMemoryChip(ItemStack stack) {
+        if (!(stack.getItem() instanceof IMatterPatternModifier)) {
+            return false;
+        }
+        if (level != null && stack.getItem() instanceof IMatterPatternHolder<?> holder) {
+            List<?> patterns = getPatternsRaw(holder, level, stack);
+            return patterns == null || patterns.isEmpty();
+        }
+        return true;
+    }
+
     @NotNull
     @Override
     protected IInventorySlotHolder getInitialInventory(IContentsListener listener) {
@@ -68,16 +83,16 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
         inputSlot = BasicInventorySlot.at(stack -> {
             MatterCompound compound = ReplicationCalculation.getMatterCompound(stack);
             return compound != null && !compound.getValues().isEmpty();
-        }, listener, 36, 42);
+        }, listener, 36, 35);
 
-        // Chip input slot accepts only IMatterPatternModifier items (Memory Chip)
-        chipInputSlot = BasicInventorySlot.at(stack -> stack.getItem() instanceof IMatterPatternModifier, listener, 78, 26);
+        // Chip input slot accepts only blank Memory Chips (no existing patterns)
+        chipInputSlot = BasicInventorySlot.at(this::isBlankMemoryChip, listener, 78, 35);
 
         // Chip output slot
-        chipOutputSlot = OutputInventorySlot.at(listener, 120, 42);
+        chipOutputSlot = OutputInventorySlot.at(listener, 120, 35);
 
-        // Energy slot slightly higher
-        energySlot = EnergyInventorySlot.fillOrConvert(energyContainer, this::getLevel, listener, 143, 42);
+        // Energy slot
+        energySlot = EnergyInventorySlot.fillOrConvert(energyContainer, this::getLevel, listener, 143, 35);
 
         builder.addSlot(inputSlot);
         builder.addSlot(chipInputSlot);
@@ -87,7 +102,7 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
         return builder.build();
     }
 
-    public void tryScan(ServerPlayer player) {
+    public void tryAutoScan() {
         if (level == null || level.isClientSide) return;
 
         ItemStack inputStack = inputSlot.getStack();
@@ -95,6 +110,14 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
 
         if (inputStack.isEmpty() || chipStack.isEmpty()) {
             return;
+        }
+
+        // Must be a blank memory chip (nothing written on it)
+        if (chipStack.getItem() instanceof IMatterPatternHolder<?> holder) {
+            List<?> patterns = getPatternsRaw(holder, level, chipStack);
+            if (patterns != null && !patterns.isEmpty()) {
+                return;
+            }
         }
 
         if (energyContainer.getEnergy() < SCAN_ENERGY_COST) {
@@ -123,13 +146,11 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
                 return;
             }
 
-            // Consume 1 chip, 1 target item, and energy
+            // Consume 1 chip, 1 target item, and energy (No sound)
             chipInputSlot.shrinkStack(1, Action.EXECUTE);
             inputSlot.shrinkStack(1, Action.EXECUTE);
             energyContainer.extract(SCAN_ENERGY_COST, Action.EXECUTE, AutomationType.INTERNAL);
 
-            // Play success sound
-            level.playSound(null, getBlockPos(), SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 0.5f, 1.5f);
             markForSave();
         }
     }
@@ -138,6 +159,7 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
     protected boolean onUpdateServer() {
         boolean superRet = super.onUpdateServer();
         energySlot.fillContainerOrConvert();
+        tryAutoScan();
         return superRet;
     }
 }
