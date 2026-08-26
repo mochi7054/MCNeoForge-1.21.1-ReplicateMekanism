@@ -23,6 +23,9 @@
 @rem
 @rem ##########################################################################
 
+@rem Set JAVA_HOME automatically to the Java 21 runtime
+set JAVA_HOME=C:\Users\mochi\AppData\Roaming\PrismLauncher\java\java-runtime-delta
+
 @rem Set local scope for the variables with windows NT shell
 if "%OS%"=="Windows_NT" setlocal
 
