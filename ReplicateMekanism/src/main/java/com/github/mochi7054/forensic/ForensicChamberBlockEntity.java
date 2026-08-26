@@ -16,6 +16,7 @@ import mekanism.common.inventory.slot.BasicInventorySlot;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
 import mekanism.common.lib.transmitter.TransmissionType;
+import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.tile.prefab.TileEntityConfigurableMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,8 +25,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
 
@@ -44,7 +43,9 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
         configComponent.setupItemIOExtraConfig(inputSlot, chipOutputSlot, chipInputSlot, energySlot);
         configComponent.setupInputConfig(TransmissionType.ENERGY, energyContainer);
 
-        ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM);
+        if (ejectorComponent != null) {
+            ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM);
+        }
     }
 
     @NotNull
@@ -98,33 +99,19 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
         // Execute 100% pattern identification
         ModifierAction action = (ModifierAction) modifier.addPattern(level, chipCopy, inputStack, 1.0f);
         if (action != null && action.getType() == ModifierType.FULL) {
-            int replicaUpgrades = supportsUpgrades() ? getComponent().getUpgrades(ReplicateMekanism.REPLICA_UPGRADE_TYPE) : 0;
-            int maxProcess = Math.min(1 << replicaUpgrades, chipStack.getCount());
-
             ItemStack outputStack = chipOutputSlot.getStack();
-            int toProduce;
             if (outputStack.isEmpty()) {
-                toProduce = Math.min(maxProcess, chipCopy.getMaxStackSize());
-                chipCopy.setCount(toProduce);
                 chipOutputSlot.setStack(chipCopy);
-            } else if (ItemStack.isSameItemSameComponents(outputStack, chipCopy)) {
-                int room = outputStack.getMaxStackSize() - outputStack.getCount();
-                if (room <= 0) return;
-                toProduce = Math.min(maxProcess, room);
-                outputStack.grow(toProduce);
+            } else if (ItemStack.isSameItemSameComponents(outputStack, chipCopy) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
+                outputStack.grow(1);
             } else {
-                // Output slot mismatch
+                // Output slot is full or mismatch
                 return;
             }
 
-            // Consume chips
-            chipInputSlot.shrinkStack(toProduce, Action.EXECUTE);
-
-            // Only consume target item if NO replica upgrade is installed
-            if (replicaUpgrades == 0) {
-                inputSlot.shrinkStack(1, Action.EXECUTE);
-            }
-
+            // Consume 1 chip, 1 target item, and energy
+            chipInputSlot.shrinkStack(1, Action.EXECUTE);
+            inputSlot.shrinkStack(1, Action.EXECUTE);
             energyContainer.extract(SCAN_ENERGY_COST, Action.EXECUTE, AutomationType.INTERNAL);
 
             // Play success sound

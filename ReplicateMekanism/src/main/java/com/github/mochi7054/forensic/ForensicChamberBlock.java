@@ -35,7 +35,6 @@ public class ForensicChamberBlock extends BlockTile<ForensicChamberBlockEntity, 
 
         blockType.add(
                 new mekanism.common.block.attribute.AttributeEnergy(() -> 50L, () -> 40_000L),
-                mekanism.common.block.attribute.AttributeUpgradeSupport.SPEED_ENERGY,
                 mekanism.common.block.attribute.AttributeSideConfig.create(TransmissionType.ITEM, TransmissionType.ENERGY),
                 mekanism.common.block.attribute.Attributes.ACTIVE,
                 mekanism.common.block.attribute.Attributes.REDSTONE,
