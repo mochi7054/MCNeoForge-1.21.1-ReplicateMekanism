@@ -66,7 +66,7 @@ public class ReplicateMekanism {
     public static final DeferredItem<Item> REPLICA_INCOMPLETE_CONTROL_CIRCUIT = ITEMS.register("replica_incomplete_control_circuit", () -> new com.github.mochi7054.item.ColoredNameItem(new Item.Properties(), CIRCUIT_COLOR));
     public static final DeferredItem<Item> REPLICA_CONTROL_CIRCUIT = ITEMS.register("replica_control_circuit", () -> new com.github.mochi7054.item.ColoredNameItem(new Item.Properties(), CIRCUIT_COLOR));
     public static final DeferredItem<Item> REPLICA_UPGRADE = ITEMS.register("replica_upgrade", () -> {
-        return new ReplicaUpgradeItem(new Item.Properties().stacksTo(com.github.mochi7054.config.Config.getReplicaUpgradeMaxStack()), CIRCUIT_COLOR);
+        return new ReplicaUpgradeItem(new Item.Properties().stacksTo(64), CIRCUIT_COLOR);
     });
     public static final DeferredItem<Item> REPLICA_TIER_INSTALLER = ITEMS.register("replica_tier_installer", () -> new com.github.mochi7054.item.ReplicaTierInstallerItem(new Item.Properties().stacksTo(16), CIRCUIT_COLOR));
 

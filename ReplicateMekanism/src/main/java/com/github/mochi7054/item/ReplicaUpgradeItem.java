@@ -23,11 +23,6 @@ public class ReplicaUpgradeItem extends ItemUpgrade {
     }
 
     @Override
-    public int getMaxStackSize(ItemStack stack) {
-        return com.github.mochi7054.config.Config.getReplicaUpgradeMaxStack();
-    }
-
-    @Override
     public MutableComponent getName(ItemStack stack) {
         return super.getName(stack).copy().withStyle(style -> style.withColor(nameColor));
     }
