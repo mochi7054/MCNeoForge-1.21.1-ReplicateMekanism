@@ -123,7 +123,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             new ArrayList<>(inputSlots),
             new ArrayList<>(outputSlots),
             energySlot,
-            false
+            true
         );
 
         mekanism.common.tile.component.config.ConfigInfo itemConfig =
@@ -401,12 +401,18 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                 craftingStack = this.activeCraftingStack;
             }
 
+            int outputCount = 1;
+            if (getComponent() != null) {
+                int upgradeCount = getComponent().getUpgrades(com.github.mochi7054.ReplicateMekanism.REPLICA_UPGRADE_TYPE);
+                outputCount = 1 << upgradeCount;
+            }
+
             if (task != null) {
                 task.finalizeReplication(level, getBlockPos(), network);
                 network.onTaskValueChanged(task, (net.minecraft.server.level.ServerLevel) level);
 
                 BlockPos source = task.getSource();
-                ItemStack copyStack = craftingStack.copyWithCount(1);
+                ItemStack copyStack = craftingStack.copyWithCount(outputCount);
 
                 if (!getBlockPos().equals(source)) {
                     net.neoforged.neoforge.items.IItemHandler itemHandler = level.getCapability(
@@ -432,8 +438,8 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                         ItemStack outputStack = outputSlot.getStack();
                         if (outputStack.isEmpty()) {
                             outputSlot.setStack(copyStack);
-                        } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
-                            outputSlot.growStack(1, Action.EXECUTE);
+                        } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + outputCount <= outputStack.getMaxStackSize()) {
+                            outputSlot.growStack(outputCount, Action.EXECUTE);
                         } else {
                             net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
                         }
@@ -443,8 +449,8 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                     ItemStack outputStack = outputSlot.getStack();
                     if (outputStack.isEmpty()) {
                         outputSlot.setStack(copyStack);
-                    } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize()) {
-                        outputSlot.growStack(1, Action.EXECUTE);
+                    } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + outputCount <= outputStack.getMaxStackSize()) {
+                        outputSlot.growStack(outputCount, Action.EXECUTE);
                     } else {
                         net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
                     }
@@ -452,21 +458,16 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
 
                 cancelActiveTask(activeSlotIndex);
             } else {
-                int outputCount = 1;
-                if (getComponent() != null) {
-                    int upgradeCount = getComponent().getUpgrades(ReplicateMekanism.REPLICA_UPGRADE_TYPE);
-                    outputCount = 1 << upgradeCount;
-                }
-
                 OutputInventorySlot outputSlot = outputSlots.get(activeSlotIndex);
                 ItemStack sourceStack = inputSlots.get(activeSlotIndex).getStack();
                 ItemStack outputStack = outputSlot.getStack();
+                ItemStack newOutput = sourceStack.copyWithCount(outputCount);
                 if (outputStack.isEmpty()) {
-                    ItemStack newOutput = sourceStack.copy();
-                    newOutput.setCount(outputCount);
                     outputSlot.setStack(newOutput);
-                } else {
+                } else if (ItemStack.isSameItemSameComponents(outputStack, newOutput) && outputStack.getCount() + outputCount <= outputStack.getMaxStackSize()) {
                     outputSlot.growStack(outputCount, Action.EXECUTE);
+                } else {
+                    net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), newOutput);
                 }
             }
         }
@@ -627,10 +628,15 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                         }
 
                         if (allFluidsAvailable) {
+                            int outputCount = 1;
+                            if (getComponent() != null) {
+                                int upgradeCount = getComponent().getUpgrades(com.github.mochi7054.ReplicateMekanism.REPLICA_UPGRADE_TYPE);
+                                outputCount = 1 << upgradeCount;
+                            }
                             OutputInventorySlot outputSlot = outputSlots.get(i);
                             ItemStack outputStack = outputSlot.getStack();
-                            ItemStack copyStack = checkStack.copyWithCount(1);
-                            boolean outputCompatible = outputStack.isEmpty() || (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + 1 <= outputStack.getMaxStackSize());
+                            ItemStack copyStack = checkStack.copyWithCount(outputCount);
+                            boolean outputCompatible = outputStack.isEmpty() || (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + outputCount <= outputStack.getMaxStackSize());
                             if (outputCompatible) {
                                 canOperate[i] = true;
                                 slotCompounds[i] = recipeCompound;

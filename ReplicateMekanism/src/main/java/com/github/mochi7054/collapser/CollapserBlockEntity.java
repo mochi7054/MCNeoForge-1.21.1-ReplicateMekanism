@@ -312,9 +312,11 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
                         operatingTicks[i] = 0;
                         MatterCompound compound = slotCompounds[i];
                         if (compound != null) {
+                            int upgradeCount = getComponent() != null ? getComponent().getUpgrades(com.github.mochi7054.ReplicateMekanism.REPLICA_UPGRADE_TYPE) : 0;
+                            double multiplier = (double) (1 << upgradeCount);
                             for (Map.Entry<IMatterType, MatterValue> entry : compound.getValues().entrySet()) {
                                 IMatterType matterType = entry.getKey();
-                                double amount = entry.getValue().getAmount();
+                                double amount = entry.getValue().getAmount() * multiplier;
                                 com.github.mochi7054.fluid.SimpleMatterTank targetTank = getTankForMatterType(matterType);
                                 if (targetTank != null) {
                                     targetTank.fill(new com.buuz135.replication.api.matter_fluid.MatterStack(matterType, amount), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
