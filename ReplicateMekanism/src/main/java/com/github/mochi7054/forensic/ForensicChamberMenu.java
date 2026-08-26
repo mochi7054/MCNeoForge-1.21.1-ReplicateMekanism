@@ -23,7 +23,25 @@ public class ForensicChamberMenu extends MekanismTileContainer<ForensicChamberBl
     }
 
     @Override
-    protected int getInventoryYOffset() {
-        return 84;
+    protected void addInventorySlots(Inventory playerInventory) {
+        int xOffset = 8;
+        int yOffset = 94;
+
+        // Main Inventory (3 rows of 9 slots)
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) {
+                int slotIndex = 9 + col + row * 9;
+                int x = xOffset + col * 18;
+                int y = yOffset + row * 18;
+                this.addSlot(new mekanism.common.inventory.container.slot.MainInventorySlot(playerInventory, slotIndex, x, y));
+            }
+        }
+
+        // Hotbar (9 slots)
+        int hotbarY = 152;
+        for (int col = 0; col < 9; col++) {
+            int x = xOffset + col * 18;
+            this.addSlot(this.createHotBarSlot(playerInventory, col, x, hotbarY));
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.github.mochi7054.forensic;
 
+import com.buuz135.replication.ReplicationRegistry;
 import com.github.mochi7054.client.gui.ReplicationGuiVerticalPowerBar;
 import mekanism.api.text.ILangEntry;
 import mekanism.client.gui.GuiConfigurableTile;
@@ -16,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBlockEntity, ForensicChamberMenu> {
@@ -28,7 +30,7 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
         this.imageWidth = 174;
         this.imageHeight = 174;
         this.inventoryLabelX = 8;
-        this.inventoryLabelY = 82;
+        this.inventoryLabelY = 84;
         this.titleLabelY = 10;
         this.dynamicSlots = true;
     }
@@ -148,6 +150,13 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
                 if (overlay != null) {
                     guiGraphics.blit(overlay.getTexture(), this.relativeX, this.relativeY, 0.0F, 0.0F, overlay.getWidth(), overlay.getHeight(), overlay.getWidth(), overlay.getHeight());
                 }
+            }
+
+            // Ghost icon for Memory Chip if chip input slot is empty
+            if (this.relativeX == 77 && this.relativeY == 21 && !slot.hasItem()) {
+                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 0.4F);
+                guiGraphics.renderItem(new ItemStack(ReplicationRegistry.Items.MEMORY_CHIP.get()), this.relativeX + 1, this.relativeY + 1);
+                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             }
             
             this.drawContents(guiGraphics);

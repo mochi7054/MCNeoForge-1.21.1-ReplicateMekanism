@@ -2,7 +2,8 @@ package com.github.mochi7054.forensic;
 
 import com.buuz135.replication.api.pattern.IMatterPatternModifier;
 import com.buuz135.replication.api.pattern.IMatterPatternModifier.ModifierAction;
-import com.buuz135.replication.api.pattern.IMatterPatternModifier.ModifierType;
+import com.buuz135.replication.calculation.MatterCompound;
+import com.buuz135.replication.calculation.ReplicationCalculation;
 import com.github.mochi7054.ReplicateMekanism;
 import mekanism.api.Action;
 import mekanism.api.AutomationType;
@@ -12,6 +13,7 @@ import mekanism.common.capabilities.holder.energy.EnergyContainerHelper;
 import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.slot.IInventorySlotHolder;
 import mekanism.common.capabilities.holder.slot.InventorySlotHelper;
+import mekanism.common.inventory.container.slot.SlotOverlay;
 import mekanism.common.inventory.slot.BasicInventorySlot;
 import mekanism.common.inventory.slot.EnergyInventorySlot;
 import mekanism.common.inventory.slot.OutputInventorySlot;
@@ -62,9 +64,22 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
     protected IInventorySlotHolder getInitialInventory(IContentsListener listener) {
         InventorySlotHelper builder = InventorySlotHelper.forSideWithConfig(this);
 
-        inputSlot = BasicInventorySlot.at(stack -> true, listener, 36, 35);
+        // Input slot accepts only items that have matter compound values
+        inputSlot = BasicInventorySlot.at(stack -> {
+            MatterCompound compound = ReplicationCalculation.getMatterCompound(stack);
+            return compound != null && !compound.getValues().isEmpty();
+        }, listener, 36, 35);
+        inputSlot.setSlotOverlay(SlotOverlay.INPUT);
+
+        // Chip input slot accepts only IMatterPatternModifier items (Memory Chip)
         chipInputSlot = BasicInventorySlot.at(stack -> stack.getItem() instanceof IMatterPatternModifier, listener, 78, 22);
+        chipInputSlot.setSlotOverlay(SlotOverlay.FORMULA);
+
+        // Chip output slot
         chipOutputSlot = OutputInventorySlot.at(listener, 120, 35);
+        chipOutputSlot.setSlotOverlay(SlotOverlay.OUTPUT);
+
+        // Energy slot
         energySlot = EnergyInventorySlot.fillOrConvert(energyContainer, this::getLevel, listener, 143, 56);
 
         builder.addSlot(inputSlot);
@@ -96,9 +111,11 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
         ItemStack chipCopy = chipStack.copy();
         chipCopy.setCount(1);
 
-        // Execute 100% pattern identification
-        ModifierAction action = (ModifierAction) modifier.addPattern(level, chipCopy, inputStack, 1.0f);
-        if (action != null && action.getType() == ModifierType.FULL) {
+        // Execute 100% pattern identification on item's default instance
+        ItemStack targetItem = inputStack.getItem().getDefaultInstance();
+        ModifierAction action = (ModifierAction) modifier.addPattern(level, chipCopy, targetItem, 1.0f);
+        
+        if (action != null && action.getPattern() != null) {
             ItemStack outputStack = chipOutputSlot.getStack();
             if (outputStack.isEmpty()) {
                 chipOutputSlot.setStack(chipCopy);
