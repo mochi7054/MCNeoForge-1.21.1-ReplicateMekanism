@@ -93,7 +93,7 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
     }
 
     public void tryAutoScan() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide || !canFunction()) return;
 
         ItemStack inputStack = inputSlot.getStack();
         ItemStack chipStack = chipInputSlot.getStack();
