@@ -102,5 +102,5 @@
   "advancements.replicatemekanism.replica_upgrade.title": "なんでも2倍のバーゲンセール！",
   "advancements.replicatemekanism.replica_upgrade.description": "レプリカアップグレードを入手する。",
   "advancements.replicatemekanism.cheated_replica.title": "ズルしたレプリカの味は最悪だ",
-  "advancements.replicatemekanism.cheated_replica.description": "レプリカアップグレードの最大インストール個数を変更する。"
+  "advancements.replicatemekanism.cheated_replica.description": "§7[隠し進捗]§r レプリカアップグレードの最大インストール個数を変更する。"
 }
