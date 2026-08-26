@@ -334,11 +334,6 @@ public class ReplicateMekanism {
             com.github.mochi7054.imaginator.PacketSetImaginatorSorting.CODEC,
             com.github.mochi7054.imaginator.PacketSetImaginatorSorting::handle
         );
-        registrar.playToServer(
-            com.github.mochi7054.forensic.PacketScanForensicChamber.TYPE,
-            com.github.mochi7054.forensic.PacketScanForensicChamber.CODEC,
-            com.github.mochi7054.forensic.PacketScanForensicChamber::handle
-        );
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
