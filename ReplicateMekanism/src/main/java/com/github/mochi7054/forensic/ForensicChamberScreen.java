@@ -129,8 +129,8 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
             }
 
             // Ghost icon for Memory Chip if chip input slot or chip output slot is empty
-            boolean isChipInput = (this.relativeX == 77 && this.relativeY == 34);
-            boolean isChipOutput = (this.relativeX == 119 && this.relativeY == 34);
+            boolean isChipInput = (this.relativeX == 73 && this.relativeY == 41);
+            boolean isChipOutput = (this.relativeX == 115 && this.relativeY == 41);
             if ((isChipInput || isChipOutput) && !slot.hasItem()) {
                 com.mojang.blaze3d.systems.RenderSystem.enableBlend();
                 com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
