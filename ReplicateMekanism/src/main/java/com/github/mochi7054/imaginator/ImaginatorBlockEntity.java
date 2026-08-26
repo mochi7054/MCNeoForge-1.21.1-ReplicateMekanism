@@ -163,7 +163,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
     @NotNull
     @Override
     protected IFluidTankHolder getInitialFluidTanks(IContentsListener listener) {
-        int capacity = getTierSafe().getTankCapacity();
+        int capacity = getTierSafe().getImaginatorTankCapacity();
         earthTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.EARTH.get(), capacity, this::setChanged);
         netherTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.NETHER.get(), capacity, this::setChanged);
         organicTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.ORGANIC.get(), capacity, this::setChanged);
