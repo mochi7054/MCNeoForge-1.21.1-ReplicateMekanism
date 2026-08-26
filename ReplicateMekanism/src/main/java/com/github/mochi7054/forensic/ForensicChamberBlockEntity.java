@@ -3,6 +3,7 @@ package com.github.mochi7054.forensic;
 import com.buuz135.replication.api.pattern.IMatterPatternHolder;
 import com.buuz135.replication.api.pattern.IMatterPatternModifier;
 import com.buuz135.replication.api.pattern.IMatterPatternModifier.ModifierAction;
+import com.buuz135.replication.api.pattern.MatterPattern;
 import com.buuz135.replication.calculation.MatterCompound;
 import com.buuz135.replication.calculation.ReplicationCalculation;
 import com.github.mochi7054.ReplicateMekanism;
@@ -63,15 +64,9 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
         return holder.getPatterns(level, (T) target);
     }
 
-    private boolean isBlankMemoryChip(ItemStack stack) {
-        if (!(stack.getItem() instanceof IMatterPatternModifier)) {
-            return false;
-        }
-        if (level != null && stack.getItem() instanceof IMatterPatternHolder<?> holder) {
-            List<?> patterns = getPatternsRaw(holder, level, stack);
-            return patterns == null || patterns.isEmpty();
-        }
-        return true;
+    @SuppressWarnings("unchecked")
+    private static <T> int getPatternSlotsRaw(IMatterPatternHolder<T> holder, Object target) {
+        return holder.getPatternSlots((T) target);
     }
 
     @NotNull
@@ -85,8 +80,8 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
             return compound != null && !compound.getValues().isEmpty();
         }, listener, 36, 35);
 
-        // Chip input slot accepts only blank Memory Chips (no existing patterns)
-        chipInputSlot = BasicInventorySlot.at(this::isBlankMemoryChip, listener, 78, 35);
+        // Chip input slot accepts any Memory Chip / Pattern Modifier
+        chipInputSlot = BasicInventorySlot.at(stack -> stack.getItem() instanceof IMatterPatternModifier, listener, 78, 35);
 
         // Chip output slot
         chipOutputSlot = OutputInventorySlot.at(listener, 120, 35);
@@ -112,27 +107,46 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
             return;
         }
 
-        // Must be a blank memory chip (nothing written on it)
-        if (chipStack.getItem() instanceof IMatterPatternHolder<?> holder) {
-            List<?> patterns = getPatternsRaw(holder, level, chipStack);
-            if (patterns != null && !patterns.isEmpty()) {
-                return;
-            }
-        }
-
         if (energyContainer.getEnergy() < SCAN_ENERGY_COST) {
             return;
         }
 
-        if (!(chipStack.getItem() instanceof IMatterPatternModifier modifier)) {
+        if (!(chipStack.getItem() instanceof IMatterPatternModifier modifier) || !(chipStack.getItem() instanceof IMatterPatternHolder<?> holder)) {
             return;
+        }
+
+        ItemStack targetItem = inputStack.getItem().getDefaultInstance();
+
+        // Check if this pattern is ALREADY stored in the memory chip at 100%
+        List<?> patterns = getPatternsRaw(holder, level, chipStack);
+        boolean alreadyExists = false;
+        if (patterns != null) {
+            for (Object obj : patterns) {
+                if (obj instanceof MatterPattern pattern) {
+                    if (ItemStack.isSameItemSameComponents(pattern.getStack(), targetItem)) {
+                        if (pattern.getCompletion() >= 1.0f) {
+                            // Already 100% identified in this chip -> Do nothing!
+                            return;
+                        }
+                        alreadyExists = true;
+                    }
+                }
+            }
+
+            // If it's a new pattern, check if the chip has free pattern slots
+            if (!alreadyExists) {
+                int maxSlots = getPatternSlotsRaw(holder, chipStack);
+                if (patterns.size() >= maxSlots) {
+                    // Chip is full of other patterns -> Do nothing!
+                    return;
+                }
+            }
         }
 
         ItemStack chipCopy = chipStack.copy();
         chipCopy.setCount(1);
 
         // Execute 100% pattern identification on item's default instance
-        ItemStack targetItem = inputStack.getItem().getDefaultInstance();
         ModifierAction action = (ModifierAction) modifier.addPattern(level, chipCopy, targetItem, 1.0f);
         
         if (action != null && action.getPattern() != null) {
