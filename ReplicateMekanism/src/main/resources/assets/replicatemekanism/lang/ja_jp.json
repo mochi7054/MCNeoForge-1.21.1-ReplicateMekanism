@@ -100,5 +100,7 @@
   "advancements.replicatemekanism.ultimate_collapser.title": "すべてがふにゃふにゃ",
   "advancements.replicatemekanism.ultimate_collapser.description": "現実崩落機を究極ティアにアップグレードする。",
   "advancements.replicatemekanism.replica_upgrade.title": "なんでも2倍のバーゲンセール！",
-  "advancements.replicatemekanism.replica_upgrade.description": "レプリカアップグレードを入手する。"
+  "advancements.replicatemekanism.replica_upgrade.description": "レプリカアップグレードを入手する。",
+  "advancements.replicatemekanism.cheated_replica.title": "ズルしたレプリカの味は最悪だ",
+  "advancements.replicatemekanism.cheated_replica.description": "レプリカアップグレードの最大インストール個数を変更する。"
 }

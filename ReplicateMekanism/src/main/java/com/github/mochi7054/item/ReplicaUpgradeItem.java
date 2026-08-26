@@ -28,6 +28,15 @@ public class ReplicaUpgradeItem extends ItemUpgrade {
     }
 
     @Override
+    public net.minecraft.world.InteractionResult useOn(net.minecraft.world.item.context.UseOnContext context) {
+        var result = super.useOn(context);
+        if (result.consumesAction() && context.getPlayer() instanceof net.minecraft.server.level.ServerPlayer player) {
+            ReplicateMekanism.checkAndAwardCheatedAdvancement(player);
+        }
+        return result;
+    }
+
+    @Override
     public MutableComponent getName(ItemStack stack) {
         return super.getName(stack).copy().withStyle(style -> style.withColor(nameColor));
     }

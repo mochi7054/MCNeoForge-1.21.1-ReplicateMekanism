@@ -1,0 +1,28 @@
+﻿{
+  "parent": "replicatemekanism:replica_upgrade",
+  "display": {
+    "icon": {
+      "id": "replicatemekanism:replica_upgrade"
+    },
+    "title": {
+      "translate": "advancements.replicatemekanism.cheated_replica.title"
+    },
+    "description": {
+      "translate": "advancements.replicatemekanism.cheated_replica.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "cheated": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "cheated"
+    ]
+  ]
+}
