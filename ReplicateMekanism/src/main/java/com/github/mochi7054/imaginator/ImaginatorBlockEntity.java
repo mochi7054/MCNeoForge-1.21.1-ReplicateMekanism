@@ -507,40 +507,14 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
 
         for (int i = 0; i < slotCount; i++) {
             if (i > 0) {
-                boolean shouldCancel = false;
+                // In sharing mode, if slot 0 is completely empty (no item and no task), clear tasks for shared slots
                 if (!sortingActive) {
-                    // Auto sort ON (Sharing mode)
-                    if (this.activeTasks[0] == null) {
-                        shouldCancel = true;
-                    } else if (this.activeTasks[i] != null && !this.activeTasks[i].getUuid().equals(this.activeTasks[0].getUuid())) {
-                        shouldCancel = true;
-                    } else if (this.activeTasks[i] != null) {
-                        // Check remaining count constraint
-                        com.buuz135.replication.api.task.IReplicationTask task0 = this.activeTasks[0];
-                        int remaining = task0.isInfinteMode() ? 999 : (task0.getTotalAmount() - task0.getCurrentAmount());
-                        int assignedCount = 0;
-                        for (int j = 0; j < i; j++) {
-                            if (this.activeTasks[j] != null && this.activeTasks[j].getUuid().equals(task0.getUuid())) {
-                                assignedCount++;
-                            }
-                        }
-                        if (assignedCount >= remaining) {
-                            shouldCancel = true;
+                    if (this.activeTasks[0] == null && inputSlots.get(0).isEmpty()) {
+                        if (this.activeTasks[i] != null) {
+                            cancelActiveTask(i);
+                            sendUpdate = true;
                         }
                     }
-                } else {
-                    // Auto sort OFF (Independent mode)
-                    if (this.activeTasks[i] != null && this.activeTasks[0] != null && this.activeTasks[i].getUuid().equals(this.activeTasks[0].getUuid())) {
-                        shouldCancel = true;
-                    }
-                }
-
-                if (shouldCancel) {
-                    if (this.activeTasks[i] != null || !this.activeCraftingStacks[i].isEmpty()) {
-                        cancelActiveTask(i);
-                        sendUpdate = true;
-                    }
-                    continue;
                 }
             }
 
@@ -651,20 +625,41 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                 }
             }
 
-            // Automatic task dispatch (when idle / slots available)
+            // 1. Automatic task dispatch from network (when idle)
             if (network != null && this.ticker % 4 == 0) {
-                for (int i = 0; i < slotCount; i++) {
-                    if (this.activeTasks[i] == null) {
-                        OutputInventorySlot outputSlot = outputSlots.get(i);
-                        ItemStack outputStack = outputSlot.getStack();
-                        if (outputStack.isEmpty() || outputStack.getCount() < outputStack.getMaxStackSize()) {
+                // Assign task to slot 0 if empty
+                if (this.activeTasks[0] == null && inputSlots.get(0).isEmpty()) {
+                    OutputInventorySlot outputSlot = outputSlots.get(0);
+                    ItemStack outputStack = outputSlot.getStack();
+                    if (outputStack.isEmpty() || outputStack.getCount() < outputStack.getMaxStackSize()) {
+                        for (com.buuz135.replication.api.task.IReplicationTask candidate :
+                                network.getTaskManager().getPendingTasks().values()) {
+                            if (candidate.canAcceptReplicator(getBlockPos(), 1)) {
+                                candidate.acceptReplicator(getBlockPos());
+                                this.activeTasks[0] = candidate;
+                                this.activeTaskUuids[0] = candidate.getUuid().toString();
+                                this.activeCraftingStacks[0] = candidate.getReplicatingStack().copy();
+                                inputSlots.get(0).setStackUnchecked(this.activeCraftingStacks[0].copyWithCount(1));
+                                this.activeTask = candidate;
+                                this.activeTaskUuid = this.activeTaskUuids[0];
+                                this.activeCraftingStack = this.activeCraftingStacks[0];
+                                network.onTaskValueChanged(candidate, (net.minecraft.server.level.ServerLevel) level);
+                                sendUpdate = true;
+                                break;
+                            }
+                        }
+                    }
+                }
 
-                            com.buuz135.replication.api.task.IReplicationTask task = null;
-                            if (i == 0 || sortingActive) {
-                                // First try to find a unique task not already accepted by any of our slots
+                // In individual mode (sortingActive), assign unique tasks to slots 1..N
+                if (sortingActive) {
+                    for (int i = 1; i < slotCount; i++) {
+                        if (this.activeTasks[i] == null && inputSlots.get(i).isEmpty()) {
+                            OutputInventorySlot outputSlot = outputSlots.get(i);
+                            ItemStack outputStack = outputSlot.getStack();
+                            if (outputStack.isEmpty() || outputStack.getCount() < outputStack.getMaxStackSize()) {
                                 for (com.buuz135.replication.api.task.IReplicationTask candidate :
                                         network.getTaskManager().getPendingTasks().values()) {
-
                                     boolean alreadyAcceptedByUs = false;
                                     for (int j = 0; j < slotCount; j++) {
                                         if (this.activeTasks[j] != null && this.activeTasks[j].getUuid().equals(candidate.getUuid())) {
@@ -675,44 +670,53 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                                     if (alreadyAcceptedByUs) continue;
 
                                     if (candidate.canAcceptReplicator(getBlockPos(), 1)) {
-                                        task = candidate;
+                                        candidate.acceptReplicator(getBlockPos());
+                                        this.activeTasks[i] = candidate;
+                                        this.activeTaskUuids[i] = candidate.getUuid().toString();
+                                        this.activeCraftingStacks[i] = candidate.getReplicatingStack().copy();
+                                        inputSlots.get(i).setStackUnchecked(this.activeCraftingStacks[i].copyWithCount(1));
+                                        network.onTaskValueChanged(candidate, (net.minecraft.server.level.ServerLevel) level);
+                                        sendUpdate = true;
                                         break;
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
 
-                            if (task != null) {
-                                // Found a unique task: register and assign
-                                task.acceptReplicator(getBlockPos());
-                                this.activeTasks[i] = task;
-                                this.activeTaskUuids[i] = task.getUuid().toString();
-                                this.activeCraftingStacks[i] = task.getReplicatingStack().copy();
-                                inputSlots.get(i).setStackUnchecked(this.activeCraftingStacks[i].copyWithCount(1));
-                                if (i == 0) {
-                                    this.activeTask = task;
-                                    this.activeTaskUuid = this.activeTaskUuids[0];
-                                    this.activeCraftingStack = this.activeCraftingStacks[0];
-                                }
-                                network.onTaskValueChanged(task, (net.minecraft.server.level.ServerLevel) level);
-                                sendUpdate = true;
-                            } else if (i > 0 && !sortingActive && this.activeTasks[0] != null) {
-                                // Auto sort ON (Sharing mode): share slot 0's task for parallel processing
-                                // Check remaining count constraint
-                                com.buuz135.replication.api.task.IReplicationTask task0 = this.activeTasks[0];
-                                int remaining = task0.isInfinteMode() ? 999 : (task0.getTotalAmount() - task0.getCurrentAmount());
-                                int assignedCount = 0;
-                                for (int j = 0; j < i; j++) {
-                                    if (this.activeTasks[j] != null && this.activeTasks[j].getUuid().equals(task0.getUuid())) {
-                                        assignedCount++;
-                                    }
-                                }
-                                if (assignedCount < remaining) {
-                                    this.activeTasks[i] = this.activeTasks[0];
+            // 2. タスク共有モード (Sharing Mode: !sortingActive)
+            // 1枠目にあるアイテム（タスクまたは手動）で2枠目以降を埋め尽くす
+            // アイテムがある場合その枠は埋めない。アイテムがなくなったらその枠も埋める
+            if (!sortingActive && slotCount > 1) {
+                ItemStack slot0Item = inputSlots.get(0).getStack();
+                com.buuz135.replication.api.task.IReplicationTask slot0Task = this.activeTasks[0];
+                ItemStack sharedItem = ItemStack.EMPTY;
+
+                if (slot0Task != null && this.activeCraftingStacks[0] != null && !this.activeCraftingStacks[0].isEmpty()) {
+                    sharedItem = this.activeCraftingStacks[0];
+                } else if (!slot0Item.isEmpty()) {
+                    sharedItem = slot0Item;
+                }
+
+                if (!sharedItem.isEmpty()) {
+                    for (int i = 1; i < slotCount; i++) {
+                        // 枠が空の場合のみ埋める（アイテムがある枠は埋めない）
+                        if (inputSlots.get(i).isEmpty() && this.activeTasks[i] == null) {
+                            OutputInventorySlot outputSlot = outputSlots.get(i);
+                            ItemStack outputStack = outputSlot.getStack();
+                            if (outputStack.isEmpty() || outputStack.getCount() < outputStack.getMaxStackSize()) {
+                                inputSlots.get(i).setStackUnchecked(sharedItem.copyWithCount(1));
+                                this.activeCraftingStacks[i] = sharedItem.copy();
+                                if (slot0Task != null) {
+                                    this.activeTasks[i] = slot0Task;
                                     this.activeTaskUuids[i] = this.activeTaskUuids[0];
-                                    this.activeCraftingStacks[i] = this.activeCraftingStacks[0].copy();
-                                    inputSlots.get(i).setStackUnchecked(this.activeCraftingStacks[i].copyWithCount(1));
-                                    sendUpdate = true;
+                                } else {
+                                    this.activeTasks[i] = null;
+                                    this.activeTaskUuids[i] = null;
                                 }
+                                sendUpdate = true;
                             }
                         }
                     }
