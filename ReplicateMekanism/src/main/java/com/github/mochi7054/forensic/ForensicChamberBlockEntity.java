@@ -62,10 +62,10 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
     protected IInventorySlotHolder getInitialInventory(IContentsListener listener) {
         InventorySlotHelper builder = InventorySlotHelper.forSideWithConfig(this);
 
-        inputSlot = BasicInventorySlot.at(stack -> true, listener, 44, 35);
-        chipInputSlot = BasicInventorySlot.at(stack -> stack.getItem() instanceof IMatterPatternModifier, listener, 80, 20);
-        chipOutputSlot = OutputInventorySlot.at(listener, 116, 35);
-        energySlot = EnergyInventorySlot.fillOrConvert(energyContainer, this::getLevel, listener, 143, 35);
+        inputSlot = BasicInventorySlot.at(stack -> true, listener, 36, 35);
+        chipInputSlot = BasicInventorySlot.at(stack -> stack.getItem() instanceof IMatterPatternModifier, listener, 78, 22);
+        chipOutputSlot = OutputInventorySlot.at(listener, 120, 35);
+        energySlot = EnergyInventorySlot.fillOrConvert(energyContainer, this::getLevel, listener, 143, 56);
 
         builder.addSlot(inputSlot);
         builder.addSlot(chipInputSlot);
