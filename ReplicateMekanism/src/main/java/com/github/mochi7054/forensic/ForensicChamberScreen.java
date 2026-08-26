@@ -44,7 +44,7 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
         this.addElement(new ReplicationGuiVerticalPowerBar(this, tile.energyContainer, 162, 22, 52));
         this.addElement(new GuiEnergyTab(this, tile.energyContainer, () -> true));
 
-        // Scan / Identify Button
+        // Scan / Identify Button slightly down
         ILangEntry scanLang = new ILangEntry() {
             @Override
             public String getTranslationKey() {
@@ -53,7 +53,7 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
         };
         TranslationButton scanButton = new TranslationButton(
                 this,
-                69, 50, 36, 18,
+                69, 54, 36, 18,
                 scanLang,
                 (element, mouseX, mouseY) -> {
                     PacketDistributor.sendToServer(new PacketScanForensicChamber(tile.getBlockPos()));
@@ -153,7 +153,7 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
             }
 
             // Ghost icon for Memory Chip if chip input slot is empty
-            if (this.relativeX == 77 && this.relativeY == 21 && !slot.hasItem()) {
+            if (this.relativeX == 77 && this.relativeY == 25 && !slot.hasItem()) {
                 guiGraphics.setColor(1.0F, 1.0F, 1.0F, 0.4F);
                 guiGraphics.renderItem(new ItemStack(ReplicationRegistry.Items.MEMORY_CHIP.get()), this.relativeX + 1, this.relativeY + 1);
                 guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
