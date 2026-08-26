@@ -415,33 +415,38 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                 ItemStack copyStack = craftingStack.copyWithCount(outputCount);
 
                 if (!getBlockPos().equals(source)) {
-                    net.neoforged.neoforge.items.IItemHandler itemHandler = level.getCapability(
-                        net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
-                        source,
-                        Direction.UP
-                    );
-                    if (itemHandler != null) {
-                        ItemStack remaining = net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(itemHandler, copyStack, false);
-                        if (!remaining.isEmpty()) {
+                    // Try Applied Replicatics Connector first
+                    boolean fullyHandled = tryInsertToAppRepConnector(level, source, copyStack);
+
+                    if (!fullyHandled && !copyStack.isEmpty()) {
+                        net.neoforged.neoforge.items.IItemHandler itemHandler = level.getCapability(
+                            net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                            source,
+                            Direction.UP
+                        );
+                        if (itemHandler != null) {
+                            ItemStack remaining = net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(itemHandler, copyStack, false);
+                            if (!remaining.isEmpty()) {
+                                OutputInventorySlot outputSlot = outputSlots.get(activeSlotIndex);
+                                ItemStack outputStack = outputSlot.getStack();
+                                if (outputStack.isEmpty()) {
+                                    outputSlot.setStack(remaining);
+                                } else if (ItemStack.isSameItemSameComponents(outputStack, remaining) && outputStack.getCount() + remaining.getCount() <= outputStack.getMaxStackSize()) {
+                                    outputSlot.growStack(remaining.getCount(), Action.EXECUTE);
+                                } else {
+                                    net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), remaining);
+                                }
+                            }
+                        } else {
                             OutputInventorySlot outputSlot = outputSlots.get(activeSlotIndex);
                             ItemStack outputStack = outputSlot.getStack();
                             if (outputStack.isEmpty()) {
-                                outputSlot.setStack(remaining);
-                            } else if (ItemStack.isSameItemSameComponents(outputStack, remaining) && outputStack.getCount() + remaining.getCount() <= outputStack.getMaxStackSize()) {
-                                outputSlot.growStack(remaining.getCount(), Action.EXECUTE);
+                                outputSlot.setStack(copyStack);
+                            } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + copyStack.getCount() <= outputStack.getMaxStackSize()) {
+                                outputSlot.growStack(copyStack.getCount(), Action.EXECUTE);
                             } else {
-                                net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), remaining);
+                                net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
                             }
-                        }
-                    } else {
-                        OutputInventorySlot outputSlot = outputSlots.get(activeSlotIndex);
-                        ItemStack outputStack = outputSlot.getStack();
-                        if (outputStack.isEmpty()) {
-                            outputSlot.setStack(copyStack);
-                        } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + outputCount <= outputStack.getMaxStackSize()) {
-                            outputSlot.growStack(outputCount, Action.EXECUTE);
-                        } else {
-                            net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
                         }
                     }
                 } else {
@@ -449,8 +454,8 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                     ItemStack outputStack = outputSlot.getStack();
                     if (outputStack.isEmpty()) {
                         outputSlot.setStack(copyStack);
-                    } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + outputCount <= outputStack.getMaxStackSize()) {
-                        outputSlot.growStack(outputCount, Action.EXECUTE);
+                    } else if (ItemStack.isSameItemSameComponents(outputStack, copyStack) && outputStack.getCount() + copyStack.getCount() <= outputStack.getMaxStackSize()) {
+                        outputSlot.growStack(copyStack.getCount(), Action.EXECUTE);
                     } else {
                         net.minecraft.world.Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY() + 1, getBlockPos().getZ(), copyStack);
                     }
@@ -1200,5 +1205,33 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             currentNetwork = null;
         }
         super.onChunkUnloaded();
+    }
+
+    private static boolean tryInsertToAppRepConnector(net.minecraft.world.level.Level level, BlockPos source, ItemStack stack) {
+        if (level == null || source == null || stack.isEmpty()) return false;
+        try {
+            net.minecraft.world.level.block.entity.BlockEntity blockEntity = level.getBlockEntity(source);
+            if (blockEntity == null) return false;
+
+            Class<?> hostClass = Class.forName("dev.lapis256.apprep.common.logic.ReplicationConnectorLogicHost");
+            if (hostClass.isInstance(blockEntity)) {
+                var getLogicMethod = hostClass.getMethod("getLogic");
+                Object logic = getLogicMethod.invoke(blockEntity);
+                if (logic != null) {
+                    var insertMethod = logic.getClass().getMethod("insertReplicatorResult", ItemStack.class);
+                    Object result = insertMethod.invoke(logic, stack);
+                    if (result instanceof Number num) {
+                        long inserted = num.longValue();
+                        if (inserted > 0) {
+                            stack.shrink((int) inserted);
+                            return stack.isEmpty();
+                        }
+                    }
+                }
+            }
+        } catch (Throwable ignored) {
+            // Applied Replicatics not installed or reflection failed
+        }
+        return false;
     }
 }
