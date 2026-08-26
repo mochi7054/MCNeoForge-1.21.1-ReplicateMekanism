@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/MCNeoForge-1.21.1-ReplicateMekanism.iml" filepath="$PROJECT_DIR$/.idea/MCNeoForge-1.21.1-ReplicateMekanism.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ReplicateMekanism.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ReplicateMekanism.main.iml" />
     </modules>
   </component>
 </project>

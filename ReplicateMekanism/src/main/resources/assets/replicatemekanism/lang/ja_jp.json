@@ -14,6 +14,7 @@
   "upgrade.replicatemekanism.replica.effect": "生産倍率: x%s (最大 x%s)",
   "upgrade.replicatemekanism.replica.supported_machines": "すべてのアップグレード対応機械",
   "replicatemekanism.configuration.replicaUpgradeMaxStack": "レプリカアップグレードの最大スタック数",
+  "replicatemekanism.matter": "マター",
 
   "fluid.replicatemekanism.earth_matter": "アース・マター",
   "fluid.replicatemekanism.nether_matter": "ネザー・マター",

@@ -19,6 +19,7 @@
   "replicatemekanism.configuration.section.replicatemekanism.common.toml": "ReplicateMekanism Configs",
   "replicatemekanism.configuration.section.replicatemekanism.common.toml.title": "ReplicateMekanism Configs",
   "replicatemekanism.configuration.replicaUpgradeMaxStack": "Replica Upgrade Max Stack Limit",
+  "replicatemekanism.matter": "Matter",
 
   "fluid.replicatemekanism.earth_matter": "Earth Matter",
   "fluid.replicatemekanism.nether_matter": "Nether Matter",

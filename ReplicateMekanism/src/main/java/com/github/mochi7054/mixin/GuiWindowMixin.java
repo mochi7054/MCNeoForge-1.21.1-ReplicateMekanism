@@ -14,27 +14,27 @@ public class GuiWindowMixin {
     @ModifyVariable(method = "drawTitleText", at = @At("HEAD"), argsOnly = true)
     private Component modifyTitleText(Component text) {
         if (text != null) {
-            String key = "";
+            String str = text.getString();
+            boolean isFluidTitle = str.contains("Fluid") || str.contains("流体") || str.contains("マター構成") || str.contains("Matter Configuration");
+            
             if (text.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents translatable) {
-                key = translatable.getKey();
+                if ("gui.configuration.config".equals(translatable.getKey())) {
+                    for (Object arg : translatable.getArgs()) {
+                        if (arg != null && arg.toString().contains("FLUID")) {
+                            isFluidTitle = true;
+                            break;
+                        }
+                    }
+                }
             }
-            if ("transmission.mekanism.fluid".equals(key) || 
-                text.getString().contains("Fluid Configuration") || 
-                text.getString().contains("流体構成") ||
-                text.getString().contains("Fluid") ||
-                text.getString().contains("流体")) {
-                
+
+            if (isFluidTitle) {
                 net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
                 if (mc.screen instanceof mekanism.client.gui.GuiMekanism<?> gui) {
                     if (gui.getMenu() instanceof mekanism.common.inventory.container.tile.MekanismTileContainer<?> container) {
                         Object tile = container.getTileEntity();
                         if (tile instanceof ImaginatorBlockEntity || tile instanceof CollapserBlockEntity) {
-                            String lang = mc.getLanguageManager().getSelected();
-                            if (lang != null && lang.contains("ja")) {
-                                return Component.literal("マター構成");
-                            } else {
-                                return Component.literal("Matter Configuration");
-                            }
+                            return Component.translatable("gui.configuration.config", Component.translatable("replicatemekanism.matter"));
                         }
                     }
                 }

@@ -29,15 +29,7 @@ public class GuiConfigTypeTabMixin {
                 tileField.setAccessible(true);
                 Object tile = tileField.get(config);
                 if (tile instanceof ImaginatorBlockEntity || tile instanceof CollapserBlockEntity) {
-                    net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
-                    String lang = mc.getLanguageManager().getSelected();
-                    Component tooltipText;
-                    if (lang != null && lang.contains("ja")) {
-                        tooltipText = Component.literal("マター");
-                    } else {
-                        tooltipText = Component.literal("Matter");
-                    }
-                    typeTooltips.put(TransmissionType.FLUID, Tooltip.create(tooltipText));
+                    typeTooltips.put(TransmissionType.FLUID, Tooltip.create(Component.translatable("replicatemekanism.matter")));
                 }
             } catch (Exception e) {
                 // Ignore
