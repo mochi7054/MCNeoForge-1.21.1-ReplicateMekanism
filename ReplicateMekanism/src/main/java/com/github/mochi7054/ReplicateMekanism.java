@@ -310,33 +310,48 @@ public class ReplicateMekanism {
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
         try {
-            // Imaginator FluidHandler Registrations
-            event.registerBlockEntity(
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+            var imaginatorTiles = java.util.List.of(
                     ReplicateMekanism.IMAGINATOR_TILE.get(),
-                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
-            );
-            event.registerBlockEntity(
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                     ReplicateMekanism.IMAGINATOR_BASIC_TILE.get(),
-                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
-            );
-            event.registerBlockEntity(
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                     ReplicateMekanism.IMAGINATOR_ADVANCED_TILE.get(),
-                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
-            );
-            event.registerBlockEntity(
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
                     ReplicateMekanism.IMAGINATOR_ELITE_TILE.get(),
-                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
-            );
-            event.registerBlockEntity(
-                    net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-                    ReplicateMekanism.IMAGINATOR_ULTIMATE_TILE.get(),
-                    (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+                    ReplicateMekanism.IMAGINATOR_ULTIMATE_TILE.get()
             );
 
+            var collapserTiles = java.util.List.of(
+                    ReplicateMekanism.COLLAPSER_TILE.get(),
+                    ReplicateMekanism.COLLAPSER_BASIC_TILE.get(),
+                    ReplicateMekanism.COLLAPSER_ADVANCED_TILE.get(),
+                    ReplicateMekanism.COLLAPSER_ELITE_TILE.get(),
+                    ReplicateMekanism.COLLAPSER_ULTIMATE_TILE.get()
+            );
+
+            // ItemHandler Registrations (for automation, pipes, hoppers, etc.)
+            for (var tileType : imaginatorTiles) {
+                event.registerBlockEntity(
+                        net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                        tileType,
+                        mekanism.common.tile.base.CapabilityTileEntity.ITEM_HANDLER_PROVIDER
+                );
+                event.registerBlockEntity(
+                        net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                        tileType,
+                        (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+                );
+            }
+
+            for (var tileType : collapserTiles) {
+                event.registerBlockEntity(
+                        net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                        tileType,
+                        mekanism.common.tile.base.CapabilityTileEntity.ITEM_HANDLER_PROVIDER
+                );
+                event.registerBlockEntity(
+                        net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                        tileType,
+                        (be, side) -> new com.github.mochi7054.fluid.ReplicationFluidHandler(be, be.getMatterTanks(), side)
+                );
+            }
         } catch (Exception e) {
             LOGGER.error("Failed to register capabilities for Replication BlockEntities", e);
         }
