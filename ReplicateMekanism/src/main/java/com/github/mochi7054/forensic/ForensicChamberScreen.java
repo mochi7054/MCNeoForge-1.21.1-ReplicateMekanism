@@ -157,9 +157,10 @@ public class ForensicChamberScreen extends GuiConfigurableTile<ForensicChamberBl
             boolean isChipInput = (this.relativeX == 77 && this.relativeY == 25);
             boolean isChipOutput = (this.relativeX == 119 && this.relativeY == 41);
             if ((isChipInput || isChipOutput) && !slot.hasItem()) {
-                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 0.35F);
+                com.mojang.blaze3d.systems.RenderSystem.enableBlend();
+                com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
                 guiGraphics.blit(MEMORY_CHIP_GHOST_TEXTURE, this.relativeX + 1, this.relativeY + 1, 0, 0, 16, 16, 16, 16);
-                guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+                com.mojang.blaze3d.systems.RenderSystem.disableBlend();
             }
             
             this.drawContents(guiGraphics);
