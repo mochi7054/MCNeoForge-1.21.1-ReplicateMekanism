@@ -7,6 +7,7 @@
   "item.replicatemekanism.replica_control_circuit": "レプリカ制御回路",
   "item.replicatemekanism.replica_upgrade": "レプリカアップグレード",
   "item.replicatemekanism.replica_tier_installer": "レプリカティアインストーラー",
+  "tooltip.replicatemekanism.replica_tier_installer": "Replicationの機械（レプリケーター、ディスインテグレーター、識別室）に使用すると、ReplicateMekanismの機械にアップグレード変換します。",
   "block.replicatemekanism.forensic_chamber": "鑑識室",
   "container.replicatemekanism.forensic_chamber": "鑑識室",
   "description.replicatemekanism.forensic_chamber": "対象アイテムを消費し、メモリチップに100%識別済みのマターパターンを即座に書き込みます。",

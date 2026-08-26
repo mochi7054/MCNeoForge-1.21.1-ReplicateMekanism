@@ -8,6 +8,7 @@
   "item.replicatemekanism.replica_control_circuit": "Replica Control Circuit",
   "item.replicatemekanism.replica_upgrade": "Replica Upgrade",
   "item.replicatemekanism.replica_tier_installer": "Replica Tier Installer",
+  "tooltip.replicatemekanism.replica_tier_installer": "Use on Replication machines (Replicator, Disintegrator, Identification Chamber) to upgrade them into ReplicateMekanism machines.",
   "block.replicatemekanism.forensic_chamber": "Forensic Chamber",
   "container.replicatemekanism.forensic_chamber": "Forensic Chamber",
   "description.replicatemekanism.forensic_chamber": "Consumes the target item and instantly writes a 100% identified matter pattern onto a memory chip.",

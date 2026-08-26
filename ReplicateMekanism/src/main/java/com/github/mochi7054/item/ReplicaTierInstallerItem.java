@@ -191,4 +191,10 @@ public class ReplicaTierInstallerItem extends Item {
 
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, net.minecraft.world.item.TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.translatable("tooltip.replicatemekanism.replica_tier_installer").withStyle(net.minecraft.ChatFormatting.GRAY));
+    }
 }
