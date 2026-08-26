@@ -1,6 +1,6 @@
 {
 	"credit": "Made with Blockbench",
-	"render_type": "minecraft:cutout",
+	"render_type": "minecraft:translucent",
 	"textures": {
 		"1": "replicatemekanism:block/forensic_chamber",
 		"particle": "replicatemekanism:block/forensic_chamber"
