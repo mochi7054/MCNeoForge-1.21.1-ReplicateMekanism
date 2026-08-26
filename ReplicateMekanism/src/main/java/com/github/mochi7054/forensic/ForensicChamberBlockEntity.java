@@ -40,12 +40,12 @@ public class ForensicChamberBlockEntity extends TileEntityConfigurableMachine {
     public ForensicChamberBlockEntity(BlockPos pos, BlockState state) {
         super(state.getBlockHolder(), pos, state);
 
+        ejectorComponent = new TileComponentEjector(this);
+
         configComponent.setupItemIOExtraConfig(inputSlot, chipOutputSlot, chipInputSlot, energySlot);
         configComponent.setupInputConfig(TransmissionType.ENERGY, energyContainer);
 
-        if (ejectorComponent != null) {
-            ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM);
-        }
+        ejectorComponent.setOutputData(configComponent, TransmissionType.ITEM);
     }
 
     @NotNull
