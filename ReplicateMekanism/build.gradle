@@ -118,6 +118,7 @@ neoForge {
 // "optional", meaning it will not be pulled by dependents of this mod.
 configurations {
     runtimeClasspath.extendsFrom localRuntime
+    localRuntime.extendsFrom implementation
 }
 
 dependencies {
