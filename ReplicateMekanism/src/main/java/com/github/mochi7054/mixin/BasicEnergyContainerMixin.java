@@ -6,7 +6,9 @@ import mekanism.api.AutomationType;
 import mekanism.common.tile.base.TileEntityMekanism;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.github.mochi7054.recipe.ReplicaRecipeTracker;
 
 @Mixin(value = BasicEnergyContainer.class, remap = false)
@@ -22,6 +24,17 @@ public abstract class BasicEnergyContainerMixin implements com.github.mochi7054.
     @Override
     public void setReplicateMekanism$owner(TileEntityMekanism owner) {
         this.replicateMekanism$owner = owner;
+    }
+
+    @Inject(method = "getMaxEnergy", at = @At("RETURN"), cancellable = true)
+    private void onGetMaxEnergy(CallbackInfoReturnable<Long> cir) {
+        if (replicateMekanism$owner instanceof mekanism.generators.common.tile.TileEntityGenerator tile) {
+            int mult = ReplicaRecipeTracker.getReplicaMultiplier(tile);
+            if (mult > 1) {
+                long orig = cir.getReturnValue();
+                cir.setReturnValue(orig * mult);
+            }
+        }
     }
 
     @ModifyVariable(

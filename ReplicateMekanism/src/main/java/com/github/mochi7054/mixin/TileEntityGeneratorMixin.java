@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import com.github.mochi7054.recipe.ReplicaRecipeTracker;
 
 @Mixin(value = TileEntityGenerator.class, remap = false)
 public abstract class TileEntityGeneratorMixin extends TileEntityMekanism {
@@ -46,6 +47,15 @@ public abstract class TileEntityGeneratorMixin extends TileEntityMekanism {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Inject(method = "getMaxOutput", at = @At("RETURN"), cancellable = true)
+    private void onGetMaxOutput(CallbackInfoReturnable<Long> cir) {
+        int mult = ReplicaRecipeTracker.getReplicaMultiplier(this);
+        if (mult > 1) {
+            long orig = cir.getReturnValue();
+            cir.setReturnValue(orig * mult);
         }
     }
 }
