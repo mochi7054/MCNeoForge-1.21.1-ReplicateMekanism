@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import com.github.mochi7054.ReplicateMekanism;
+import com.github.mochi7054.recipe.ReplicaRecipeTracker;
 
 @Mixin(value = TileEntityFormulaicAssemblicator.class, remap = false)
 public class TileEntityFormulaicAssemblicatorMixin {
@@ -19,17 +19,12 @@ public class TileEntityFormulaicAssemblicatorMixin {
     )
     private ItemStack modifyCraftedOutput(ItemStack stack, ItemStack originalStack, Action action) {
         TileEntityFormulaicAssemblicator assemblicator = (TileEntityFormulaicAssemblicator) (Object) this;
-        int upgradeCount = 0;
-        if (assemblicator.getComponent() != null) {
-            upgradeCount = assemblicator.getComponent().getUpgrades(ReplicateMekanism.REPLICA_UPGRADE_TYPE);
-        }
-        if (upgradeCount > 0) {
-            if (stack != null && !stack.isEmpty()) {
-                ItemStack multiplied = stack.copy();
-                int multiplier = 1 << upgradeCount;
-                multiplied.setCount(multiplied.getCount() * multiplier);
-                return multiplied;
-            }
+        int mult = ReplicaRecipeTracker.getReplicaMultiplier(assemblicator);
+        if (action.execute() && mult > 1 && stack != null && !stack.isEmpty()) {
+            ItemStack multiplied = stack.copy();
+            long newCount = (long) multiplied.getCount() * mult;
+            multiplied.setCount((int) Math.min(Integer.MAX_VALUE, newCount));
+            return multiplied;
         }
         return stack;
     }
