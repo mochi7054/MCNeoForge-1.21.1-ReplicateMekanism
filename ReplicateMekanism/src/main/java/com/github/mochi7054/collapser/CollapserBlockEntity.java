@@ -540,17 +540,37 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         }
         if (collected.isEmpty()) return;
 
-        // アイテム種別ごとに合計数を集計
-        java.util.Map<net.minecraft.core.component.DataComponentPatch, java.util.AbstractMap.SimpleEntry<ItemStack, Integer>> countMap =
-                new java.util.LinkedHashMap<>();
-        for (ItemStack stack : collected) {
-            var key = stack.getComponentsPatch();
-            var entry = countMap.get(key);
-            if (entry == null) {
-                countMap.put(key, new java.util.AbstractMap.SimpleEntry<>(stack.copyWithCount(1), stack.getCount()));
-            } else {
-                entry.setValue(entry.getValue() + stack.getCount());
+        class ItemKey {
+            final net.minecraft.world.item.Item item;
+            final net.minecraft.core.component.DataComponentPatch patch;
+            final ItemStack template;
+
+            ItemKey(ItemStack stack) {
+                this.item = stack.getItem();
+                this.patch = stack.getComponentsPatch();
+                this.template = stack.copyWithCount(1);
             }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o instanceof ItemKey other) {
+                    return this.item == other.item && java.util.Objects.equals(this.patch, other.patch);
+                }
+                return false;
+            }
+
+            @Override
+            public int hashCode() {
+                return 31 * java.util.Objects.hashCode(item) + java.util.Objects.hashCode(patch);
+            }
+        }
+
+        // アイテム種別ごとに合計数を集計
+        java.util.Map<ItemKey, Integer> countMap = new java.util.LinkedHashMap<>();
+        for (ItemStack stack : collected) {
+            ItemKey key = new ItemKey(stack);
+            countMap.put(key, countMap.getOrDefault(key, 0) + stack.getCount());
         }
 
         int slotCount = inputSlots.size();
@@ -576,8 +596,8 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
 
         java.util.List<SortingGroup> groups = new java.util.ArrayList<>();
         int totalAllocated = 0;
-        for (var entry : countMap.values()) {
-            SortingGroup group = new SortingGroup(entry.getKey(), entry.getValue());
+        for (var entry : countMap.entrySet()) {
+            SortingGroup group = new SortingGroup(entry.getKey().template, entry.getValue());
             groups.add(group);
             totalAllocated += group.allocatedSlots;
         }
