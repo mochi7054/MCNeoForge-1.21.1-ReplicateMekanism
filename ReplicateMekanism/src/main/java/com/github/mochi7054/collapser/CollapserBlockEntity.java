@@ -57,6 +57,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
 
     /** 自動分配（ソート）が有効かどうか。BASIC以上のティアのみ機能する。 */
     public boolean sorting = false;
+    private boolean sortingNeeded = false;
 
     private MachineEnergyContainer<CollapserBlockEntity> energyContainer;
 
@@ -219,11 +220,16 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             inputSlots.clear();
         }
 
+        IContentsListener slotListener = () -> {
+            listener.onContentsChanged();
+            this.sortingNeeded = true;
+        };
+
         for (int i = 0; i < slotCount; i++) {
             InputInventorySlot inputSlot = InputInventorySlot.at(stack -> {
                 MatterCompound compound = ReplicationCalculation.getMatterCompound(stack);
                 return compound != null && !compound.getValues().isEmpty();
-            }, listener, inputCoords[i][0], inputCoords[i][1]);
+            }, slotListener, inputCoords[i][0], inputCoords[i][1]);
             inputSlots.add(inputSlot);
             builder.addSlot(inputSlot);
         }
@@ -355,9 +361,10 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             sendUpdate = true;
         }
 
-        // 自動分配: BASIC以上のティアで sorting が有効なら毎 tick 実行
-        if (sorting && inputSlots.size() > 1) {
+        // 自動分配: BASIC以上のティアで sorting が有効かつインベントリが変更された場合に実行
+        if (sorting && sortingNeeded && inputSlots.size() > 1) {
             sortInventory();
+            sortingNeeded = false;
         }
 
         // 自動搬出 (Auto-Eject): configComponentでFLUIDの自動排出が有効、またはOUTPUTに設定されている面にプッシュ
@@ -519,26 +526,21 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
 
     public void setSorting(boolean value) {
         this.sorting = value;
+        if (value) {
+            this.sortingNeeded = true;
+        }
         setChanged();
     }
 
     /**
      * 全入力スロットのアイテムを均等に分配する（Mekanism Factory の sortInventory に相当）。
      * 同じアイテムをできるだけ均等に各スロットへ振り分け、余りは先頭スロットから順に入れる。
+     * 変更のないスロットには setStack を呼ばず、処理中のプログレスを維持する。
      */
     private void sortInventory() {
         if (inputSlots == null || inputSlots.size() <= 1) return;
 
-        // 全スロットのアイテムを集める
-        java.util.List<ItemStack> collected = new java.util.ArrayList<>();
-        for (mekanism.common.inventory.slot.InputInventorySlot slot : inputSlots) {
-            ItemStack stack = slot.getStack();
-            if (!stack.isEmpty()) {
-                collected.add(stack.copy());
-                slot.setStack(ItemStack.EMPTY);
-            }
-        }
-        if (collected.isEmpty()) return;
+        int slotCount = inputSlots.size();
 
         class ItemKey {
             final net.minecraft.world.item.Item item;
@@ -566,14 +568,16 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             }
         }
 
-        // アイテム種別ごとに合計数を集計
+        // スロットをクリアせずに全アイテムを集計
         java.util.Map<ItemKey, Integer> countMap = new java.util.LinkedHashMap<>();
-        for (ItemStack stack : collected) {
-            ItemKey key = new ItemKey(stack);
-            countMap.put(key, countMap.getOrDefault(key, 0) + stack.getCount());
+        for (mekanism.common.inventory.slot.InputInventorySlot slot : inputSlots) {
+            ItemStack stack = slot.getStack();
+            if (!stack.isEmpty()) {
+                ItemKey key = new ItemKey(stack);
+                countMap.put(key, countMap.getOrDefault(key, 0) + stack.getCount());
+            }
         }
-
-        int slotCount = inputSlots.size();
+        if (countMap.isEmpty()) return;
 
         // 各アイテム種別の情報を格納する一時クラス
         class SortingGroup {
@@ -617,7 +621,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             }
         }
 
-        // 残りのスロットを、一番スロットあたりの個数が多いアイテムに優先して均等に分配する
+        // 残りの空きスロットを、1スロットあたりの個数が多いアイテムに優先して均等分配
         while (totalAllocated < slotCount) {
             SortingGroup bestGroup = null;
             int maxAverage = -1;
@@ -636,7 +640,12 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             }
         }
 
-        // 分配したスロット数に従って、アイテムをスロットにセットする
+        // 理想的なスロット配置を計算
+        ItemStack[] targetStacks = new ItemStack[slotCount];
+        for (int i = 0; i < slotCount; i++) {
+            targetStacks[i] = ItemStack.EMPTY;
+        }
+
         int slotIdx = 0;
         for (SortingGroup group : groups) {
             int total = group.total;
@@ -647,8 +656,16 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             for (int i = 0; i < slotsToUse && slotIdx < slotCount; i++, slotIdx++) {
                 int count = perSlot + (i < remainder ? 1 : 0);
                 if (count <= 0) continue;
-                ItemStack toSet = group.template.copyWithCount(Math.min(count, group.maxPerStack));
-                inputSlots.get(slotIdx).setStack(toSet);
+                targetStacks[slotIdx] = group.template.copyWithCount(Math.min(count, group.maxPerStack));
+            }
+        }
+
+        // 差分があるスロットのみ setStack を呼び出す（不要なイベント発火やプログレス破棄を防ぐ）
+        for (int i = 0; i < slotCount; i++) {
+            ItemStack current = inputSlots.get(i).getStack();
+            ItemStack target = targetStacks[i];
+            if (!ItemStack.matches(current, target)) {
+                inputSlots.get(i).setStack(target);
             }
         }
     }
