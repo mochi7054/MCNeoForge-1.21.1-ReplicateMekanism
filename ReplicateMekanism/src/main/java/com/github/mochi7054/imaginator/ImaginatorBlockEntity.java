@@ -735,8 +735,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                         int totalNeeded = slot0Task.getTotalAmount();
                         int alreadyDone = slot0Task.getCurrentAmount();
                         int remainingItems = Math.max(0, totalNeeded - alreadyDone);
-                        int remainingAfterSlot0 = Math.max(0, remainingItems - outputCount);
-                        remainingTaskSlots = (remainingAfterSlot0 + outputCount - 1) / outputCount;
+                        remainingTaskSlots = Math.max(0, remainingItems - 1);
                     }
 
                     int allocatedToShared = 0;
