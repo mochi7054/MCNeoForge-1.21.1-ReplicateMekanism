@@ -766,6 +766,41 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         tag.put("matterTanks", tanksTag);
     }
 
+    @Override
+    public void writeSustainedData(HolderLookup.Provider provider, CompoundTag tag) {
+        super.writeSustainedData(provider, tag);
+        tag.putBoolean("sorting", this.sorting);
+        CompoundTag tanksTag = new CompoundTag();
+        tanksTag.putDouble("earth", earthTank.getMatterAmount());
+        tanksTag.putDouble("nether", netherTank.getMatterAmount());
+        tanksTag.putDouble("organic", organicTank.getMatterAmount());
+        tanksTag.putDouble("ender", enderTank.getMatterAmount());
+        tanksTag.putDouble("metallic", metallicTank.getMatterAmount());
+        tanksTag.putDouble("precious", preciousTank.getMatterAmount());
+        tanksTag.putDouble("living", livingTank.getMatterAmount());
+        tanksTag.putDouble("quantum", quantumTank.getMatterAmount());
+        tag.put("matterTanks", tanksTag);
+    }
+
+    @Override
+    public void readSustainedData(HolderLookup.Provider provider, CompoundTag tag) {
+        super.readSustainedData(provider, tag);
+        if (tag.contains("sorting")) {
+            this.sorting = tag.getBoolean("sorting");
+        }
+        if (tag.contains("matterTanks", Tag.TAG_COMPOUND)) {
+            CompoundTag tanksTag = tag.getCompound("matterTanks");
+            earthTank.setAmount(tanksTag.getDouble("earth"));
+            netherTank.setAmount(tanksTag.getDouble("nether"));
+            organicTank.setAmount(tanksTag.getDouble("organic"));
+            enderTank.setAmount(tanksTag.getDouble("ender"));
+            metallicTank.setAmount(tanksTag.getDouble("metallic"));
+            preciousTank.setAmount(tanksTag.getDouble("precious"));
+            livingTank.setAmount(tanksTag.getDouble("living"));
+            quantumTank.setAmount(tanksTag.getDouble("quantum"));
+        }
+    }
+
     // ITierUpgradable Implementation
     @Override
     public void parseUpgradeData(HolderLookup.Provider provider, mekanism.common.upgrade.IUpgradeData upgradeData) {

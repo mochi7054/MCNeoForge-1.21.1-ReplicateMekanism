@@ -381,6 +381,18 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
 
     private void performReplication(int activeSlotIndex, MatterCompound recipeCompound, com.buuz135.replication.network.MatterNetwork network) {
         if (recipeCompound != null && !recipeCompound.getValues().isEmpty()) {
+            // 1. 全マターが足りているか厳密に事前チェック（デュープ防止）
+            for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
+                IMatterType neededMatterType = entry.getKey();
+                double neededAmount = entry.getValue().getAmount();
+
+                com.github.mochi7054.fluid.SimpleMatterTank matchingTank = getMatchingTank(neededMatterType);
+                if (matchingTank == null || matchingTank.getMatterAmount() < neededAmount) {
+                    return; // マターが足りないので複製中止
+                }
+            }
+
+            // 2. すべて足りている場合のみ実際に消費
             for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
                 IMatterType neededMatterType = entry.getKey();
                 double neededAmount = entry.getValue().getAmount();
@@ -583,6 +595,12 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         MatterCompound[] slotCompounds = new MatterCompound[inputSlots.size()];
 
         if (canFunction()) {
+            // スロット間で共有する仮想マター残量（マター不足デュープ防止）
+            java.util.Map<String, Double> virtualMatter = new java.util.HashMap<>();
+            for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
+                virtualMatter.put(tank.getMatter().getMatterType().getName(), tank.getMatterAmount());
+            }
+
             for (int i = 0; i < inputSlots.size(); i++) {
                 com.buuz135.replication.api.task.IReplicationTask task = this.activeTasks[i];
                 ItemStack checkStack = ItemStack.EMPTY;
@@ -599,8 +617,8 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                         for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
                             IMatterType neededMatterType = entry.getKey();
                             double neededAmount = entry.getValue().getAmount();
-                            com.github.mochi7054.fluid.SimpleMatterTank matchingTank = getMatchingTank(neededMatterType);
-                            if (matchingTank == null || matchingTank.getMatterAmount() < neededAmount) {
+                            double currentVirtual = virtualMatter.getOrDefault(neededMatterType.getName(), 0.0);
+                            if (currentVirtual < neededAmount) {
                                 allFluidsAvailable = false;
                                 break;
                             }
@@ -619,6 +637,11 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                             if (outputCompatible) {
                                 canOperate[i] = true;
                                 slotCompounds[i] = recipeCompound;
+                                // 後続スロットの重複判定を防ぐため仮想残量を消費
+                                for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
+                                    String typeName = entry.getKey().getName();
+                                    virtualMatter.put(typeName, virtualMatter.get(typeName) - entry.getValue().getAmount());
+                                }
                             }
                         }
                     }
@@ -687,8 +710,8 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             }
 
             // 2. タスク共有モード (Sharing Mode: !sortingActive)
-            // 1枠目にあるアイテム（タスクまたは手動）で2枠目以降を埋め尽くす
-            // アイテムがある場合その枠は埋めない。アイテムがなくなったらその枠も埋める
+            // 1枠目にあるアイテム（タスクまたは手動）で2枠目以降を埋める
+            // タスクの場合は残り必要数量を超えない範囲でのみスロットを割り当てる（超過複製防止）
             if (!sortingActive && slotCount > 1) {
                 ItemStack slot0Item = inputSlots.get(0).getStack();
                 com.buuz135.replication.api.task.IReplicationTask slot0Task = this.activeTasks[0];
@@ -701,12 +724,35 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                 }
 
                 if (!sharedItem.isEmpty()) {
+                    int outputCount = 1;
+                    if (getComponent() != null) {
+                        int upgradeCount = getComponent().getUpgrades(com.github.mochi7054.ReplicateMekanism.REPLICA_UPGRADE_TYPE);
+                        outputCount = 1 << upgradeCount;
+                    }
+
+                    int remainingTaskSlots = Integer.MAX_VALUE;
+                    if (slot0Task != null) {
+                        int totalNeeded = slot0Task.getTotalAmount();
+                        int alreadyDone = slot0Task.getCurrentAmount();
+                        int remainingItems = Math.max(0, totalNeeded - alreadyDone);
+                        int remainingAfterSlot0 = Math.max(0, remainingItems - outputCount);
+                        remainingTaskSlots = (remainingAfterSlot0 + outputCount - 1) / outputCount;
+                    }
+
+                    int allocatedToShared = 0;
                     for (int i = 1; i < slotCount; i++) {
-                        // 枠が空の場合のみ埋める（アイテムがある枠は埋めない）
+                        if (slot0Task != null && allocatedToShared >= remainingTaskSlots) {
+                            if (this.activeTasks[i] != null && this.activeTasks[i].getUuid().equals(slot0Task.getUuid())) {
+                                cancelActiveTask(i);
+                                sendUpdate = true;
+                            }
+                            continue;
+                        }
+
                         if (inputSlots.get(i).isEmpty() && this.activeTasks[i] == null) {
                             OutputInventorySlot outputSlot = outputSlots.get(i);
                             ItemStack outputStack = outputSlot.getStack();
-                            if (outputStack.isEmpty() || outputStack.getCount() < outputStack.getMaxStackSize()) {
+                            if (outputStack.isEmpty() || outputStack.getCount() + outputCount <= outputStack.getMaxStackSize()) {
                                 inputSlots.get(i).setStackUnchecked(sharedItem.copyWithCount(1));
                                 this.activeCraftingStacks[i] = sharedItem.copy();
                                 if (slot0Task != null) {
@@ -716,8 +762,11 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                                     this.activeTasks[i] = null;
                                     this.activeTaskUuids[i] = null;
                                 }
+                                allocatedToShared++;
                                 sendUpdate = true;
                             }
+                        } else if (this.activeTasks[i] != null && slot0Task != null && this.activeTasks[i].getUuid().equals(slot0Task.getUuid())) {
+                            allocatedToShared++;
                         }
                     }
                 }
@@ -1096,6 +1145,41 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         tanksTag.putDouble("living", livingTank.getMatterAmount());
         tanksTag.putDouble("quantum", quantumTank.getMatterAmount());
         tag.put("matterTanks", tanksTag);
+    }
+
+    @Override
+    public void writeSustainedData(HolderLookup.Provider provider, CompoundTag tag) {
+        super.writeSustainedData(provider, tag);
+        tag.putBoolean("sorting", this.sorting);
+        CompoundTag tanksTag = new CompoundTag();
+        tanksTag.putDouble("earth", earthTank.getMatterAmount());
+        tanksTag.putDouble("nether", netherTank.getMatterAmount());
+        tanksTag.putDouble("organic", organicTank.getMatterAmount());
+        tanksTag.putDouble("ender", enderTank.getMatterAmount());
+        tanksTag.putDouble("metallic", metallicTank.getMatterAmount());
+        tanksTag.putDouble("precious", preciousTank.getMatterAmount());
+        tanksTag.putDouble("living", livingTank.getMatterAmount());
+        tanksTag.putDouble("quantum", quantumTank.getMatterAmount());
+        tag.put("matterTanks", tanksTag);
+    }
+
+    @Override
+    public void readSustainedData(HolderLookup.Provider provider, CompoundTag tag) {
+        super.readSustainedData(provider, tag);
+        if (tag.contains("sorting")) {
+            this.sorting = tag.getBoolean("sorting");
+        }
+        if (tag.contains("matterTanks", Tag.TAG_COMPOUND)) {
+            CompoundTag tanksTag = tag.getCompound("matterTanks");
+            earthTank.setAmount(tanksTag.getDouble("earth"));
+            netherTank.setAmount(tanksTag.getDouble("nether"));
+            organicTank.setAmount(tanksTag.getDouble("organic"));
+            enderTank.setAmount(tanksTag.getDouble("ender"));
+            metallicTank.setAmount(tanksTag.getDouble("metallic"));
+            preciousTank.setAmount(tanksTag.getDouble("precious"));
+            livingTank.setAmount(tanksTag.getDouble("living"));
+            quantumTank.setAmount(tanksTag.getDouble("quantum"));
+        }
     }
 
     // ITierUpgradable Implementation
