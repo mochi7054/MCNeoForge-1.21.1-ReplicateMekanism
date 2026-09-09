@@ -37,6 +37,8 @@
   "fluid.replicatemekanism.precious_matter": "Precious Matter",
   "fluid.replicatemekanism.living_matter": "Living Matter",
   "fluid.replicatemekanism.quantum_matter": "Quantum Matter",
+
+  "tooltip.replicatemekanism.matter_tank_amount": "%s Matter: %s / %s mB",
   
   "block.replicatemekanism.imaginator": "Imaginator",
   "container.replicatemekanism.imaginator": "Imaginator",

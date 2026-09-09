@@ -35,6 +35,17 @@
   "fluid.replicatemekanism.precious_matter": "プレシャス・マター",
   "fluid.replicatemekanism.living_matter": "リビング・マター",
   "fluid.replicatemekanism.quantum_matter": "クォンタム・マター",
+
+  "replication.matter_type.earth": "アース",
+  "replication.matter_type.nether": "ネザー",
+  "replication.matter_type.organic": "オーガニック",
+  "replication.matter_type.ender": "エンダー",
+  "replication.matter_type.metallic": "メタリック",
+  "replication.matter_type.precious": "プレシャス",
+  "replication.matter_type.living": "リビング",
+  "replication.matter_type.quantum": "クォンタム",
+  "replication.matter_type.empty": "空",
+  "tooltip.replicatemekanism.matter_tank_amount": "%sマター: %s / %s mB",
   
   "block.replicatemekanism.imaginator": "幻想具現化機",
   "container.replicatemekanism.imaginator": "幻想具現化機",

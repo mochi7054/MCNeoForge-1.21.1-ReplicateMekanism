@@ -50,13 +50,11 @@ public class ReplicationGuiFluidBar extends GuiElement {
     @Override
     public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         super.renderToolTip(guiGraphics, mouseX, mouseY);
-        String name = tank.getMatter().getMatterType().getName();
-        // Capitalize first letter
-        if (name != null && !name.isEmpty()) {
-            name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-        }
-        String txt = name + " Matter: " + (int) tank.getMatterAmount() + " / " + (int) tank.getCapacity();
-        guiGraphics.renderTooltip(net.minecraft.client.Minecraft.getInstance().font, Component.literal(txt), mouseX, mouseY);
+        var matterType = tank.getMatter().getMatterType();
+        String typeName = matterType != null ? matterType.getName().toLowerCase() : "empty";
+        Component typeComponent = Component.translatable("replication.matter_type." + typeName);
+        Component tooltipText = Component.translatable("tooltip.replicatemekanism.matter_tank_amount", typeComponent, (int) tank.getMatterAmount(), (int) tank.getCapacity());
+        guiGraphics.renderTooltip(net.minecraft.client.Minecraft.getInstance().font, tooltipText, mouseX, mouseY);
     }
 
     private int getMatterColor(com.buuz135.replication.api.IMatterType type) {
