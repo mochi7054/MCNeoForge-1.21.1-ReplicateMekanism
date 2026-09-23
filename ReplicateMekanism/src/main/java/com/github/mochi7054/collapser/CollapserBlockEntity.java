@@ -42,12 +42,13 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import mekanism.api.Upgrade;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class CollapserBlockEntity extends TileEntityConfigurableMachine implements MenuProvider {
+public class CollapserBlockEntity extends TileEntityConfigurableMachine implements MenuProvider, mekanism.common.tile.interfaces.IUpgradeTile, mekanism.common.tile.interfaces.ITierUpgradable {
 
     public static final int BASE_TICKS_REQUIRED = 100;
     public static final long BASE_ENERGY_USAGE = 50L;
@@ -76,9 +77,13 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
     public com.github.mochi7054.fluid.SimpleMatterTank quantumTank;
     public mekanism.common.capabilities.fluid.BasicFluidTank dummyFluidTank;
 
+    public java.util.Map<String, com.github.mochi7054.fluid.SimpleMatterTank> customMatterTanks = new java.util.concurrent.ConcurrentHashMap<>();
+
     public List<com.github.mochi7054.fluid.SimpleMatterTank> getMatterTanks() {
-        return List.of(earthTank, netherTank, organicTank, enderTank,
-                metallicTank, preciousTank, livingTank, quantumTank);
+        List<com.github.mochi7054.fluid.SimpleMatterTank> tanks = new ArrayList<>(List.of(earthTank, netherTank, organicTank, enderTank,
+                metallicTank, preciousTank, livingTank, quantumTank));
+        tanks.addAll(customMatterTanks.values());
+        return tanks;
     }
 
     public List<InputInventorySlot> inputSlots;
@@ -508,6 +513,7 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
 
     @Nullable
     private com.github.mochi7054.fluid.SimpleMatterTank getTankForMatterType(IMatterType matterType) {
+        if (matterType == null) return null;
         String name = matterType.getName().toLowerCase();
         return switch (name) {
             case "earth"    -> earthTank;
@@ -518,8 +524,27 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             case "precious" -> preciousTank;
             case "living"   -> livingTank;
             case "quantum"  -> quantumTank;
-            default         -> null;
+            default         -> {
+                if (!customMatterTanks.containsKey(name)) {
+                    com.github.mochi7054.fluid.SimpleMatterTank newTank = new com.github.mochi7054.fluid.SimpleMatterTank(
+                        matterType,
+                        getTierSafe().getTankCapacity(),
+                        () -> {
+                            onContentsChanged();
+                            setChanged();
+                        }
+                    );
+                    customMatterTanks.put(name, newTank);
+                }
+                yield customMatterTanks.get(name);
+            }
         };
+    }
+
+    @Override
+    public void recalculateUpgrades(Upgrade upgradeType) {
+        super.recalculateUpgrades(upgradeType);
+        ticksRequired = MekanismUtils.getTicks(this, BASE_TICKS_REQUIRED);
     }
 
     // ---- 自動分配 ----
@@ -741,6 +766,19 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             livingTank.setAmount(tanksTag.getDouble("living"));
             quantumTank.setAmount(tanksTag.getDouble("quantum"));
         }
+        if (tag.contains("customMatterTanks", Tag.TAG_COMPOUND)) {
+            CompoundTag customTanksTag = tag.getCompound("customMatterTanks");
+            for (String key : customTanksTag.getAllKeys()) {
+                IMatterType mType = com.buuz135.replication.ReplicationRegistry.MATTER_TYPES_REGISTRY.stream()
+                    .filter(t -> t.getName().equalsIgnoreCase(key)).findFirst().orElse(null);
+                if (mType != null) {
+                    com.github.mochi7054.fluid.SimpleMatterTank tank = getTankForMatterType(mType);
+                    if (tank != null) {
+                        tank.setAmount(customTanksTag.getDouble(key));
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -764,6 +802,12 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         tanksTag.putDouble("living", livingTank.getMatterAmount());
         tanksTag.putDouble("quantum", quantumTank.getMatterAmount());
         tag.put("matterTanks", tanksTag);
+
+        CompoundTag customTanksTag = new CompoundTag();
+        for (Map.Entry<String, com.github.mochi7054.fluid.SimpleMatterTank> entry : customMatterTanks.entrySet()) {
+            customTanksTag.putDouble(entry.getKey(), entry.getValue().getMatterAmount());
+        }
+        tag.put("customMatterTanks", customTanksTag);
     }
 
     @Override
@@ -780,6 +824,12 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
         tanksTag.putDouble("living", livingTank.getMatterAmount());
         tanksTag.putDouble("quantum", quantumTank.getMatterAmount());
         tag.put("matterTanks", tanksTag);
+
+        CompoundTag customTanksTag = new CompoundTag();
+        for (Map.Entry<String, com.github.mochi7054.fluid.SimpleMatterTank> entry : customMatterTanks.entrySet()) {
+            customTanksTag.putDouble(entry.getKey(), entry.getValue().getMatterAmount());
+        }
+        tag.put("customMatterTanks", customTanksTag);
     }
 
     @Override
@@ -798,6 +848,19 @@ public class CollapserBlockEntity extends TileEntityConfigurableMachine implemen
             preciousTank.setAmount(tanksTag.getDouble("precious"));
             livingTank.setAmount(tanksTag.getDouble("living"));
             quantumTank.setAmount(tanksTag.getDouble("quantum"));
+        }
+        if (tag.contains("customMatterTanks", Tag.TAG_COMPOUND)) {
+            CompoundTag customTanksTag = tag.getCompound("customMatterTanks");
+            for (String key : customTanksTag.getAllKeys()) {
+                IMatterType mType = com.buuz135.replication.ReplicationRegistry.MATTER_TYPES_REGISTRY.stream()
+                    .filter(t -> t.getName().equalsIgnoreCase(key)).findFirst().orElse(null);
+                if (mType != null) {
+                    com.github.mochi7054.fluid.SimpleMatterTank tank = getTankForMatterType(mType);
+                    if (tank != null) {
+                        tank.setAmount(customTanksTag.getDouble(key));
+                    }
+                }
+            }
         }
     }
 

@@ -22,7 +22,10 @@
                 "mekanism:upgrades",
                 "mekanism:energy",
                 "mekanism:items",
-                "mekanism:fluids"
+                "mekanism:fluids",
+                "minecraft:custom_data",
+                "mekanism:sorting",
+                "mekanism:custom_data"
               ],
               "source": "block_entity"
             }

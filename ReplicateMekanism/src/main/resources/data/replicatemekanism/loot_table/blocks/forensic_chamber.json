@@ -20,7 +20,10 @@
                 "mekanism:security",
                 "mekanism:side_config",
                 "mekanism:energy",
-                "mekanism:items"
+                "mekanism:items",
+                "minecraft:custom_data",
+                "mekanism:sorting",
+                "mekanism:custom_data"
               ],
               "source": "block_entity"
             }
