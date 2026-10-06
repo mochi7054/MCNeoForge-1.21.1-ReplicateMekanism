@@ -39,6 +39,7 @@
   "fluid.replicatemekanism.quantum_matter": "Quantum Matter",
 
   "tooltip.replicatemekanism.matter_tank_amount": "%s Matter: %s / %s mB",
+  "tooltip.replicatemekanism.matter_tank_empty": "Empty Matter Tank (%s mB)",
   
   "block.replicatemekanism.imaginator": "Imaginator",
   "container.replicatemekanism.imaginator": "Imaginator",

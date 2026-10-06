@@ -44,6 +44,7 @@
   "fluid.replicatemekanism.living_matter": "Живая материя",
   "fluid.replicatemekanism.quantum_matter": "Квантовая материя",
   "tooltip.replicatemekanism.matter_tank_amount": "%s материя: %s / %s мБ",
+  "tooltip.replicatemekanism.matter_tank_empty": "Пустой резервуар материи (%s мБ)",
   "block.replicatemekanism.imaginator": "Имагинатор",
   "container.replicatemekanism.imaginator": "Имагинатор",
   "description.replicatemekanism.imaginator": "Использует энергию и жидкую материю для создания предметов.",

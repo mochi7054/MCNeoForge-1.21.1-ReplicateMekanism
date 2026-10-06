@@ -24,34 +24,40 @@ public class ReplicationGuiFluidBar extends GuiElement {
         int w = this.width;
         int h = this.height;
 
-        // Draw custom Replication dark background inside the bar (like the inside of a slot)
+        // Draw custom Replication dark background inside the bar
         guiGraphics.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0xFF181A24);
 
-        // Draw the matter level fill overlay
-        double max = tank.getCapacity();
-        double current = tank.getMatterAmount();
-        double ratio = max > 0 ? current / max : 0;
+        if (tank != null && tank.getMatterType() != null) {
+            double max = tank.getCapacity();
+            double current = tank.getMatterAmount();
+            double ratio = max > 0 ? current / max : 0;
 
-        if (ratio > 0) {
-            int color = getMatterColor(tank.getMatter().getMatterType());
-            if (horizontal) {
-                int fillWidth = (int) Math.round((w - 2) * ratio);
-                guiGraphics.fill(x + 1, y + 1, x + 1 + fillWidth, y + h - 1, color);
-            } else {
-                int fillHeight = (int) Math.round((h - 2) * ratio);
-                guiGraphics.fill(x + 1, y + h - 1 - fillHeight, x + w - 1, y + h - 1, color);
+            if (ratio > 0) {
+                int color = getMatterColor(tank.getMatterType());
+                if (horizontal) {
+                    int fillWidth = (int) Math.round((w - 2) * ratio);
+                    guiGraphics.fill(x + 1, y + 1, x + 1 + fillWidth, y + h - 1, color);
+                } else {
+                    int fillHeight = (int) Math.round((h - 2) * ratio);
+                    guiGraphics.fill(x + 1, y + h - 1 - fillHeight, x + w - 1, y + h - 1, color);
+                }
             }
         }
 
-        // Draw Replication green border
+        // Draw Replication border
         drawReplicationBorder(guiGraphics);
     }
 
     @Override
     public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         super.renderToolTip(guiGraphics, mouseX, mouseY);
-        var matterType = tank.getMatter().getMatterType();
-        String typeName = matterType != null ? matterType.getName().toLowerCase() : "empty";
+        if (tank == null || tank.getMatterType() == null) {
+            Component tooltipText = Component.translatable("tooltip.replicatemekanism.matter_tank_empty", tank != null ? (int) tank.getCapacity() : 0);
+            guiGraphics.renderTooltip(net.minecraft.client.Minecraft.getInstance().font, tooltipText, mouseX, mouseY);
+            return;
+        }
+        var matterType = tank.getMatterType();
+        String typeName = matterType.getName().toLowerCase();
         Component typeComponent = Component.translatable("replication.matter_type." + typeName);
         Component tooltipText = Component.translatable("tooltip.replicatemekanism.matter_tank_amount", typeComponent, (int) tank.getMatterAmount(), (int) tank.getCapacity());
         guiGraphics.renderTooltip(net.minecraft.client.Minecraft.getInstance().font, tooltipText, mouseX, mouseY);
@@ -68,7 +74,20 @@ public class ReplicationGuiFluidBar extends GuiElement {
         if (name.contains("precious")) return 0xFFFBC02D;
         if (name.contains("living")) return 0xFF81C784;
         if (name.contains("quantum")) return 0xFF3F51B5;
-        return 0xFFFFFFFF;
+        try {
+            float[] rgb = type.getColor().get();
+            if (rgb != null && rgb.length >= 3) {
+                int r = (int) (rgb[0] * 255.0f);
+                int g = (int) (rgb[1] * 255.0f);
+                int b = (int) (rgb[2] * 255.0f);
+                return 0xFF000000 | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
+            }
+        } catch (Throwable ignored) {}
+        int hash = type.getName().hashCode();
+        int r = (hash & 0x7F) + 128;
+        int g = ((hash >> 8) & 0x7F) + 128;
+        int b = ((hash >> 16) & 0x7F) + 128;
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
     private void drawReplicationBorder(GuiGraphics guiGraphics) {

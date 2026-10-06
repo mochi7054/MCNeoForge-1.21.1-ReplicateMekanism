@@ -86,13 +86,20 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
     public com.github.mochi7054.fluid.SimpleMatterTank preciousTank;
     public com.github.mochi7054.fluid.SimpleMatterTank livingTank;
     public com.github.mochi7054.fluid.SimpleMatterTank quantumTank;
+    public final List<com.github.mochi7054.fluid.SimpleMatterTank> customTanks = new ArrayList<>(8);
     public mekanism.common.capabilities.fluid.BasicFluidTank dummyFluidTank;
 
-    public java.util.Map<String, com.github.mochi7054.fluid.SimpleMatterTank> customMatterTanks = new java.util.concurrent.ConcurrentHashMap<>();
-
     public List<com.github.mochi7054.fluid.SimpleMatterTank> getMatterTanks() {
-        List<com.github.mochi7054.fluid.SimpleMatterTank> tanks = new ArrayList<>(List.of(earthTank, netherTank, organicTank, enderTank, metallicTank, preciousTank, livingTank, quantumTank));
-        tanks.addAll(customMatterTanks.values());
+        List<com.github.mochi7054.fluid.SimpleMatterTank> tanks = new ArrayList<>(16);
+        tanks.add(earthTank);
+        tanks.add(netherTank);
+        tanks.add(organicTank);
+        tanks.add(enderTank);
+        tanks.add(metallicTank);
+        tanks.add(preciousTank);
+        tanks.add(livingTank);
+        tanks.add(quantumTank);
+        tanks.addAll(customTanks);
         return tanks;
     }
 
@@ -182,6 +189,11 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         preciousTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.PRECIOUS.get(), capacity, this::setChanged);
         livingTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.LIVING.get(), capacity, this::setChanged);
         quantumTank = new com.github.mochi7054.fluid.SimpleMatterTank(com.buuz135.replication.ReplicationRegistry.Matter.QUANTUM.get(), capacity, this::setChanged);
+
+        customTanks.clear();
+        for (int i = 0; i < 8; i++) {
+            customTanks.add(new com.github.mochi7054.fluid.SimpleMatterTank(capacity, this::setChanged));
+        }
 
         dummyFluidTank = mekanism.common.capabilities.fluid.BasicFluidTank.create(0, (fluid) -> false, (fluid) -> false, listener);
         FluidTankHelper builder = FluidTankHelper.forSideWithConfig(this);
@@ -380,24 +392,34 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         }
     }
 
-    private com.github.mochi7054.fluid.SimpleMatterTank getMatchingTank(IMatterType neededMatterType) {
+    @Nullable
+    public com.github.mochi7054.fluid.SimpleMatterTank getMatchingTank(IMatterType neededMatterType) {
         if (neededMatterType == null) return null;
         String name = neededMatterType.getName().toLowerCase();
-        for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
-            if (tank.getMatter().getMatterType() != null && tank.getMatter().getMatterType().getName().equalsIgnoreCase(name)) {
-                return tank;
+        return switch (name) {
+            case "earth"    -> earthTank;
+            case "nether"   -> netherTank;
+            case "organic"  -> organicTank;
+            case "ender"    -> enderTank;
+            case "metallic" -> metallicTank;
+            case "precious" -> preciousTank;
+            case "living"   -> livingTank;
+            case "quantum"  -> quantumTank;
+            default         -> {
+                for (com.github.mochi7054.fluid.SimpleMatterTank tank : customTanks) {
+                    if (tank.getMatterType() != null && tank.getMatterType().getName().equalsIgnoreCase(name)) {
+                        yield tank;
+                    }
+                }
+                for (com.github.mochi7054.fluid.SimpleMatterTank tank : customTanks) {
+                    if (tank.getMatterAmount() <= 0.00001 || tank.getMatterType() == null) {
+                        tank.setMatterType(neededMatterType);
+                        yield tank;
+                    }
+                }
+                yield null;
             }
-        }
-        com.github.mochi7054.fluid.SimpleMatterTank newTank = new com.github.mochi7054.fluid.SimpleMatterTank(
-            neededMatterType,
-            getTierSafe().getImaginatorTankCapacity(),
-            () -> {
-                onContentsChanged();
-                setChanged();
-            }
-        );
-        customMatterTanks.put(name, newTank);
-        return newTank;
+        };
     }
 
     private void performReplication(int activeSlotIndex, MatterCompound recipeCompound, com.buuz135.replication.network.MatterNetwork network) {
@@ -631,7 +653,9 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             // スロット間で共有する仮想マター残量（マター不足デュープ防止）
             java.util.Map<String, Double> virtualMatter = new java.util.HashMap<>();
             for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
-                virtualMatter.put(tank.getMatter().getMatterType().getName(), tank.getMatterAmount());
+                if (tank.getMatterType() != null) {
+                    virtualMatter.put(tank.getMatterType().getName().toLowerCase(), tank.getMatterAmount());
+                }
             }
 
             for (int i = 0; i < inputSlots.size(); i++) {
@@ -650,7 +674,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                         for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
                             IMatterType neededMatterType = entry.getKey();
                             double neededAmount = entry.getValue().getAmount();
-                            double currentVirtual = virtualMatter.getOrDefault(neededMatterType.getName(), 0.0);
+                            double currentVirtual = virtualMatter.getOrDefault(neededMatterType.getName().toLowerCase(), 0.0);
                             if (currentVirtual < neededAmount) {
                                 allFluidsAvailable = false;
                                 break;
@@ -672,8 +696,8 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                                 slotCompounds[i] = recipeCompound;
                                 // 後続スロットの重複判定を防ぐため仮想残量を消費
                                 for (Map.Entry<IMatterType, MatterValue> entry : recipeCompound.getValues().entrySet()) {
-                                    String typeName = entry.getKey().getName();
-                                    virtualMatter.put(typeName, virtualMatter.get(typeName) - entry.getValue().getAmount());
+                                    String typeName = entry.getKey().getName().toLowerCase();
+                                    virtualMatter.put(typeName, virtualMatter.getOrDefault(typeName, 0.0) - entry.getValue().getAmount());
                                 }
                             }
                         }
@@ -690,7 +714,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                     if (outputStack.isEmpty() || outputStack.getCount() < outputStack.getMaxStackSize()) {
                         for (com.buuz135.replication.api.task.IReplicationTask candidate :
                                 network.getTaskManager().getPendingTasks().values()) {
-                            if (candidate.canAcceptReplicator(getBlockPos(), 1)) {
+                            if (candidate.canAcceptReplicator(getBlockPos(), 1024)) {
                                 candidate.acceptReplicator(getBlockPos());
                                 this.activeTasks[0] = candidate;
                                 this.activeTaskUuids[0] = candidate.getUuid().toString();
@@ -725,7 +749,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
                                     }
                                     if (alreadyAcceptedByUs) continue;
 
-                                    if (candidate.canAcceptReplicator(getBlockPos(), 1)) {
+                                    if (candidate.canAcceptReplicator(getBlockPos(), 1024)) {
                                         candidate.acceptReplicator(getBlockPos());
                                         this.activeTasks[i] = candidate;
                                         this.activeTaskUuids[i] = candidate.getUuid().toString();
@@ -765,10 +789,14 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
 
                     int remainingTaskSlots = Integer.MAX_VALUE;
                     if (slot0Task != null) {
-                        int totalNeeded = slot0Task.getTotalAmount();
-                        int alreadyDone = slot0Task.getCurrentAmount();
-                        int remainingItems = Math.max(0, totalNeeded - alreadyDone);
-                        remainingTaskSlots = Math.max(0, remainingItems - 1);
+                        if (slot0Task.isInfinteMode()) {
+                            remainingTaskSlots = slotCount - 1;
+                        } else {
+                            int totalNeeded = slot0Task.getTotalAmount();
+                            int alreadyDone = slot0Task.getCurrentAmount();
+                            int remainingItems = Math.max(0, totalNeeded - alreadyDone);
+                            remainingTaskSlots = Math.max(0, remainingItems - 1);
+                        }
                     }
 
                     int allocatedToShared = 0;
@@ -1049,6 +1077,21 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         for (com.github.mochi7054.fluid.SimpleMatterTank tank : getMatterTanks()) {
             container.track(mekanism.common.inventory.container.sync.SyncableDouble.create(tank::getMatterAmount, tank::setAmount));
         }
+        for (com.github.mochi7054.fluid.SimpleMatterTank customTank : customTanks) {
+            container.track(SyncableInt.create(
+                () -> {
+                    IMatterType type = customTank.getMatterType();
+                    return type != null ? com.buuz135.replication.ReplicationRegistry.MATTER_TYPES_REGISTRY.getId(type) : -1;
+                },
+                id -> {
+                    if (id < 0) {
+                        customTank.setMatterType(null);
+                    } else {
+                        customTank.setMatterType(com.buuz135.replication.ReplicationRegistry.MATTER_TYPES_REGISTRY.byId(id));
+                    }
+                }
+            ));
+        }
     }
 
     @Override
@@ -1122,16 +1165,31 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             livingTank.setAmount(tanksTag.getDouble("living"));
             quantumTank.setAmount(tanksTag.getDouble("quantum"));
         }
-        if (tag.contains("customMatterTanks", Tag.TAG_COMPOUND)) {
+        if (tag.contains("customTanksList", Tag.TAG_LIST)) {
+            net.minecraft.nbt.ListTag customList = tag.getList("customTanksList", Tag.TAG_COMPOUND);
+            for (int i = 0; i < Math.min(customList.size(), customTanks.size()); i++) {
+                CompoundTag cTag = customList.getCompound(i);
+                if (cTag.contains("type")) {
+                    String typeName = cTag.getString("type");
+                    IMatterType mType = com.buuz135.replication.ReplicationRegistry.MATTER_TYPES_REGISTRY.stream()
+                        .filter(t -> t.getName().equalsIgnoreCase(typeName)).findFirst().orElse(null);
+                    customTanks.get(i).setMatterType(mType);
+                } else {
+                    customTanks.get(i).setMatterType(null);
+                }
+                customTanks.get(i).setAmount(cTag.getDouble("amount"));
+            }
+        } else if (tag.contains("customMatterTanks", Tag.TAG_COMPOUND)) {
             CompoundTag customTanksTag = tag.getCompound("customMatterTanks");
+            int idx = 0;
             for (String key : customTanksTag.getAllKeys()) {
+                if (idx >= customTanks.size()) break;
                 IMatterType mType = com.buuz135.replication.ReplicationRegistry.MATTER_TYPES_REGISTRY.stream()
                     .filter(t -> t.getName().equalsIgnoreCase(key)).findFirst().orElse(null);
                 if (mType != null) {
-                    com.github.mochi7054.fluid.SimpleMatterTank tank = getMatchingTank(mType);
-                    if (tank != null) {
-                        tank.setAmount(customTanksTag.getDouble(key));
-                    }
+                    customTanks.get(idx).setMatterType(mType);
+                    customTanks.get(idx).setAmount(customTanksTag.getDouble(key));
+                    idx++;
                 }
             }
         }
@@ -1191,11 +1249,16 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         tanksTag.putDouble("quantum", quantumTank.getMatterAmount());
         tag.put("matterTanks", tanksTag);
 
-        CompoundTag customTanksTag = new CompoundTag();
-        for (Map.Entry<String, com.github.mochi7054.fluid.SimpleMatterTank> entry : customMatterTanks.entrySet()) {
-            customTanksTag.putDouble(entry.getKey(), entry.getValue().getMatterAmount());
+        net.minecraft.nbt.ListTag customList = new net.minecraft.nbt.ListTag();
+        for (com.github.mochi7054.fluid.SimpleMatterTank tank : customTanks) {
+            CompoundTag cTag = new CompoundTag();
+            if (tank.getMatterType() != null) {
+                cTag.putString("type", tank.getMatterType().getName());
+            }
+            cTag.putDouble("amount", tank.getMatterAmount());
+            customList.add(cTag);
         }
-        tag.put("customMatterTanks", customTanksTag);
+        tag.put("customTanksList", customList);
     }
 
     @Override
@@ -1213,11 +1276,16 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         tanksTag.putDouble("quantum", quantumTank.getMatterAmount());
         tag.put("matterTanks", tanksTag);
 
-        CompoundTag customTanksTag = new CompoundTag();
-        for (Map.Entry<String, com.github.mochi7054.fluid.SimpleMatterTank> entry : customMatterTanks.entrySet()) {
-            customTanksTag.putDouble(entry.getKey(), entry.getValue().getMatterAmount());
+        net.minecraft.nbt.ListTag customList = new net.minecraft.nbt.ListTag();
+        for (com.github.mochi7054.fluid.SimpleMatterTank tank : customTanks) {
+            CompoundTag cTag = new CompoundTag();
+            if (tank.getMatterType() != null) {
+                cTag.putString("type", tank.getMatterType().getName());
+            }
+            cTag.putDouble("amount", tank.getMatterAmount());
+            customList.add(cTag);
         }
-        tag.put("customMatterTanks", customTanksTag);
+        tag.put("customTanksList", customList);
     }
 
     @Override
@@ -1237,16 +1305,31 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             livingTank.setAmount(tanksTag.getDouble("living"));
             quantumTank.setAmount(tanksTag.getDouble("quantum"));
         }
-        if (tag.contains("customMatterTanks", Tag.TAG_COMPOUND)) {
+        if (tag.contains("customTanksList", Tag.TAG_LIST)) {
+            net.minecraft.nbt.ListTag customList = tag.getList("customTanksList", Tag.TAG_COMPOUND);
+            for (int i = 0; i < Math.min(customList.size(), customTanks.size()); i++) {
+                CompoundTag cTag = customList.getCompound(i);
+                if (cTag.contains("type")) {
+                    String typeName = cTag.getString("type");
+                    IMatterType mType = com.buuz135.replication.ReplicationRegistry.MATTER_TYPES_REGISTRY.stream()
+                        .filter(t -> t.getName().equalsIgnoreCase(typeName)).findFirst().orElse(null);
+                    customTanks.get(i).setMatterType(mType);
+                } else {
+                    customTanks.get(i).setMatterType(null);
+                }
+                customTanks.get(i).setAmount(cTag.getDouble("amount"));
+            }
+        } else if (tag.contains("customMatterTanks", Tag.TAG_COMPOUND)) {
             CompoundTag customTanksTag = tag.getCompound("customMatterTanks");
+            int idx = 0;
             for (String key : customTanksTag.getAllKeys()) {
+                if (idx >= customTanks.size()) break;
                 IMatterType mType = com.buuz135.replication.ReplicationRegistry.MATTER_TYPES_REGISTRY.stream()
                     .filter(t -> t.getName().equalsIgnoreCase(key)).findFirst().orElse(null);
                 if (mType != null) {
-                    com.github.mochi7054.fluid.SimpleMatterTank tank = getMatchingTank(mType);
-                    if (tank != null) {
-                        tank.setAmount(customTanksTag.getDouble(key));
-                    }
+                    customTanks.get(idx).setMatterType(mType);
+                    customTanks.get(idx).setAmount(customTanksTag.getDouble(key));
+                    idx++;
                 }
             }
         }
@@ -1269,6 +1352,18 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             var tanks = this.getMatterTanks();
             for (int i = 0; i < Math.min(tanks.size(), data.matterAmounts.size()); i++) {
                 tanks.get(i).setAmount(data.matterAmounts.get(i));
+            }
+            if (data.customMatterTypes != null) {
+                for (int i = 0; i < Math.min(this.customTanks.size(), data.customMatterTypes.size()); i++) {
+                    String typeName = data.customMatterTypes.get(i);
+                    if (typeName != null && !typeName.isEmpty()) {
+                        IMatterType mType = com.buuz135.replication.ReplicationRegistry.MATTER_TYPES_REGISTRY.stream()
+                            .filter(t -> t.getName().equalsIgnoreCase(typeName)).findFirst().orElse(null);
+                        this.customTanks.get(i).setMatterType(mType);
+                    } else {
+                        this.customTanks.get(i).setMatterType(null);
+                    }
+                }
             }
             
             for (mekanism.common.tile.component.ITileComponent component : this.getComponents()) {
@@ -1297,6 +1392,10 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         for (com.github.mochi7054.fluid.SimpleMatterTank tank : this.getMatterTanks()) {
             matterAmounts.add(tank.getMatterAmount());
         }
+        List<String> customMatterTypes = new java.util.ArrayList<>();
+        for (com.github.mochi7054.fluid.SimpleMatterTank customTank : this.customTanks) {
+            customMatterTypes.add(customTank.getMatterType() != null ? customTank.getMatterType().getName() : "");
+        }
         
         CompoundTag componentsTag = new CompoundTag();
         for (mekanism.common.tile.component.ITileComponent component : this.getComponents()) {
@@ -1309,6 +1408,7 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
             outputs,
             energyStack,
             matterAmounts,
+            customMatterTypes,
             componentsTag,
             this.operatingTicks != null ? this.operatingTicks.clone() : new int[0],
             this.sorting
@@ -1321,16 +1421,18 @@ public class ImaginatorBlockEntity extends TileEntityConfigurableMachine impleme
         public final List<ItemStack> outputStacks;
         public final ItemStack energySlotStack;
         public final List<Double> matterAmounts;
+        public final List<String> customMatterTypes;
         public final CompoundTag componentNbt;
         public final int[] operatingTicks;
         public final boolean sorting;
         
-        public ImaginatorUpgradeData(long energy, List<ItemStack> inputStacks, List<ItemStack> outputStacks, ItemStack energySlotStack, List<Double> matterAmounts, CompoundTag componentNbt, int[] operatingTicks, boolean sorting) {
+        public ImaginatorUpgradeData(long energy, List<ItemStack> inputStacks, List<ItemStack> outputStacks, ItemStack energySlotStack, List<Double> matterAmounts, List<String> customMatterTypes, CompoundTag componentNbt, int[] operatingTicks, boolean sorting) {
             this.energy = energy;
             this.inputStacks = inputStacks;
             this.outputStacks = outputStacks;
             this.energySlotStack = energySlotStack;
             this.matterAmounts = matterAmounts;
+            this.customMatterTypes = customMatterTypes;
             this.componentNbt = componentNbt;
             this.operatingTicks = operatingTicks;
             this.sorting = sorting;
